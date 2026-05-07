@@ -97,9 +97,11 @@ def get_task_label(row: dict[str, str], task: str, regression_label: str = "labe
 
 
 def get_phq9_target(row: dict[str, str]) -> float:
-    if "PHQ-9" not in row or str(row["PHQ-9"]).strip() == "":
-        raise KeyError("Column PHQ-9 not found in split csv")
-    return float(row["PHQ-9"])
+    # 兼容 Elder（PHQ-9）和 Young（phq9_score）两种列名
+    for col in ("PHQ-9", "phq9_score", "phq9"):
+        if col in row and str(row[col]).strip() != "":
+            return float(row[col])
+    raise KeyError("Column PHQ-9/phq9_score not found in split csv")
 
 
 def load_task_maps(
@@ -349,7 +351,9 @@ class MPDDElderDataset(Dataset):
         self.video_feature = video_feature
         self.target_t = target_t
         self.has_phq_target = phq_map is not None
-        self.is_young = any(root.name.lower() == "young" for root in self.split_data_roots.values())
+        # Use substring match because resolve_project_path() follows symlinks,
+        # changing e.g. ".../Young" -> ".../Train-MPDD-Young" (exact "young" match fails).
+        self.is_young = "young" in str(data_root).lower()
         self.need_av = subtrack in ("A-V+P", "A-V-G+P")
         self.need_gait = subtrack in ("A-V-G+P", "G+P")
         self.audio_roots: dict[str, Path] = {}

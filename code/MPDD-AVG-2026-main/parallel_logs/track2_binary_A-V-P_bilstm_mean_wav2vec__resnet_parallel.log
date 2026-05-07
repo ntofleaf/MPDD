@@ -1,0 +1,27 @@
+2026-05-07 12:07:48,781 - INFO - Experiment: track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel
+2026-05-07 12:07:48,781 - INFO - Device: cuda
+2026-05-07 12:07:48,781 - INFO - Train/Val: 79 / 9
+2026-05-07 12:09:18,419 - INFO - Epoch 1/80 | train_loss=1.838029 | val_f1=0.357143 val_acc=0.555556 val_kappa=0.000000 val_ccc=0.009190 val_rmse=0.603623 val_mae=0.518443
+2026-05-07 12:10:34,614 - INFO - Epoch 2/80 | train_loss=1.447621 | val_f1=0.357143 val_acc=0.555556 val_kappa=0.000000 val_ccc=0.002215 val_rmse=0.655065 val_mae=0.533415
+2026-05-07 12:11:52,736 - INFO - Epoch 3/80 | train_loss=1.289190 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=0.000719 val_rmse=0.607719 val_mae=0.517733
+2026-05-07 12:13:11,031 - INFO - Epoch 4/80 | train_loss=1.299431 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=-0.001203 val_rmse=0.623999 val_mae=0.522563
+2026-05-07 12:14:29,092 - INFO - Epoch 5/80 | train_loss=1.334310 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=-0.000745 val_rmse=0.631999 val_mae=0.524368
+2026-05-07 12:15:48,620 - INFO - Epoch 6/80 | train_loss=1.312804 | val_f1=0.584615 val_acc=0.666667 val_kappa=0.270270 val_ccc=-0.003098 val_rmse=0.681326 val_mae=0.544147
+2026-05-07 12:17:04,022 - INFO - Epoch 7/80 | train_loss=1.193854 | val_f1=0.357143 val_acc=0.555556 val_kappa=0.000000 val_ccc=-0.011373 val_rmse=0.668494 val_mae=0.536824
+2026-05-07 12:17:56,481 - INFO - Epoch 8/80 | train_loss=1.131967 | val_f1=0.357143 val_acc=0.555556 val_kappa=0.000000 val_ccc=-0.013203 val_rmse=0.665065 val_mae=0.532895
+2026-05-07 12:18:37,663 - INFO - Epoch 9/80 | train_loss=1.083034 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=-0.021143 val_rmse=0.607871 val_mae=0.537629
+2026-05-07 12:19:14,853 - INFO - Epoch 10/80 | train_loss=1.015543 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=-0.041515 val_rmse=0.627629 val_mae=0.530410
+2026-05-07 12:19:52,310 - INFO - Epoch 11/80 | train_loss=0.779457 | val_f1=0.415584 val_acc=0.444444 val_kappa=-0.153846 val_ccc=-0.091826 val_rmse=0.676920 val_mae=0.547655
+2026-05-07 12:20:30,004 - INFO - Epoch 12/80 | train_loss=0.541740 | val_f1=0.325000 val_acc=0.333333 val_kappa=-0.285714 val_ccc=-0.244237 val_rmse=0.722637 val_mae=0.621931
+2026-05-07 12:21:09,883 - INFO - Epoch 13/80 | train_loss=0.434193 | val_f1=0.415584 val_acc=0.444444 val_kappa=-0.046512 val_ccc=-0.262989 val_rmse=0.806275 val_mae=0.670234
+2026-05-07 12:21:49,881 - INFO - Epoch 14/80 | train_loss=0.311939 | val_f1=0.444444 val_acc=0.444444 val_kappa=-0.097561 val_ccc=-0.301056 val_rmse=0.760973 val_mae=0.644050
+2026-05-07 12:22:31,733 - INFO - Epoch 15/80 | train_loss=0.345933 | val_f1=0.444444 val_acc=0.444444 val_kappa=-0.097561 val_ccc=-0.319038 val_rmse=0.748379 val_mae=0.644620
+2026-05-07 12:23:05,695 - INFO - Epoch 16/80 | train_loss=0.251857 | val_f1=0.415584 val_acc=0.444444 val_kappa=-0.046512 val_ccc=-0.267342 val_rmse=0.711308 val_mae=0.613686
+2026-05-07 12:23:32,403 - INFO - Epoch 17/80 | train_loss=0.375915 | val_f1=0.325000 val_acc=0.333333 val_kappa=-0.350000 val_ccc=-0.267525 val_rmse=0.701144 val_mae=0.619874
+2026-05-07 12:24:00,813 - INFO - Epoch 18/80 | train_loss=0.204703 | val_f1=0.250000 val_acc=0.333333 val_kappa=-0.227273 val_ccc=-0.279222 val_rmse=0.753625 val_mae=0.619803
+2026-05-07 12:24:26,407 - INFO - Epoch 19/80 | train_loss=0.259289 | val_f1=0.357143 val_acc=0.555556 val_kappa=0.000000 val_ccc=-0.115825 val_rmse=0.768224 val_mae=0.635249
+2026-05-07 12:24:51,992 - INFO - Epoch 20/80 | train_loss=0.187283 | val_f1=0.307692 val_acc=0.444444 val_kappa=0.000000 val_ccc=-0.107634 val_rmse=0.684544 val_mae=0.562564
+2026-05-07 12:25:14,141 - INFO - Epoch 21/80 | train_loss=0.286437 | val_f1=0.250000 val_acc=0.333333 val_kappa=-0.227273 val_ccc=-0.099182 val_rmse=0.655128 val_mae=0.580565
+2026-05-07 12:25:14,141 - INFO - Early stopping at epoch 21
+2026-05-07 12:25:14,143 - INFO - Best checkpoint: checkpoints/Track2/A-V-P/binary/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/best_model_2026-05-07-12.07.47.pth
+2026-05-07 12:25:14,143 - INFO - Validation metrics saved to: logs/Track2/A-V-P/binary/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/train_result_2026-05-07-12.07.47.json

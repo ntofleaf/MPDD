@@ -1,0 +1,106 @@
+[INFO] Using GPUs: 0 1 2 3 4 5 6 7 (total 8)
+
+==========================================
+ 启动 7 个实验
+==========================================
+[GPU 0] Track1/A-V+P/ternary  audio=mfcc video=resnet
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track1_ternary_A-V-P_bilstm_mean_mfcc__resnet_parallel.log
+         checkpoint: checkpoints/Track1/A-V-P/ternary/track1_ternary_A-V-P_bilstm_mean_mfcc__resnet_parallel/
+         result JSON: logs/Track1/A-V-P/ternary/track1_ternary_A-V-P_bilstm_mean_mfcc__resnet_parallel/train_result_*.json
+
+[GPU 0] PID=619009 已启动 -> track1_ternary_A-V-P_bilstm_mean_mfcc__resnet_parallel
+[GPU 1] Track1/A-V+P/binary  audio=opensmile video=resnet
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track1_binary_A-V-P_bilstm_mean_opensmile__resnet_parallel.log
+         checkpoint: checkpoints/Track1/A-V-P/binary/track1_binary_A-V-P_bilstm_mean_opensmile__resnet_parallel/
+         result JSON: logs/Track1/A-V-P/binary/track1_binary_A-V-P_bilstm_mean_opensmile__resnet_parallel/train_result_*.json
+
+[GPU 1] PID=619017 已启动 -> track1_binary_A-V-P_bilstm_mean_opensmile__resnet_parallel
+[GPU 2] Track1/A-V-G+P/binary  audio=mfcc video=resnet
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track1_binary_A-V-G-P_bilstm_mean_mfcc__resnet_parallel.log
+         checkpoint: checkpoints/Track1/A-V-G-P/binary/track1_binary_A-V-G-P_bilstm_mean_mfcc__resnet_parallel/
+         result JSON: logs/Track1/A-V-G-P/binary/track1_binary_A-V-G-P_bilstm_mean_mfcc__resnet_parallel/train_result_*.json
+
+[GPU 2] PID=619025 已启动 -> track1_binary_A-V-G-P_bilstm_mean_mfcc__resnet_parallel
+[GPU 3] Track1/A-V-G+P/ternary  audio=wav2vec video=openface
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track1_ternary_A-V-G-P_bilstm_mean_wav2vec__openface_parallel.log
+         checkpoint: checkpoints/Track1/A-V-G-P/ternary/track1_ternary_A-V-G-P_bilstm_mean_wav2vec__openface_parallel/
+         result JSON: logs/Track1/A-V-G-P/ternary/track1_ternary_A-V-G-P_bilstm_mean_wav2vec__openface_parallel/train_result_*.json
+
+[GPU 3] PID=619033 已启动 -> track1_ternary_A-V-G-P_bilstm_mean_wav2vec__openface_parallel
+[GPU 4] Track1/G+P/binary  audio= video=
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track1_binary_G-P_bilstm_mean_gait_only_parallel.log
+         checkpoint: checkpoints/Track1/G-P/binary/track1_binary_G-P_bilstm_mean_gait_only_parallel/
+         result JSON: logs/Track1/G-P/binary/track1_binary_G-P_bilstm_mean_gait_only_parallel/train_result_*.json
+
+[GPU 4] PID=619041 已启动 -> track1_binary_G-P_bilstm_mean_gait_only_parallel
+[GPU 5] Track2/A-V+P/binary  audio=wav2vec video=resnet
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel.log
+         checkpoint: checkpoints/Track2/A-V-P/binary/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/
+         result JSON: logs/Track2/A-V-P/binary/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/train_result_*.json
+
+[GPU 5] PID=619049 已启动 -> track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel
+[GPU 6] Track2/A-V+P/ternary  audio=wav2vec video=resnet
+         输出日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel.log
+         checkpoint: checkpoints/Track2/A-V-P/ternary/track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/
+         result JSON: logs/Track2/A-V-P/ternary/track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel/train_result_*.json
+
+[GPU 6] PID=619057 已启动 -> track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel
+
+==========================================
+ 全部 7 个进程已启动，开始等待...
+ 实时查看某个实验进度：
+   tail -f parallel_logs/<实验名>.log
+   tail -f parallel_logs/*.log  (全部)
+==========================================
+[OK]   track1_ternary_A-V-P_bilstm_mean_mfcc__resnet_parallel
+[OK]   track1_binary_A-V-P_bilstm_mean_opensmile__resnet_parallel
+[OK]   track1_binary_A-V-G-P_bilstm_mean_mfcc__resnet_parallel
+[OK]   track1_ternary_A-V-G-P_bilstm_mean_wav2vec__openface_parallel
+[OK]   track1_binary_G-P_bilstm_mean_gait_only_parallel
+[FAIL] track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel (PID=619049, 查看日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track2_binary_A-V-P_bilstm_mean_wav2vec__resnet_parallel.log)
+[FAIL] track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel (PID=619057, 查看日志: /home/niutao/data/code/MPDD-AVG-2026-main/parallel_logs/track2_ternary_A-V-P_bilstm_mean_wav2vec__resnet_parallel.log)
+
+==========================================
+ 全部实验完成！失败数: 2
+==========================================
+
+汇总结果：
+track   subtrack  task     audio      video     epoch  F1      ACC     Kappa   CCC      RMSE  
+------------------------------------------------------------------------------------------------
+Track1  A-V-G+P   binary   mfcc       resnet    12     0.6786  0.7778  0.4000  0.1464   0.5893
+Track1  A-V-G+P   binary   mfcc       resnet    12     0.6786  0.7778  0.4000  0.1464   0.5893
+Track1  A-V-G+P   binary   mfcc       resnet    12     0.6786  0.7778  0.4000  0.1464   0.5893
+Track1  A-V-G+P   binary   mfcc       resnet    12     0.6786  0.7778  0.4000  0.1464   0.5893
+Track1  A-V-G+P   binary   mfcc       resnet    12     0.6786  0.7778  0.4000  0.1464   0.5893
+Track1  A-V-G+P   ternary  wav2vec    openface  66     0.6190  0.7778  0.4375  0.5947   0.4320
+Track1  A-V-G+P   ternary  wav2vec    openface  66     0.6190  0.7778  0.4375  0.5947   0.4320
+Track1  A-V-G+P   ternary  wav2vec    openface  66     0.6190  0.7778  0.4375  0.5947   0.4320
+Track1  A-V-G+P   ternary  wav2vec    openface  66     0.6190  0.7778  0.4375  0.5947   0.4320
+Track1  A-V-G+P   ternary  wav2vec    openface  66     0.6190  0.7778  0.4375  0.5947   0.4320
+Track1  A-V+P     binary   wav2vec    resnet    2      0.4000  0.6667  0.0000  -0.0062  6.6032
+Track1  A-V+P     binary   wav2vec    resnet    2      0.4000  0.6667  0.0000  -0.0062  6.6032
+Track1  A-V+P     binary   wav2vec    resnet    2      0.4000  0.6667  0.0000  -0.0062  6.6032
+Track1  A-V+P     binary   wav2vec    resnet    2      0.4000  0.6667  0.0000  -0.0062  6.6032
+Track1  A-V+P     binary   wav2vec    resnet    2      0.4000  0.6667  0.0000  -0.0062  6.6032
+Track1  A-V+P     binary   opensmile  resnet    4      0.4000  0.6667  0.0000  0.0059   1.2208
+Track1  A-V+P     binary   opensmile  resnet    4      0.4000  0.6667  0.0000  0.0059   1.2208
+Track1  A-V+P     binary   opensmile  resnet    4      0.4000  0.6667  0.0000  0.0059   1.2208
+Track1  A-V+P     binary   opensmile  resnet    4      0.4000  0.6667  0.0000  0.0059   1.2208
+Track1  A-V+P     binary   opensmile  resnet    4      0.4000  0.6667  0.0000  0.0059   1.2208
+Track1  A-V+P     ternary  mfcc       resnet    13     0.6410  0.8889  0.7429  0.3257   0.5435
+Track1  A-V+P     ternary  mfcc       resnet    13     0.6410  0.8889  0.7429  0.3257   0.5435
+Track1  A-V+P     ternary  mfcc       resnet    13     0.6410  0.8889  0.7429  0.3257   0.5435
+Track1  A-V+P     ternary  mfcc       resnet    13     0.6410  0.8889  0.7429  0.3257   0.5435
+Track1  A-V+P     ternary  mfcc       resnet    13     0.6410  0.8889  0.7429  0.3257   0.5435
+Track1  A-V+P     ternary  mfcc       resnet    13     0.3535  0.5556  0.1628  0.0934   0.8498
+Track1  A-V+P     ternary  mfcc       resnet    13     0.3535  0.5556  0.1628  0.0934   0.8498
+Track1  A-V+P     ternary  mfcc       resnet    13     0.3535  0.5556  0.1628  0.0934   0.8498
+Track1  A-V+P     ternary  mfcc       resnet    13     0.3535  0.5556  0.1628  0.0934   0.8498
+Track1  A-V+P     ternary  mfcc       resnet    13     0.3535  0.5556  0.1628  0.0934   0.8498
+Track1  G+P       binary   mfcc       densenet  42     0.6786  0.7778  0.4000  -0.2786  0.6110
+Track1  G+P       binary   mfcc       densenet  42     0.6786  0.7778  0.4000  -0.2786  0.6110
+Track1  G+P       binary   mfcc       densenet  42     0.6786  0.7778  0.4000  -0.2786  0.6110
+Track1  G+P       binary   mfcc       densenet  42     0.6786  0.7778  0.4000  -0.2786  0.6110
+Track1  G+P       binary   mfcc       densenet  42     0.6786  0.7778  0.4000  -0.2786  0.6110
+
+结果已保存到: /home/niutao/data/code/MPDD-AVG-2026-main/results_summary.csv

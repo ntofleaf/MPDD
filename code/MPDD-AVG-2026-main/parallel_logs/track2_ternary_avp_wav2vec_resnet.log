@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/niutao/data/code/MPDD-AVG-2026-main/train.py", line 429, in <module>
+    main()
+  File "/home/niutao/data/code/MPDD-AVG-2026-main/train.py", line 195, in main
+    train_dataset = MPDDElderDataset(
+  File "/home/niutao/data/code/MPDD-AVG-2026-main/dataset.py", line 389, in __init__
+    raise RuntimeError(
+RuntimeError: No valid samples found for task=ternary, subtrack=A-V+P, audio_feature=wav2vec, video_feature=resnet

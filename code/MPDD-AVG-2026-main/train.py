@@ -75,7 +75,8 @@ def parse_args() -> argparse.Namespace:
     known_args, _ = base_parser.parse_known_args()
     defaults = load_config(known_args.config)
     parser = build_parser(defaults)
-    return parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    return args
 
 
 def setup_seed(seed: int) -> None:
@@ -246,6 +247,10 @@ def main() -> None:
         "encoder_type": args.encoder_type,
     }
     model = TorchcatBaseline(**model_kwargs).to(device)
+    num_gpus = torch.cuda.device_count() if str(device).startswith("cuda") else 0
+    if num_gpus > 1:
+        model = nn.DataParallel(model)
+        logger.info("DataParallel enabled: using %d GPUs", num_gpus)
 
     class_weights = build_class_weights(
         [int(sample["label"]) for sample in train_dataset.samples],
@@ -324,9 +329,10 @@ def main() -> None:
             best_val_metrics = val_metrics
             best_val_summary = summarize_metrics(val_metrics)
             epochs_without_improve = 0
+            _state_dict = model.module.state_dict() if isinstance(model, nn.DataParallel) else model.state_dict()
             torch.save(
                 {
-                    "model_state": model.state_dict(),
+                    "model_state": _state_dict,
                     "model_kwargs": model_kwargs,
                     "track": args.track,
                     "task": args.task,
