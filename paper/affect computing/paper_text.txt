@@ -1,0 +1,1108 @@
+Personality-guided Public-Private Domain Disentangled Hypergraph-Former
+Network for Multimodal Depression Detection
+Changzeng Fu1,*, Shiwen Zhao1, Yunze Zhang1, Zhongquan Jian2, Shiqi Zhao1, Chaoran Liu3
+1School of Computer Science and Engineering, Northeastern University, Shenyang, China
+2School of Computer and Data Science, Minjiang University, Fuzhou, China
+3Research and Development Center for Large Language Models, NII, Tokyo, Japan
+fuchangzeng@qhd.neu.edu.cn, 2472505@stu.neu.edu.cn, 2402087@stu.neu.edu.cn,
+jianzq@mju.edu.cn, zhaoshiqi@qhd.neu.edu.cn, cliu@nii.ac.jp
+Abstract
+Depression represents a global mental health challenge re-
+quiring efficient and reliable automated detection methods.
+Current Transformer- or Graph Neural Networks (GNNs)-
+based multimodal depression detection methods face sig-
+nificant challenges in modeling individual differences and
+cross-modal temporal dependencies across diverse behav-
+ioral contexts. Therefore, we propose P3HF (Personality-
+guided Public-Private Domain Disentangled Hypergraph-
+Former Network) with three key innovations: (1) personality-
+guided representation learning using LLMs to transform
+discrete individual features into contextual descriptions for
+personalized encoding; (2) Hypergraph-Former architecture
+modeling high-order cross-modal temporal relationships; (3)
+event-level domain disentanglement with contrastive learn-
+ing for improved generalization across behavioral contexts.
+Experiments on MPDD-Young dataset show P3HF achieves
+around 10% improvement on accuracy and weighted F1 for
+binary and ternary depression classification task over exist-
+ing methods. Extensive ablation studies validate the indepen-
+dent contribution of each architectural component, confirm-
+ing that personality-guided representation learning and high-
+order hypergraph reasoning are both essential for generating
+robust, individual-aware depression-related representations.
+Code — https://github.com/hacilab/P3HF
+Introduction
+Depression affects approximately 3.8% of the global popu-
+lation and remains the fourth leading cause of death among
+individuals aged 15-29, with over 700,000 suicide deaths an-
+nually (WHO 2023). The severe shortage of mental health-
+care resources, particularly in developing regions, has driven
+the development of automated depression detection tech-
+nologies for early diagnosis (Trotzek, Koitka, and Friedrich
+2018; Niu, Li, and Fu 2024; Fu et al. 2025d; Zhao et al.
+2025b; Fu et al. 2025b).
+The methodological development of automated de-
+pression detection has progressively transcended uni-
+modal paradigms toward richer multimodal representations.
+*Corresponding Author
+Copyright © 2026, Association for the Advancement of Artificial
+Intelligence (www.aaai.org). All rights reserved.
+Methodologies have evolved from recurrent neural net-
+works to Transformer-based encoders and hypergraph struc-
+tures (Ma et al. 2016; Meng et al. 2021; Qin et al. 2022; Li
+et al. 2024), progressively enhancing cross-modal modeling
+capabilities. Complementing these architectural advances,
+the field has shifted from population-level models to indi-
+vidualized perspectives, explicitly incorporating personality
+factors as moderators of depression severity (Francis 2023;
+Fu et al. 2025c). These methodological maturation is mir-
+rored by dataset evolution: beginning with the interview-
+centric, single-event AVEC-2014 and DAIC-WOZ corpora,
+progressing to the extended E-DAIC, and culminating in
+the recently introduced MPDD benchmark that uniquely in-
+tegrates individual-difference annotations with multi-event
+multimodal recordings to enable personalized detection.
+Despite these advances, three critical problems remain
+unresolved. Problem 1: depression manifestations exhibit
+significant individual variations, resulting in highly hetero-
+geneous multimodal features. Existing deep learning meth-
+ods predominantly adopt uniform modeling strategies, fail-
+ing to account for individual differences in expression pat-
+terns and communication styles. Problem 2: while hyper-
+graph neural networks effectively model high-order cross-
+modal relationships through hyperedges connecting multi-
+ple nodes, these hyperedges constitute unordered sets that
+cannot explicitly capture temporal sequential relationships
+between nodes. This limitation is particularly problematic
+for depression detection, where symptom expression often
+exhibits crucial temporal dependencies. Problem 3: depres-
+sion as a complex psychological disorder demonstrates sig-
+nificant context-dependent manifestations that single-event
+scenarios cannot comprehensively capture.
+According to Bandura’s reciprocal determinism theory,
+individual depression manifestations result from mutual in-
+fluences among personal factors, environment, and behav-
+ior (Bandura 1986). Different events serve as distinct en-
+vironmental stimuli, triggering varied cognitive patterns
+and behavioral responses. This triadic reciprocal causa-
+tion mechanism suggests that depression expressions un-
+der different events comprise two information types: cross-
+event shared general information (public domain) reflecting
+core depression manifestations, and event-specific contex-
+tual information (private domain) capturing individualized
+The Fortieth AAAI Conference on Artificial Intelligence (AAAI-26)
+1801
+responses to specific contexts. Effective disentanglement of
+these domains is crucial for reliable multi-event depression
+detection, as failure to distinguish them may result in distri-
+bution shift problems when encountering unseen individuals
+or events.
+In response to these challenges, we propose P3HF
+(Personality-guided Public-Private Domain Disentangled
+Hypergraph-Former Network), which integrates three key
+innovations:
+To address Problem 1, a personality-guided feature regula-
+tion mechanism that enhances individual difference percep-
+tion by utilizing LLM-generated personality descriptions to
+guide audiovisual feature extraction;
+To address Problem 2, a novel Hypergraph-Former ar-
+chitecture that introduces positional encoding and attention
+mechanisms into hypergraph networks, effectively capturing
+both modal interactions and temporal dependencies;
+To address Problem 3, an event-level domain disentangle-
+ment mechanism based on contrastive learning that distin-
+guishes public and private domains across events, improv-
+ing generalization capability and robustness in multi-event
+scenarios.
+Related Works
+Individual-Aware in Depression Detection
+Modeling individual differences is a critical component in
+automated depression detection systems. Early approaches
+primarily relied on static demographic features as auxil-
+iary information. Kanchapogu and Mohanty (2025) demon-
+strated effective bipolar and unipolar depression detection
+through joint modeling of structured demographic features
+with time-series behavioral data, while also introducing
+multi-task learning strategies that employ gender classifica-
+tion as an auxiliary task to enhance depression detection per-
+formance. Similarly, Zhang et al. (2023) improved emotion
+recognition accuracy through gender-specific acoustic fea-
+tures, highlighting the importance of demographic consid-
+erations. Recent advances have shifted toward incorporat-
+ing psychological constructs, particularly personality traits.
+Tan et al. (2025) proposed a psychology-informed module
+that validates the effectiveness of personality-aware repre-
+sentations in language tasks, achieving significant perfor-
+mance gains in depression detection scenarios. Zhao et al.
+(2018) and Fu et al. (2022) emphasized personality differ-
+ences’ profound impact on emotion recognition, proposing a
+personality-aware personalized framework. However, these
+methods exhibit fundamental limitations: discrete label rep-
+resentations of individual attributes fail to capture fine-
+grained individual feature differences, limiting their ability
+to model the heterogeneous nature of depression manifesta-
+tions across different individuals.
+Graph-Based Multimodal Fusion
+Graph Neural Networks have demonstrated exceptional ca-
+pability in modeling complex relational structures within
+multimodal data for mental health analysis. Ghosal et al.
+(2019) pioneered DialogueGCN, which models dialogues
+as speaker-centered graph structures to propagate emo-
+tional context between utterances. Building on this foun-
+dation, Chen et al. (2022) proposed MS2-GNN for depres-
+sion screening, jointly optimizing modal-shared and modal-
+specific graph branches to capture both common and unique
+cross-modal patterns. Recent developments have explored
+hypergraph architectures for higher-order relationship mod-
+eling. Yi et al. (2024) introduced the MFHACL model,
+combining hypergraph autoencoders with cross-modal con-
+trastive learning to capture higher-order cross-modal inter-
+actions while explicitly aligning modalities in latent emo-
+tional representation space. DepressionMIGNN (Zhao et al.
+2025a) combines RGCN and GAT approaches for utterance-
+level feature extraction across different modalities. While
+these hypergraph-based methods excel at modeling com-
+plex cross-modal relationships through unordered hyper-
+edges, they inherently sacrifice temporal relationship mod-
+eling capabilities, which is a critical limitation for depres-
+sion detection.DIB-HGCN (Chen and Shi 2025) constructed
+adaptive dialogue and monologue hyperedges to track cross-
+modal emotional changes in conversations.
+Disentanglement and Representation Learning
+Domain feature disentanglement aims to separate domain-
+invariant and domain-specific information in learned repre-
+sentations. Bengio, Courville, and Vincent (2013) first for-
+malized disentangled representation learning, arguing that
+multiple explanatory factors are often mixed within rep-
+resentations. Locatello et al. (2019) advanced this field
+through explicit modeling of data generation processes,
+while Zellinger et al. (2019) proposed robust unsuper-
+vised methods for domain-invariant representation learn-
+ing through distribution alignment. Graph-based and mul-
+timodal approaches have embraced disentanglement prin-
+ciples. AM-GCN (Wang et al. 2020) extracts specific and
+shared embeddings from node features and topological
+structures, while MISA (Hazarika, Zimmermann, and Poria
+2020) learns modal-invariant and modal-specific representa-
+tions for sentiment analysis. Sun et al. (2023) proposed gated
+cross-modal attention mechanisms for filtering cross-modal
+inconsistencies, and Ravi et al. (2024) introduced speaker
+disentanglement in depression detection to remove speaker-
+specific characteristics. However, existing approaches pri-
+marily address multi-modal or individual difference disen-
+tanglement, with limited consideration for event-level dis-
+entanglement. In mental health detection, individuals ex-
+hibit distinct behavioral patterns across different events, ne-
+cessitating explicit modeling of event-specific versus event-
+invariant depression manifestations.
+Methodology
+Overview.
+Given sample S, composed of K different
+events, {E1, E2, . . . , EK}. Ek has different lengths Tk, in-
+dicating the number of segmented frames. Ek = {Vk, Ak},
+representing visual and audio modalities respectively. For Vk
+and Ak, Vk = {v1, v2, . . . , vTk}, Ak = {a1, a2, . . . , aTk},
+indicating that two modalities in the same sample across dif-
+ferent events are divided into Tk segments. To align different
+1802
+Figure 1: Model architecture of our P3HF, which is optimized through a combinational objective of three parts. Since the
+number of events in the dataset we use is three, the legend is drawn in the form of K = 3.
+event lengths, we adopt a repetition-based padding strategy.
+Each sample S includes a unique depression label Ydepression,
+Big Five personality(neuroticism, extraversion, openness,
+agreeableness, and conscientiousness) scores, and demo-
+graphic information (gender, age, and hometown), which are
+known to be associated with individual personality traits.
+In automated depression detection tasks, our objective is
+to construct a function F predicting depression labels for
+each segment. As mentioned in the Introduction, to address
+the mentioned problems, we first embed individual informa-
+tion P as prior into audiovisual features. Then, modalities
+from event k undergo fusion G to obtain Hk, and contrastive
+learning is applied to obtain the final prediction results:
+ˆy = F(G(V1|P, A1|P), G(V2|P, A2|P),
+. . . , G(VK|P, AK|P)), k ∈[1, K]
+(1)
+Preprocessing.
+For each sample’s visual feature extrac-
+tion, we employ Haar Cascade face detection, then use
+pretrained ResNet-50 (He et al. 2016) to extract 2048-
+dimensional features Vk ∈RTk×2048. Audio features Ak ∈
+RTk×1024 are extracted using Chinese fine-tuned Wav2Vec2
+(Baevski et al. 2020) model. For personality information P,
+we construct prompts containing gender, age, hometown,
+and Big Five personality scores as GPT-4 input (tempera-
+ture=0 for reproducibility), obtaining descriptive text cap-
+turing individual characteristics. We then use BERT (Devlin
+et al. 2019) to encode generated personality descriptions,
+producing 768-dimensional text features.
+Personality-guided Feature Gating.
+As shown in the first
+part of Figure 1, our method adopts multimodal inputs, in-
+cluding visual features V[1:K], audio features A[1:K], and
+personality information P preprocessed from the MPDD
+dataset. To capture contextual information, we apply bidi-
+rectional LSTM layers to Vk, Ak, and P, unifying all feature
+dimensions to D1:
+˜Vk = Bi-LSTM(Vk) ∈RTk×D1
+(2)
+˜Ak = Bi-LSTM(Ak) ∈RTk×D1
+(3)
+˜P = Bi-LSTM(P) ∈RD1
+(4)
+To derive adaptive gating weights conditioned on different
+individuals, we apply a learnable linear transformation to the
+personalized representation ˜P:
+Wgate = σ
+
+Wp ˜P + bp
+
+∈RD1
+(5)
+where σ(·) denotes the sigmoid activation function, Wp and
+bp are learnable parameters.
+Inspired by ResNet (He et al. 2016), we introduce residual
+connections to prevent gradient vanishing and regulate audio
+and visual features through gating mechanism:
+Ak|P = ˜Ak + ˜Ak ⊙Wgate,
+Vk|P = ˜Vk + ˜Vk ⊙Wgate
+(6)
+1803
+where ⊙represents the multiplication of elements in
+a broadcasting mechanism, Wgate
+∈
+RD1 is broad-
+cast to match the temporal dimension Tk. This produces
+personality-guided audiovisual features A|P and V |P, rep-
+resenting features modulated by prior individual informa-
+tion.
+Hypergraph-Former Construction.
+To address the lack
+of temporal relationships in traditional hypergraphs, we inte-
+grate sinusoidal positional encoding into personality-guided
+features. For each event k, we add positional encoding to
+audio and visual features:
+ˆAk = Ak|P + PE(Ak|P) ∈RTk×D1
+(7)
+ˆVk = Vk|P + PE(Vk|P) ∈RTk×D1
+(8)
+where PE(·) represents sinusoidal positional encoding, in-
+jecting temporal order information into feature representa-
+tions.
+We then construct hypergraph H = (V, E) for each event,
+where node set V contains all audio and visual features from
+the same sample and event, totaling 2Tk nodes. Hyperedge
+set E is constructed using predefined sliding windows of
+size w. The windowed construction strategy is motivated by
+observations that depression-related patterns frequently ex-
+hibit local temporal consistency, where adjacent time steps
+share contextual information crucial for accurate detection.
+To capture high-order intra-modal and inter-modal relation-
+ships within each window, we create hyperedges by: (1)
+connecting all nodes of the same modality within windows
+to enhance intra-modal local features (represented by solid
+lines in part two of Figure 1); (2) connecting each node of
+one modality to all nodes of another modality within win-
+dows to model local inter-modal interactions (represented
+by dashed lines in part two of Figure 1). This produces
+(Tk −w + 1) × (2 + 2w) hyperedges total, comprehen-
+sively covering temporal and inter-modal relationships. Fol-
+lowing the hypergraph neural network framework, we com-
+pute node representations through hypergraph convolution.
+Hypergraph convolution operations aggregate information
+from connected nodes through hyperedges:
+X(l+1) = σ(D−1/2
+v
+HWeD−1
+e HT D−1/2
+v
+X(l)Θ(l))
+(9)
+where H ∈R|V|×|E| is the incidence matrix, Dv and De are
+diagonal degree matrices for nodes and hyperedges respec-
+tively, We denotes the hyperedge weight matrix, Θ(l) is the
+learnable parameter matrix. Output dimensions are set to D2
+for improved computational efficiency.
+To enhance feature interactions and capture global de-
+pendencies beyond local hypergraph connections, we apply
+multi-head self-attention (M) to hypergraph-processed fea-
+tures:
+M =
+h
+M
+i=1
+(
+softmax
+ 
+QWQ
+i (KWK
+i )T
+√D2
+!
+VWV
+i
+)
+WO
+(10)
+where Q, K, V represent the audio or visual features pro-
+cessed by the hypergraph module, WQ
+i , WK
+i , WV
+i , WO
+are learnable projection matrices, h is the number of atten-
+tion heads. This operation is applied separately to both audio
+and visual features to obtain ˜Ak, ˜Vk ∈RTk×D2.
+Finally, we concatenate the attention-enhanced features to
+obtain unified representations:
+Hk = ⊕(A(att)
+k
+, V (att)
+k
+) ∈RTk×2D2
+(11)
+Public-Private Domain Disentanglement.
+As shown
+in part three of Figure 1, Hypergraph-Former outputs
+[H1, H2, . . . , HK] represent features from K events re-
+spectively. Inspired by Zellinger et al. (2019), we aim
+to learn domain-invariant representations across different
+events while learning individual event-specific features. To
+capture public distributions across events, we input all hy-
+pergraph representations into a shared public encoder:
+Pubk = Pub-Enc(Hk) ∈RTk×D3
+(12)
+Meanwhile, since we have previously obtained Individual
+guided features, to model private distributions across differ-
+ent individuals and different events, we use independent pri-
+vate encoders for each event:
+Prik = Prik-Enc(Hk) ∈RTk×D3
+(13)
+Subsequently, based on contrastive learning paradigms,
+we pull public features together and push private features
+apart. For the public domain, we adopt adversarial training
+following the GAN framework, where our public encoder
+acts as the generator producing Pubk, while a discriminator
+is trained to predict event labels from these representations:
+ˆYevent,k = Disc(Pubk) ∈RTk
+(14)
+The discriminator loss encourages accurate event classifi-
+cation, continuously improving the discriminator’s perfor-
+mance through cross-entropy optimization:
+Ldisc = −
+K
+X
+k=1
+T k
+X
+t=1
+Yevent,k,t log ˆYevent,k,t
+(15)
+where Yevent represents the actual event sequence numbers
+of the true sources of various features, encoded as one-hot
+vectors. To effectively disentangle public features that are
+invariant across events, we formulate the adversarial training
+as a MinMax optimization problem:
+Ladv = min
+Pub-Enc max
+Disc
+X
+k,t
+Yevent,k,t log Disc(Pub-Enc(Hk))t
+(16)
+For the private domain, we adopt Hilbert-Schmidt In-
+dependence Criterion (HSIC) to measure independence
+between private representations from different events.
+HSIC quantifies dependence between two random variables
+by computing the Hilbert-Schmidt norm of their cross-
+covariance operator. Given private representations Prii and
+Prij, HSIC is computed as, with HSIC approaching 0 indi-
+cating greater variable independence:
+HSIC(Prii, Prij) = trace(LiHLjH)
+(17)
+1804
+where Li and Lj are kernel matrices computed using RBF
+kernels (σ = 1.0), and H is the centering matrix. By mini-
+mizing LHSIC = P
+i̸=j HSIC(Prii, Prij), we ensure pri-
+vate encoders capture event-specific features while main-
+taining independence across different events. Finally, we
+concatenate averaged public representations with all private
+representations to aggregate multi-event features:
+I =
+M (
+1
+K
+K
+X
+k=1
+Pubk, Pri1, . . . , PriK
+)
+∈RTk×(1+K)D3
+(18)
+Depression Detection.
+We project I through multiple lin-
+ear layers to obtain the final output ˆYdepression ∈RTk×3,
+where the three classes represent normal, mildly depressed,
+and severely depressed states respectively. The depression
+classification loss employs negative log-likelihood (NLL)
+loss:
+Ldep = −1
+Tk
+Tk
+X
+t=1
+log P( ˆYdepression,t = Ydepression,t)
+(19)
+The overall training objective combines all loss components:
+Lmain = αLdep + βLadv + γLHSIC
+(20)
+with weight constraints α+β+γ = 1 ensuring balanced op-
+timization. We employ an alternating training strategy where
+the discriminator aims to minimize Ldisc (maximize Ladv)
+while the main model minimizes Lmain, as detailed in Al-
+gorithm 1. The optimal discriminator accuracy around 1/3
+indicates successful public domain learning.
+Experiment
+Experiment Protocol
+Dataset.
+To investigate the effectiveness of personality-
+guided multimodal multi-event models, we conduct exper-
+iments on the MPDD-Young dataset from the MPDD Chal-
+lenge. This dataset contains multimodal recordings (audio
+and video) from young populations, annotated with PHQ-
+9 depression scores and multi-dimensional individual infor-
+mation including age, gender, hometown, and Big Five per-
+sonality traits. Data collection involves subjects perform-
+ing three tasks (i.e., K = 3): self-introduction and two
+text reading tasks, capturing subjects’ multimodal mani-
+festations under natural and guided contexts. It should be
+noted that among existing publicly available depression
+detection datasets, MPDD is currently the only dataset
+simultaneously possessing multi-event structure, multi-
+modal recording, and multi-dimensional individual in-
+formation labels. This makes it uniquely suitable for our
+proposed architecture.
+Evaluation Metrics.
+We evaluate model performance us-
+ing two commonly used performance metrics for each sub-
+ject’s final prediction results in both binary and three-class
+classification tasks: weighted F1-score (w-F1) and accuracy
+(Acc). Accuracy measures the overall proportion of correct
+Algorithm 1: Training Process of P3HF
+Require: Dataset with K events {E1, . . . , EK}, personal-
+ity P, labels Ydepression
+Require: Hyperparameters D1, D2, D3, α, β, γ
+Ensure: Trained P3HF model for depression detection
+1: Initialize network components: encoders, Hypergraph-
+Former parameters, discriminator, classifier
+2: for each training epoch do
+3:
+for each mini-batch do
+4:
+// Forward Pass
+5:
+˜U ←Bi-LSTM(U), Mk ∈{Vk, Ak, P} // Eq.2-4
+6:
+Wgate ←σ(Wp ˜P + bp)
+7:
+for k = 1 to K do
+8:
+Ak|P, Vk|P ←Gating(Ak, Vk, Wgate) // Eq.6
+9:
+Hk ←HF(Ak|P, Vk|P) // Eq.7-11
+10:
+Pubk, Prik ←Domain(Hk) // Eq.12-13
+11:
+end for
+12:
+I ←⊕(
+PK
+k=1 P ubk
+K
+, Pri1, . . . , PriK) // Eq.18
+13:
+ˆYevent ←Disc({Pub[1:K]})
+14:
+ˆYdepression ←Classifier(I)
+15:
+// Loss Computation
+16:
+Ldisc
+←
+CE(Yevent, ˆYevent); Ladv
+←
+−Ldisc //
+Eq.15-16
+17:
+LHSIC ←P
+i̸=j HSIC(Prii, Prij)
+18:
+Ldep ←NLL(Ydepression, ˆYdepression) // Eq.19
+19:
+// Alternating Adversarial Training
+20:
+Step 1: θdisc ←θdisc −ηdisc∇Ldisc
+21:
+Step 2: θmain ←θmain −ηmain∇Lmain
+22:
+end for
+23: end for
+model predictions; weighted F1-score comprehensively con-
+siders precision and recall for each class, weighted averaged
+by the number of samples in each class, making it more suit-
+able for class imbalance scenarios.
+Implementation Details.
+All experiments in this study
+are conducted on a Windows 10 system with an NVIDIA
+RTX 4090 GPU, implemented using PyTorch 1.13.1 and
+PyG 2.6.1 frameworks. We set batch size to 20, with max-
+imum training of 300 epochs per experiment. Learning rate
+adopts cosine annealing strategy (1e-4 to 1e-5), optimized
+via Optuna. The optimizer uses Adam with weight decay
+of 5e-4. To prevent overfitting, we introduce early stopping
+and checkpoint mechanisms to save optimal models. Experi-
+ments were repeated with 10 random seeds, showing signifi-
+cant differences (one-way ANOVA, p < 0.05) across method
+variants.
+Performance Comparison
+We evaluate P3HF against state-of-the-art depression detec-
+tion methods across unimodal and multimodal paradigms
+on MPDD-Young dataset. Baselines include: (i) Unimodal:
+NUSD (Wang, Ravi, and Alwan 2023) employs non-
+uniform processing for speaker-invariant speech analysis;
+STA-DRN (Pan et al. 2024) leverages spatial-temporal at-
+1805
+Method
+Binary
+Ternary
+ACC
+w-F1
+ACC
+w-F1
+Unimodal
+NUSD (2023)
+63.01
+60.64
+57.19
+55.44
+STA-DRN (2024)
+64.14
+62.23
+58.93
+57.34
+Multimodal
+Baseline (2025)
+63.64
+59.96
+49.66
+51.86
+Gated LSTM (2019)
+64.48
+62.17
+52.51
+50.32
+TBN (2019)
+66.21
+64.77
+61.76
+60.23
+IA fusion (2022)
+68.41
+67.23
+62.87
+61.39
+DEP-Former (2024)
+67.85
+66.23
+63.43
+61.75
+MGLRA (2024)
+70.37
+68.93
+61.35
+59.78
+DepMamba (2025)
+72.56
+71.44
+67.85
+66.23
+P3HF (Ours)
+82.17
+81.39
+76.29
+74.61
+Table 1: Comparative performance on MPDD-Young
+dataset. Our method achieves substantial improvements
+across both classification tasks.
+tention for facial expression dynamics. (ii) Multimodal:
+Gated LSTM (Rohanian et al. 2019) for word-level fusion;
+TBN (Kazakos et al. 2019) adapts EPIC-Fusion for audio-
+visual temporal modeling; IA fusion (Chumachenko, Iosi-
+fidis, and Gabbouj 2022) handles incomplete multimodal
+data via self-attention; DEP-Former (Ye et al. 2024) an-
+alyzes emotional changes through Transformer architec-
+ture; MGLRA (Meng et al. 2024) combines masked graph
+learning with recurrent alignment; DepMamba (Ye, Zhang,
+and Shan 2025) utilizes progressive Mamba-based fusion;
+MPDD baseline (Fu et al. 2025a) integrates personalized
+features.
+Quantitative Analysis.
+Table 1 demonstrates P3HF’s su-
+perior performance. For binary classification, we achieve
+82.17%/81.39% (ACC/w-F1), surpassing the strongest base-
+line DepMamba by 9.61%/9.95%. Ternary classification
+shows consistent improvements of 8.44%/8.38% over Dep-
+Mamba (76.29%/74.61% vs. 67.85%/66.23%), validating
+our approach’s effectiveness for fine-grained depression
+severity assessment.
+Architectural Advantages.
+Our superior performance
+stems from three key innovations: (i) Individual Model-
+ing: LLM-based personality embeddings enable personal-
+ized depression pattern adaptation, addressing individual
+symptom expression variability ignored by traditional ap-
+proaches (Gated LSTM, IA fusion, STA-DRN). (ii) Mul-
+timodal Integration: Hypergraph-Former captures high-
+order intra/cross-modal relationships with temporal aware-
+ness, overcoming limitations of existing methods—MGLRA
+lacks temporal modeling while TBN cannot handle high-
+order dependencies. (iii) Multi-event Generalization: Do-
+main disentanglement mechanisms distinguish context-
+specific manifestations, addressing critical gaps in current
+methods—NUSD focuses solely on speech disentangle-
+ment, DepMamba’s progressive fusion struggles with cross-
+event feature discrimination, and DEP-Former’s emotional
+analysis lacks multi-event contextual understanding.
+Component
+Binary
+Ternary
+ACC
+w-F1
+ACC
+w-F1
+Multimodal Fusion
+w/o visual
+77.52
+76.63
+72.94
+70.52
+w/o audio
+76.89
+75.77
+70.85
+69.39
+Domain Disentanglement
+w/o disentangled domain
+71.84
+70.17
+66.53
+65.72
+w/o pub-domain
+75.34
+74.38
+70.30
+68.19
+w/o pri-domain
+78.15
+77.02
+74.01
+71.32
+Personality Guidance
+w/o personal information
+76.68
+75.41
+71.55
+69.24
+w/ numeric embedding
+80.61
+78.77
+75.32
+73.34
+Full Model
+82.17
+81.39
+76.29
+74.61
+Table 2: Component ablation results demonstrating each
+module’s contribution.
+Architecture
+Binary
+Ternary
+ACC
+w-F1
+ACC
+w-F1
+Cross-Attention
+75.82
+74.59
+69.15
+67.33
+Directed GCN
+77.55
+76.24
+72.41
+69.29
+Undirected GCN
+79.33
+78.17
+73.57
+71.94
+Directed GAT
+78.51
+77.42
+72.82
+70.68
+Undirected GAT
+80.07
+79.14
+74.23
+72.51
+Hypergraph
+79.68
+78.73
+73.86
+72.05
+Hypergraph-Attention
+80.31
+79.55
+74.32
+72.94
+Hypergraph-Former
+82.17
+81.39
+76.29
+74.61
+Table 3: Architectural comparison revealing Hypergraph-
+Former’s superiority.
+The
+substantial
+performance
+gaps
+(8.38%-9.95%
+improvements)
+demonstrate
+that
+personality-guided,
+hypergraph-enhanced multimodal fusion with domain dis-
+entanglement addresses fundamental limitations in existing
+depression detection paradigms, particularly for cross-event
+generalization and individual adaptation.
+Ablation Study
+Component-wise Analysis.
+We conduct comprehensive
+ablation experiments to quantify each component’s con-
+tribution in P3HF. Table 2 presents results on MPDD
+dataset, revealing critical insights into architectural design
+choices. Removing visual modality causes 4.65% accu-
+racy drop (binary) and 3.35% drop (ternary), while au-
+dio removal leads to 5.28% and 5.44% degradation respec-
+tively. The asymmetric impact suggests audio features cap-
+ture more discriminative temporal patterns for personal-
+ized correlations, aligning with psychological theories em-
+phasizing prosodic cues in mental health assessment. The
+public domain encoder removal severely impacts perfor-
+mance (6.83%/5.99%), demonstrating its crucial role in
+extracting event-invariant representations. Private domain
+removal shows smaller degradation (4.02%/2.28%), indi-
+cating event-specific features provide complementary but
+less critical information. This asymmetry validates our hy-
+1806
+Figure 2: Hyperparameter sensitivity analysis showing
+optimal configurations for window size and attention
+heads across binary/ternary tasks. HF:hypergraph-former;
+HG:hypergraph; CA:cross attention.
+pothesis that shared personality traits dominate individual
+patterns. Personal information removal causes consistent
+degradation (5.49%/4.74%), confirming that personality-
+guided attention effectively captures individual differences.
+The complete model achieves 82.17%/81.39% (binary) and
+76.29%/74.61% (ternary) performance, substantially outper-
+forming all ablated versions.
+Architectural Comparison.
+Table 3 compares alternative
+architectures against Hypergraph-Former. Cross-attention
+exhibits limited capability (75.82%/69.15%), failing to
+model complex multimodal dependencies. GNNs show
+progressive improvement: directed GCN (77.55%/72.41%)
+< undirected GCN (79.33%/73.57%) < undirected GAT
+(80.07%/74.23%), confirming bidirectional propagation
+and
+attention
+mechanisms’
+benefits.
+Standard
+hyper-
+graph achieves competitive results (79.68%/73.86%), but
+Hypergraph-Former surpasses it by 2.49%/2.43%, validat-
+ing our key innovations: (i) positional encoding captures
+temporal dependencies, (ii) self-attention enhances local
+feature discrimination, and (iii) hypergraph structure mod-
+els high-order cross-modal relationships.
+Hyperparameter Sensitivity.
+Figure 2 reveals critical hy-
+perparameter dependencies. Window size exhibits inverted-
+U relationship: size=1 reduces hypergraph to simple con-
+nections, limiting local consistency modeling; optimal per-
+formance at size=11 balances temporal context and compu-
+tational efficiency; larger windows introduce noise, degrad-
+ing performance. This finding suggests individual patterns
+require moderate temporal context (≈11 time steps) for op-
+timal characterization.
+Attention heads show similar patterns with optimum at 4
+heads. Insufficient heads (≤3) limit cross-modal relation-
+ship modeling, while excessive heads (≥5) cause attention
+redundancy and overfitting. This reveals the inherent com-
+plexity of personalized multimodal interactions requires pre-
+cisely balanced attention diversity.
+Figure 3: Domain disentanglement visualization under dif-
+ferent loss weights. Optimal configuration (β = γ = 0.1)
+achieves clear public-private feature separation.
+Domain Disentanglement Visualization.
+Figure 3 pro-
+vides t-SNE visualization of domain disentanglement effects
+under varying loss configurations (β: adversarial loss, γ:
+HSIC loss). Without disentanglement (β = γ = 0), fea-
+tures exhibit chaotic mixing across events. Partial optimiza-
+tion (β = 0.1, γ = 0 or β = 0, γ = 0.1) achieves in-
+complete separation. Optimal configuration (β = γ = 0.1)
+demonstrates clear disentanglement: public features con-
+verge to unified distributions (event-invariant), while private
+features occupy distinct spaces (event-specific). This vali-
+dates our theoretical framework that personality traits man-
+ifest as stable cross-event patterns while contextual factors
+remain event-dependent.
+Conclusion
+This
+paper
+proposes
+the
+P3HF
+framework
+through
+personality-guided
+feature
+regulation,
+temporal-aware
+hypergraph modeling, and event-level domain disentangle-
+ment. On the MPDD-Young dataset, P3HF achieves around
+10% improvement on accuracy and weighted F1 for binary
+and ternary classification task, attaining state-of-the-art
+performance. Experimental results fully validate the effec-
+tiveness of our proposed innovations. We first introduce
+LLMs for multi-dimensional individual information de-
+scription generation, breaking through traditional discrete
+label limitations and significantly improving model per-
+ception capabilities for different individuals; innovatively
+introduce positional encoding and attention mechanisms
+into hypergraph networks, effectively addressing traditional
+hypergraph deficiencies in temporal information model-
+ing; first introduce event-level domain disentanglement
+mechanisms in depression detection, successfully modeling
+public-private domain distributions and effectively address-
+ing distribution shift problems across multi-event scenarios.
+Additionally, our method holds promise for providing
+important methodological guidance for other mental health
+detection including anxiety disorders and bipolar affective
+disorders, while exploring more general model applications
+in related directions.
+1807
+Acknowledgments
+This research is supported by the National Natural Science
+Foundation of China (Grant No. 62306068) Project, the Nat-
+ural Science Foundation of Hebei Province, China (Grant
+No. F2024501002), the Fundamental Research Funds for the
+Central Universities (Grant No. N2523005) , and QinXun-
+ZhiXin Technology (Zhejiang) Co., Ltd.
+References
+Baevski, A.; Zhou, Y.; Mohamed, A.; and Auli, M. 2020.
+wav2vec 2.0: A framework for self-supervised learning of
+speech representations. Advances in neural information pro-
+cessing systems, 33: 12449–12460.
+Bandura, A. 1986. Social Foundations of Thought and Ac-
+tion: A Social Cognitive Theory. Prentice-Hall. ISBN 978-
+0-13-815614-5.
+Bengio, Y.; Courville, A.; and Vincent, P. 2013. Represen-
+tation learning: A review and new perspectives. IEEE trans-
+actions on pattern analysis and machine intelligence, 35(8):
+1798–1828.
+Chen, T.; Hong, R.; Guo, Y.; Hao, S.; and Hu, B. 2022. MS2-
+GNN: Exploring GNN-based multimodal fusion network for
+depression detection.
+IEEE Transactions on Cybernetics,
+53(12): 7749–7759.
+Chen, X.; and Shi, W. 2025. Dynamic Interactive Bimodal
+Hypergraph Networks for Emotion Recognition in Conver-
+sations. In Proceedings of the AAAI Conference on Artificial
+Intelligence, volume 39, 1256–1264.
+Chumachenko, K.; Iosifidis, A.; and Gabbouj, M. 2022.
+Self-attention fusion for audiovisual emotion recognition
+with incomplete data. In 2022 26th International Confer-
+ence on Pattern Recognition (ICPR), 2822–2828. IEEE.
+Devlin, J.; Chang, M.-W.; Lee, K.; and Toutanova, K. 2019.
+Bert: Pre-training of deep bidirectional transformers for lan-
+guage understanding. In Proceedings of the 2019 conference
+of the North American chapter of the association for compu-
+tational linguistics: human language technologies, volume 1
+(long and short papers), 4171–4186.
+Francis, S. E. X. B. 2023. The Personality of Depression-
+Utilizing Big Five Personality Traits to Detect Depression
+on Social Media. Master’s thesis, NTNU.
+Fu, C.; Fu, Z.; Zhang, Q.; Kuang, X.; Dong, J.; Su, K.; Su,
+Y.; Shi, W.; Yao, J.; Zhao, Y.; et al. 2025a. The First MPDD
+Challenge: Multimodal Personality-aware Depression De-
+tection. arXiv preprint arXiv:2505.10034.
+Fu, C.; Liu, C.; Ishi, C. T.; and Ishiguro, H. 2022. An ad-
+versarial training based speech emotion classifier with iso-
+lated gaussian regularization. IEEE Transactions on Affec-
+tive Computing, 14(3): 2361–2374.
+Fu, C.; Qian, F.; Su, K.; Su, Y.; Wang, Z.; Shi, J.; Liu, Z.;
+Liu, C.; and Ishi, C. T. 2025b. HiMul-LGG: A hierarchi-
+cal decision fusion-based local–global graph neural network
+for multimodal emotion recognition in conversation. Neural
+Networks, 181: 106764.
+Fu, C.; Qian, F.; Su, Y.; Su, K.; Song, S.; Niu, M.; Shi, J.;
+Liu, Z.; Liu, C.; Ishi, C. T.; et al. 2025c. Facial action units
+guided graph representation learning for multimodal depres-
+sion detection. Neurocomputing, 619: 129106.
+Fu, C.; Su, K.; Su, Y.; Qian, F.; Zhang, Y.; Liu, C.; Song,
+S.; Yang, L.; Lv, X.; Shan, P.; et al. 2025d. M 3 ADD: A
+Novel Benchmark for Physiology Signal-based Automatic
+Depression Detection with Multimodal Multitask Multi-
+event Framework.
+In ICASSP 2025-2025 IEEE Interna-
+tional Conference on Acoustics, Speech and Signal Process-
+ing (ICASSP), 1–5. IEEE.
+Ghosal, D.; Majumder, N.; Poria, S.; Chhaya, N.; and Gel-
+bukh, A. 2019. Dialoguegcn: A graph convolutional neu-
+ral network for emotion recognition in conversation. arXiv
+preprint arXiv:1908.11540.
+Hazarika, D.; Zimmermann, R.; and Poria, S. 2020. Misa:
+Modality-invariant and-specific representations for multi-
+modal sentiment analysis. In Proceedings of the 28th ACM
+international conference on multimedia, 1122–1131.
+He, K.; Zhang, X.; Ren, S.; and Sun, J. 2016. Deep resid-
+ual learning for image recognition. In Proceedings of the
+IEEE conference on computer vision and pattern recogni-
+tion, 770–778.
+Kanchapogu, N. R.; and Mohanty, S. N. 2025. Deep learn-
+ing with ensemble-based hybrid AI model for bipolar and
+unipolar depression detection using demographic and be-
+havioral based on time-series data. Dialogues in Clinical
+Neuroscience, 27(1): 16.
+Kazakos, E.; Nagrani, A.; Zisserman, A.; and Damen, D.
+2019. Epic-fusion: Audio-visual temporal binding for ego-
+centric action recognition. In Proceedings of the IEEE/CVF
+international conference on computer vision, 5492–5501.
+Li, X.; Dong, Y.; Yi, Y.; Liang, Z.; and Yan, S. 2024. Hyper-
+graph Neural Network for Multimodal Depression Recogni-
+tion. Electronics, 13(22): 4544.
+Locatello, F.; Bauer, S.; Lucic, M.; Raetsch, G.; Gelly, S.;
+Sch¨olkopf, B.; and Bachem, O. 2019.
+Challenging com-
+mon assumptions in the unsupervised learning of disentan-
+gled representations.
+In international conference on ma-
+chine learning, 4114–4124. PMLR.
+Ma, X.; Yang, H.; Chen, Q.; Huang, D.; and Wang, Y. 2016.
+Depaudionet: An efficient deep model for audio based de-
+pression classification. In Proceedings of the 6th interna-
+tional workshop on audio/visual emotion challenge, 35–42.
+Meng, T.; Zhang, F.; Shou, Y.; Shao, H.; Ai, W.; and Li,
+K. 2024.
+Masked graph learning with recurrent align-
+ment for multimodal emotion recognition in conversation.
+IEEE/ACM Transactions on Audio, Speech, and Language
+Processing.
+Meng, Y.; Speier, W.; Ong, M. K.; and Arnold, C. W. 2021.
+Bidirectional representation learning from transformers us-
+ing multimodal electronic health record data to predict de-
+pression. IEEE journal of biomedical and health informat-
+ics, 25(8): 3121–3129.
+Niu, M.; Li, M.; and Fu, C. 2024.
+Pointtransform net-
+works for automatic depression level prediction via facial
+keypoints. Knowledge-Based Systems, 297: 111951.
+1808
+Pan, Y.; Shang, Y.; Liu, T.; Shao, Z.; Guo, G.; Ding, H.;
+and Hu, Q. 2024. Spatial–temporal attention network for
+depression recognition from facial videos. Expert systems
+with applications, 237: 121410.
+Qin, K.; Lei, D.; Pinaya, W. H.; Pan, N.; Li, W.; Zhu, Z.;
+Sweeney, J. A.; Mechelli, A.; and Gong, Q. 2022.
+Us-
+ing graph convolutional network to characterize individu-
+als with major depressive disorder across multiple imaging
+sites. EBioMedicine, 78.
+Ravi, V.; Wang, J.; Flint, J.; and Alwan, A. 2024. Enhancing
+accuracy and privacy in speech-based depression detection
+through speaker disentanglement. Computer speech & lan-
+guage, 86: 101605.
+Rohanian, M.; Hough, J.; Purver, M.; et al. 2019. Detecting
+Depression with Word-Level Multimodal Fusion. In Inter-
+speech, 1443–1447.
+Sun, H.; Liu, J.; Chen, Y.-W.; and Lin, L. 2023. Modality-
+invariant temporal representation learning for multimodal
+sentiment classification. Information Fusion, 91: 504–514.
+Tan, J. J.; Kwan, B.-H.; Ng, D.; and Hum, Y. 2025.
+Psychology-informed Natural Language Understanding: In-
+tegrating Personality and Emotion-aware Features for Com-
+prehensive Sentiment Analysis and Depression Detection.
+Pertanika Journal of Science and Technology, 33.
+Trotzek, M.; Koitka, S.; and Friedrich, C. M. 2018. Utilizing
+neural networks and linguistic metadata for early detection
+of depression indications in text sequences. IEEE Transac-
+tions on Knowledge and Data Engineering, 32(3): 588–601.
+Wang, J.; Ravi, V.; and Alwan, A. 2023.
+Non-uniform
+speaker disentanglement for depression detection from raw
+speech signals. In Interspeech, volume 2023, 2343.
+Wang, X.; Zhu, M.; Bo, D.; Cui, P.; Shi, C.; and Pei, J. 2020.
+Am-gcn: Adaptive multi-channel graph convolutional net-
+works. In Proceedings of the 26th ACM SIGKDD Interna-
+tional conference on knowledge discovery & data mining,
+1243–1253.
+WHO. 2023.
+Depressive disorder (depression).
+https://
+www.who.int/news-room/fact-sheets/detail/depression. Ac-
+cessed: 2025-06-05.
+Ye, J.; Yu, Y.; Lu, L.; Wang, H.; Zheng, Y.; Liu, Y.; and
+Wang, Q. 2024.
+DEP-Former: Multimodal Depression
+Recognition Based on Facial Expressions and Audio Fea-
+tures via Emotional Changes. IEEE Transactions on Circuits
+and Systems for Video Technology.
+Ye, J.; Zhang, J.; and Shan, H. 2025.
+Depmamba: Pro-
+gressive fusion mamba for multimodal depression detec-
+tion. In ICASSP 2025-2025 IEEE International Conference
+on Acoustics, Speech and Signal Processing (ICASSP), 1–5.
+IEEE.
+Yi, Z.; Zhao, Z.; Shen, Z.; and Zhang, T. 2024. Multimodal
+Fusion via Hypergraph Autoencoder and Contrastive Learn-
+ing for Emotion Recognition in Conversation. In Proceed-
+ings of the 32nd ACM International Conference on Multime-
+dia, 4341–4348.
+Zellinger, W.; Moser, B. A.; Grubinger, T.; Lughofer, E.;
+Natschl¨ager, T.; and Saminger-Platz, S. 2019. Robust unsu-
+pervised domain adaptation for neural networks via moment
+alignment. Information Sciences, 483: 174–191.
+Zhang, L.-M.; Li, Y.; Zhang, Y.-T.; Ng, G. W.; Leau, Y.-B.;
+and Yan, H. 2023. A deep learning method using gender-
+specific features for emotion recognition. Sensors, 23(3):
+1355.
+Zhao, S.; Ding, G.; Han, J.; and Gao, Y. 2018. Personality-
+Aware Personalized Emotion Recognition from Physiologi-
+cal Signals. In IJCAI, 1660–1667.
+Zhao, S.; Zhang, Y.; Su, Y.; Su, K.; Liu, J.; Wang, T.; and
+Yu, S. 2025a.
+DepressionMIGNN: A Multiple-Instance
+Learning-Based Depression Detection Model with Graph
+Neural Networks. Sensors, 25(14): 4520.
+Zhao, Y.; Zhang, H.; Li, J.; Song, S.; Lian, C.; Liu, Y.; Wang,
+Y.; and Fu, C. 2025b.
+A Chinese multimodal depression
+dataset with personality labeling for older adults with un-
+derlying medical conditions. IEEE Transactions on Affective
+Computing.
+1809

@@ -1,0 +1,847 @@
+=== PAGE 1 ===
+The First MPDD Challenge: Multimodal Personality-aware
+Depression Detection
+Changzeng Fu
+Northeastern University
+Shenyang, China
+fuchangzeng@qhd.neu.edu.cn
+Zelin Fu
+Northeastern University
+Shenyang, China
+202219117@stu.neu.edu.cn
+Qi Zhang
+Northeastern University
+Shenyang, China
+202212078@stu.neu.edu.cn
+Xinhe Kuang
+Northeastern University
+Shenyang, China
+202319257@stu.neuq.edu.cn
+Jiacheng Dong
+University of Technology Sydney
+Sydney, Australia
+jiacheng.dong@student.uts.edu.au
+Kaifeng Su
+Northeastern University
+Shenyang, China
+2372306@stu.neu.edu.cn
+Yikai Su
+Northeastern University
+Shenyang, China
+2372307@stu.neu.edu.cn
+Wenbo Shi
+Northeastern University
+Shenyang, China
+shiwenbo@neuq.edu.cn
+Junfeng Yao
+Xiamen University
+Xiamen, China
+yao0010@xmu.edu.cn
+Yuliang Zhao
+Northeastern University
+Shenyang, China
+zhaoyuliang@neuq.edu.cn
+Shiqi Zhao
+Northeastern University
+Shenyang, China
+zhaoshiqi@qhd.neu.edu.cn
+Jiadong Wang
+Technical University of Munich
+Munich, Germany
+jiadong.wang@tum.de
+Siyang Song
+University of Cambridge
+Cambridge, UK
+ss2796@cam.ac.uk
+Chaoran Liu
+National Information Institute
+Tokyo, Japan
+chaoran.liu@riken.jp
+Yuichiro Yoshikawa
+Osaka University
+Osaka, Japan
+yoshikawa@irl.sys.es.osaka-u.ac.jp
+Björn Schuller
+Imperial College London
+London, UK
+bjoern.schuller@imperial.ac.uk
+Hiroshi Ishiguro
+Osaka University
+Osaka, Japan
+ishiguro@irl.sys.es.osaka-u.ac.jp
+Abstract
+Depression is a widespread mental health issue affecting diverse
+age groups, with notable prevalence among college students and
+the elderly. However, existing datasets and detection methods pri-
+marily focus on young adults, neglecting the broader age spec-
+trum and individual differences that influence depression man-
+ifestation. Current approaches often establish a direct mapping
+between multimodal data and depression indicators, failing to cap-
+ture the complexity and diversity of depression across individu-
+als. This challenge includes two tracks based on age-specific sub-
+sets: Track 1 uses the MPDD-Elderly dataset for detecting depres-
+sion in older adults, and Track 2 uses the MPDD-Young dataset
+Permission to make digital or hard copies of all or part of this work for personal or
+classroom use is granted without fee provided that copies are not made or distributed
+for profit or commercial advantage and that copies bear this notice and the full citation
+on the first page. Copyrights for components of this work owned by others than the
+author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
+republish, to post on servers or to redistribute to lists, requires prior specific permission
+and/or a fee. Request permissions from permissions@acm.org.
+MM ’25, Dublin, Ireland
+© 2025 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+ACM ISBN 979-8-4007-2035-2/2025/10
+https://doi.org/10.1145/3746027.3762020
+for detecting depression in younger participants. The Multimodal
+Personality-aware Depression Detection (MPDD) Challenge aims
+to address this gap by incorporating multimodal data alongside
+individual difference factors. We provide a baseline model that
+fuses audio and video modalities with individual difference in-
+formation to detect depression manifestations in diverse popu-
+lations. This challenge aims to promote the development of more
+personalized and accurate de pression detection methods, advanc-
+ing mental health research and fostering inclusive detection sys-
+tems. More details are available on the official challenge website:
+https://hacilab.github.io/MPDDChallenge.github.io.
+CCS Concepts
+• Computing methodologies →Artificial intelligence; • Ap-
+plied computing →Health informatics; • Information sys-
+tems →Multimedia information systems.
+Keywords
+Automatic Depression Detection, Personality-aware, Multimodality
+13924
+
+=== PAGE 2 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland
+Changzeng Fu et al.
+ACM Reference Format:
+Changzeng Fu, Zelin Fu, Qi Zhang, Xinhe Kuang, Jiacheng Dong, Kaifeng Su,
+Yikai Su, Wenbo Shi, Junfeng Yao, Yuliang Zhao, Shiqi Zhao, Jiadong Wang,
+Siyang Song, Chaoran Liu, Yuichiro Yoshikawa, Björn Schuller, and Hiroshi
+Ishiguro. 2025. The First MPDD Challenge: Multimodal Personality-aware
+Depression Detection. In Proceedings of the 33rd ACM International Confer-
+ence on Multimedia (MM ’25), October 27–31, 2025, Dublin, Ireland. ACM,
+New York, NY, USA, 6 pages. https://doi.org/10.1145/3746027.3762020
+1
+Introduction
+Depression is a pervasive mental health disorder with a profound
+impact on global well-being, affecting millions and significantly
+hindering the quality of life, productivity, and overall health [8].
+The World Health Organization (WHO) categorizes depression as a
+leading cause of disability, underscoring its substantial societal and
+economic burden [9]. Timely detection and intervention are piv-
+otal in mitigating the chronic and debilitating effects of depression.
+However, traditional methods, which rely primarily on self-reported
+questionnaires such as PHQ-9 and BDI-II, are limited in their capac-
+ity to capture the dynamic and multifaceted nature of depressive
+symptoms. These methods are also prone to reporting biases and
+may fail to detect early or subtle changes in depressive states.
+The advent of specialized datasets has been instrumental in ad-
+vancing depression research by providing multimodal data that can
+enhance the detection and understanding of depressive symptoms.
+For instance, the AVEC challenge has contributed rich audiovisual
+interview data annotated with depression-related information, facil-
+itating more nuanced assessments [10, 11, 13–15]. The DAIC-WoZ
+dataset has furthered our understanding by incorporating clinical
+interviews and PHQ-9 scores [3]. Other datasets, including the
+Pittsburgh dataset [2], the D-Vlog dataset [16], the EATD-Corpus
+[12], the CMDC [18], and the MODMA [1], have expanded the
+scope by integrating diverse data types like EEG and utilizing stan-
+dard depression scales for evaluation. Additionally, datasets such as
+AMIGOS [7] and DEAP [5] have incorporated physiological data,
+offering insights into the physiological underpinnings of depres-
+sion, while the SEED dataset provides EEG and eye movement
+data annotated with personality traits [17], highlighting the role of
+individual differences in depressive symptoms.
+Despite the burgeoning interest in multimodal approaches for
+depression detection, existing datasets and methodologies exhibit
+notable limitations. Many datasets primarily focus on establishing
+direct correlations between behavioral signals and depression lev-
+els. This approach, while valuable, often overlooks the nuanced
+individual variations in depressive symptoms [4, 6]. Moreover, the
+demographic scope of existing datasets is predominantly confined
+to young adults, thereby overlooking other critical age groups, such
+as the elderly, who may present distinct patterns of depression.
+Table 1: Comparison of Demographic Statistics Between
+MPDD-Young and MPDD-Elderly
+Dataset
+Avg. Age (Years)
+Male (%)
+Female (%)
+MPDD-Young
+20.05 ± 2.23
+51.82%
+48.18%
+MPDD-Elderly
+62.78 ± 11.02
+50.00%
+50.00%
+Table 2: Comparison of Datasets for Depression Detection
+Dataset
+Multimodal
+Depression
+Personality
+Gender
+Age
+Region
+Disease
+AVEC
+✓
+✓
+-
+✓
+✓
+-
+-
+DAIC-WoZ
+✓
+✓
+-
+✓
+-
+-
+-
+Pittsburgh
+✓
+✓
+-
+✓
+✓
+-
+-
+D-Vlog
+✓
+✓
+-
+✓
+-
+-
+-
+MMDA
+✓
+✓
+-
+✓
+✓
+-
+-
+EATD-Corpus
+✓
+✓
+-
+-
+-
+-
+-
+CMDC
+✓
+✓
+-
+✓
+✓
+-
+-
+MODMA
+✓
+✓
+-
+✓
+✓
+-
+-
+MPDD (ours)
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+Table 3: MPDD-Young Personalized Label Definitions
+Label
+Description
+Big5 traits
+One-hot style encoding of the top-scoring
+BigFive traits (ties allowed)
+Disease category
+0 = healthy, 1 = other, 2 = endocrine, 3 =
+circulatory, 4 = neurological
+Financial stress
+Economic pressure: 0 = none, 1 = mild, 2 =
+moderate, 3 = severe/unbearable
+Family members
+Number of cohabiting individuals
+2
+Dataset
+2.1
+Novelty
+To address these limitations, we introduce the First MPDD Challenge:
+Multimodal Personality-aware Depression Detection, complemented
+by a novel dataset. This initiative presents a multimodal dataset that
+incorporates audio and visual data from participants engaged in a
+variety of real-life scenarios. The MPDD dataset is enriched with
+annotations grounded in the PHQ-9 scale, the Big Five Personality
+traits, and an array of demographic details.
+The dataset consists of two subsets, MPDD-Young and MPDD-
+Elderly, as shown in figure 1, focusing on depression detection
+among young individuals and elderly participants, respectively.
+Each subset is independently collected and annotated, enabling
+targeted analysis of age-specific patterns in multimodal depres-
+sive expression. Compared to existing datasets, the MPDD dataset
+significantly enhances contextual diversity and annotation depth,
+as highlighted in Table 2. Its comprehensive annotations capture
+individual differences, providing a more inclusive and granular
+depiction of depression.
+2.2
+MPDD-Elderly
+The MPDD-Elderly dataset includes data from elderly participants
+collected at a Hospital in China, focusing on elderly individuals with
+underlying medical conditions. Before participation, each volunteer
+received an informed consent form and could choose which parts
+of the experiment to participate in. The gender distribution and
+average age of the dataset are summarized in Table 1.
+A semi-structured interview (SSI) approach was used to system-
+atically assess the psychological and emotional state of participants.
+SSI combines both closed and open-ended questions, often followed
+by “why” or “how” inquiries to encourage deeper responses. In-
+stead of strictly adhering to a standardized script, the conversation
+is guided by predefined topics, allowing for more flexibility. The
+interview questions were designed based on depression assessment
+13925
+
+=== PAGE 3 ===
+The First MPDD Challenge: Multimodal Personality-aware Depression Detection
+MM ’25, October 27–31, 2025, Dublin, Ireland
+Figure 1: Overview of the MPDD Dataset.
+scales such as HAMD and BDI, with special consideration for elderly
+individuals with chronic illnesses. During the interview, partici-
+pants were encouraged to answer questions freely, and appropriate
+prompts were given to participants who were less expressive to
+ensure adequate acquisition of information. The entire session was
+recorded using a portable camera, capturing both facial expressions
+and audio. During data collection, participants completed the PHQ-
+9 and HAMD-24 scales to assess depression severity, and the Big
+Five Personality-10 (BigFive-10) scale to evaluate personality traits.
+The depression labels are derived from these scales: HAMD-24
+supports binary and ternary classification tasks, while PHQ-9 is
+used for the quinary classification task. Based on these annotations,
+the dataset supports the following three classification tasks:
+(1) Binary classification (normal / depressed)
+(2) Ternary classification (normal / mildly depressed / severely
+depressed)
+(3) Quinary classification (normal / mildly / moderate depressed /
+moderately severe / severe)
+To support more detailed characterization of each participant,
+the MPDD-Elderly dataset includes additional annotations that
+describe personal and contextual information. These labels cover
+physical health conditions (e.g., endocrine or neurological diseases),
+financial stress levels, and the number of co-habiting family mem-
+bers. Personality traits from the BigFive-10 scale are also included
+to reflect individual behavioral tendencies. These annotations help
+build a more complete profile for each participant, which can sup-
+port personalized analysis. A summary of all label definitions is
+shown in Table 3.
+2.3
+MPDD-Young
+The MPDD-Young dataset includes data from young adult partici-
+pants, focusing on non-clinical populations experiencing varying
+levels of depressive symptoms. Before participation, each subject
+also provided written informed consent. The gender distribution
+and average age of the dataset are also summarized in Table 1. The
+data collection process included three stages: questionnaire com-
+pletion, a self-introduction session, and two controlled text reading
+tasks. Throughout the process, facial expressions were recorded via
+a front-facing camera, and speech audio was captured using a mi-
+crophone. These stages were designed to capture diverse emotional
+behaviors under both spontaneous and guided conditions. During
+data collection, participants completed both the PHQ-9 scale and
+the BigFive-10 scale to assess depression severity and personality
+traits.
+Depression labels are derived from PHQ-9 scores: binary classi-
+fication labels distinguish between depressed and non-depressed
+individuals, while ternary classification labels categorize partici-
+pants into normal, mildly depressed, and severely depressed groups.
+Based on these annotations, the dataset supports the following two
+classification tasks:
+(1) Binary classification (normal / depressed)
+(2) Ternary classification (normal / mildly depressed / severely
+depressed)
+As Table 4 shows, MPDD-Young supplements its depression la-
+bels with participant background: demographics (age, gender, place
+of origin) for cross-group comparisons and BigFive-10 personality
+traits in binary form to support personalized analysis.
+3
+Methods
+3.1
+Baseline System
+The baseline model for the MPDD Challenge is designed as a multi-
+modal depression encoder that integrates visual and acoustic fea-
+tures to predict depression levels. The model architecture, as de-
+picted in Figure 2, consists of the following main components:
+Visual Encoder The visual encoder is implemented using an LSTM-
+based feature extractor. It processes sequential visual input to cap-
+ture facial expressions and movement patterns associated with
+13926
+
+=== PAGE 4 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland
+Changzeng Fu et al.
+depression.
+Acoustic Encoder The acoustic encoder also employs an LSTM-
+based architecture, designed to process speech input. It captures
+prosodic and vocal characteristics such as tone, pitch, and rhythm.
+Transformer Fusion Network The outputs from the visual and
+acoustic encoders are fused by concatenating. This fusion allows
+the model to combine the complementary information from both
+modalities, leading to a more robust representation of the input
+data. The fused features are then fed into a transformer network.
+This component helps to capture contextual dependencies within
+the multimodal data.
+Indivisual Embedding To incorporate personalized factors, after
+learning temporal dependencies through the transformer network,
+a feature embedding representing personalized factors is concate-
+nated to the multimodal representation. Depression Classifier
+After the Transformer Fusion Network outputs the fused features
+along with personalized embeddings, these features are fed into the
+depression classifier, which predicts the depression level based on
+the encoded representations.
+The model architecture enables both multimodal feature learning
+and personalized feature learning, addressing previous research lim-
+itations in capturing individual differences in depression detection,
+and provides a fundamental framework for the MPDD Challenge.
+3.2
+Feature Sets
+In the MPDD Challenge, diverse audio and video features are ex-
+tracted to enhance depression detection. These features include
+emotional expressions and physiological responses linked to de-
+pressive symptoms. The feature sets are extracted over two distinct
+time windows: 1-second and 5-second intervals, allowing the model
+to analyze both short-term and longer-term emotional states.
+Audio Features. Audio features play a crucial role in detecting
+depression as they capture speech patterns, tone, and other vocal
+characteristics. To comprehensively compare the impact of differ-
+ent feature extraction methods on classification performance, we
+employ the following audio features:
+• MFCC (Mel-frequency cepstral coefficients)1: A widely
+used feature in speech processing that represents the short-
+term power spectrum of a sound.
+• OpenSMILE2: An open-source software toolkit for audio
+feature extraction, which provides a comprehensive set of
+low-level descriptors capturing various acoustic properties.
+Specifically, we adopted the ComParE 2016 configuration.
+• Wav2Vec3: A deep learning model pre-trained on large
+amounts of unlabeled audio data, capable of extracting mean-
+ingful representations from raw audio waveforms.
+Video Features. Video features are essential for analyzing facial
+expressions and other visual cues associated with depression. To
+compare the impact of different feature extraction methods on
+classification performance, we employ the following video features:
+1https://github.com/librosa/librosa
+2https://github.com/audeering/opensmile
+3https://github.com/facebookresearch/fairseq/tree/main/examples/wav2vec
+Table 4: MPDD-Young Personalized Label Definitions
+Label
+Description
+Age
+Age of the participant (in years)
+Gender
+Participant’s gender
+Native place
+Birthplace or region of origin
+Big5 traits
+One-hot style encoding of the top-
+scoring BigFive traits (ties allowed)
+Table 5: Sample Counts in Dataset After Sliding Window
+Subset
+Total
+Train
+Test
+MPDD-Elderly
+564
+337
+227
+MPDD-Young
+528
+264
+264
+• DenseNet (Densely Connected Convolutional Networks)4:
+A deep learning model known for its effectiveness in image
+classification tasks, used here to extract features from facial
+images.
+• OpenFace5: A facial behavior analysis toolkit that provides
+a set of features related to facial expressions and head pose.
+• ResNet (Residual Networks)6: A deep learning model that
+uses residual connections to ease the training of deep net-
+works, employed for feature extraction from visual data.
+The dataset is split into training and testing sets. Within the
+training set, 90% of the data is used for training and the remaining
+10% serves as the validation set. The splitting is strictly based on
+subject IDs to ensure that samples from the same individual do
+not appear in both training and testing sets. For the MPDD-Elderly
+subset, both the 1s and 5s sliding windows generate a total of 564
+samples, with 337 used for training and 227 for testing. For the
+MPDD-Young subset, each window setting produces 528 samples,
+evenly split into 264 training and 264 testing samples. A detailed
+breakdown is provided in Table 5.
+3.3
+Personalized Features
+To enhance personalization, we introduce individualized textual
+representations derived from participant-level attributes such as
+BigFive personality traits and financial stress levels. These attributes
+are inserted into a structured prompt and processed by a gener-
+ative language model (ChatGLM3) to produce a concise English
+description of each participant’s emotional expression style. An ex-
+ample prompt includes factual statements about each trait followed
+by an instruction asking for a short behavioral summary without
+referencing depression-related content.
+The generated descriptions are encoded using the RoBERTa-large
+model , where the sentence embedding is extracted from the final
+hidden state of the first token. These 1024-dimensional embeddings
+serve as compact personalized features and are fused with acoustic
+and visual features for downstream classification.
+4https://github.com/liuzhuang13/DenseNet
+5http://multicomp.cs.cmu.edu/resources/openface/
+6https://huggingface.co/microsoft/resnet-50
+13927
+
+=== PAGE 5 ===
+The First MPDD Challenge: Multimodal Personality-aware Depression Detection
+MM ’25, October 27–31, 2025, Dublin, Ireland
+Figure 2: The Overall Framework for Baseline Model.
+3.4
+Metrics
+We use a combination of weighted and unweighted metrics to
+evaluate performance in the MPDD Challenge. Accuracy measures
+the overall proportion of correct predictions:
+Acc = Number of Correct Predictions
+Total Number of Samples
+(1)
+F1 score balances precision and recall, which is computed as:
+𝐹1 = 2 × Precision × Recall
+Precision + Recall
+(2)
+where:
+Precision =
+𝑇𝑃
+𝑇𝑃+ 𝐹𝑃; Recall =
+𝑇𝑃
+𝑇𝑃+ 𝐹𝑁
+(3)
+For each task, we report both weighted and unweighted accu-
+racy and F1 score. The final metric for each task is the average of
+weighted and unweighted values:
+𝐴𝑐𝑐𝑡𝑎𝑠𝑘=
+𝐴𝑐𝑐𝑤𝑒𝑖𝑔ℎ𝑡𝑒𝑑+ 𝐴𝑐𝑐𝑢𝑛𝑤𝑒𝑖𝑔ℎ𝑡𝑒𝑑
+2
+𝐹𝑡𝑎𝑠𝑘
+1
+=
+𝐹1,𝑤𝑒𝑖𝑔ℎ𝑡𝑒𝑑+ 𝐹1,𝑢𝑛𝑤𝑒𝑖𝑔ℎ𝑡𝑒𝑑
+2
+(4)
+To assess the overall model performance for each track, we com-
+pute the mean of task-level scores:
+𝐴𝑐𝑐𝑡𝑟𝑎𝑐𝑘= Average(𝐴𝑐𝑐𝑡𝑎𝑠𝑘1,𝐴𝑐𝑐𝑡𝑎𝑠𝑘2, . . . )
+𝐹𝑡𝑟𝑎𝑐𝑘= Average(𝐹𝑡𝑎𝑠𝑘1
+1
+, 𝐹𝑡𝑎𝑠𝑘2
+1
+, . . . )
+(5)
+4
+Results
+4.1
+Competitive Results
+The MPDD-Elderly dataset results show that in the binary classifica-
+tion task with 1-second clips, the model using MFCC audio features
+and OpenFace visual features achieved the highest weighted accu-
+racy of 85.40% and a weighted F1 score of 85.71% when personalized
+features were included. In ternary classification with the same clip
+length, the best result was obtained using OpenSMILE audio fea-
+tures and ResNet visual features, reaching 55.49% weighted accuracy
+and 56.48% weighted F1. For quinary classification, the combination
+of OpenSMILE and DenseNet achieved 45.79% weighted accuracy
+and 66.26% weighted F1. With 5-second clips, the binary classifica-
+tion model using OpenSMILE and ResNet reached 75.40% weighted
+accuracy and 81.75% weighted F1. In ternary classification, Wav2Vec
+and OpenFace yielded the best performance with 59.62% weighted
+accuracy and 58.22% weighted F1. For the quinary task, the MFCC
+and DenseNet combination resulted in 57.71% weighted accuracy
+and 75.62% weighted F1 with personalized features.
+The results for the MPDD-Young dataset indicate that in binary
+classification with 1-second clips, the model using Wav2Vec and
+OpenFace reached 63.64% weighted accuracy and 59.96% weighted
+F1. For ternary classification, MFCC and DenseNet achieved 49.66%
+weighted accuracy and 51.86% weighted F1. Using 5-second clips,
+the binary classification model based on OpenSMILE and ResNet
+reached 62.12% weighted accuracy and 62.11% weighted F1. For
+the ternary task, MFCC and DenseNet achieved 41.71% weighted
+accuracy and 48.18% weighted F1 when personalized features were
+included.
+4.2
+Ablation Study
+To evaluate the effectiveness of incorporating personalized features
+(PF), we conduct an ablation study by comparing the performance
+of models with and without PF across different tasks and datasets.
+As shown in Table 6, adding PF consistently improves classi-
+fication performance on the MPDD-Elderly dataset. For binary
+classification with 1-second segments, weighted accuracy increases
+from 69.37% to 85.40%, and weighted F1-score improves from 82.60
+to 85.71. In the ternary task, PF boosts weighted accuracy from
+48.93% to 55.49%, and F1 from 54.35 to 56.48. Similarly, in quinary
+classification, accuracy rises from 42.45% to 45.79%, and F1 from
+63.85 to 66.26. For 5-second segments, the performance gain re-
+mains consistent: binary accuracy improves from 67.94% to 75.40%,
+and F1 from 77.90 to 81.75; ternary accuracy increases from 46.58%
+to 59.62%, and F1 from 50.88 to 58.22; quinary accuracy improves
+slightly from 56.98% to 57.71%, while F1 rises from 73.49 to 75.62.
+A similar trend is observed in Table 7 for the MPDD-Young
+dataset. In binary classification with 1-second segments, the weighted
+accuracy increases from 56.06% to 63.64%, and F1-score from 55.23
+to 59.96. For ternary classification, accuracy improves from 42.63%
+to 49.66%, and F1 from 47.95 to 51.86. In 5-second settings, binary
+classification shows a smaller but consistent gain, with accuracy
+rising from 60.61% to 62.12%, and F1 from 60.02 to 62.11. In the
+ternary task, accuracy improves from 41.29% to 41.71%, and F1 from
+42.82 to 48.18. These results confirm that incorporating personal-
+ized features leads to performance improvements across different
+segment lengths and classification tasks.
+5
+Conclusion
+This year’s MPDD Challenge introduces the theme of “Multimodal
+Personality-aware Depression Detection” and features two dis-
+tinct tracks focused on young and elderly populations. This paper
+presents the dataset construction, personalized annotations, base-
+line models, and baeline results for both tracks. Our ablation studies
+demonstrate the effectiveness of personalized features in improving
+classification accuracy across multiple tasks. All code, datasets, and
+13928
+
+=== PAGE 6 ===
+MM ’25, October 27–31, 2025, Dublin, Ireland
+Changzeng Fu et al.
+Table 6: Baseline Results of MPDD-Elderly (PF: personalized features; W/U: weighted/unweighted)
+Length
+Task
+Audio
+Visual
+w/o PF
+w/ PF
+W_Acc
+U_Acc
+W_F1
+U_F1
+W_Acc
+U_Acc
+W_F1
+U_F1
+1s
+Binary
+mfcc
+openface
+69.37
+83.33
+82.60
+70.89
+85.40
+84.62
+85.71
+79.13
+Ternary
+opensmile
+resnet
+48.93
+55.13
+54.35
+49.14
+55.49
+56.41
+56.48
+55.64
+Quinary
+opensmile
+densenet
+42.45
+66.67
+63.85
+44.00
+45.79
+69.23
+66.26
+46.66
+5s
+Binary
+opensmile
+resnet
+67.94
+76.92
+77.90
+66.15
+75.40
+80.77
+81.75
+72.37
+Ternary
+Wav2Vec
+openface
+46.58
+50.00
+50.88
+47.59
+59.62
+57.69
+58.22
+59.37
+Quinary
+mfcc
+densenet
+56.98
+75.64
+73.49
+56.83
+57.71
+78.21
+75.62
+58.40
+Table 7: Baseline Results of MPDD-Young (PF: personalized features; W/U: weighted/unweighted)
+Length
+Task
+Audio
+Visual
+w/o PF
+w/ PF
+W_Acc
+U_Acc
+W_F1
+U_F1
+W_Acc
+U_Acc
+W_F1
+U_F1
+1s
+Binary
+Wav2Vec
+openface
+56.06
+56.06
+55.23
+55.23
+63.64
+63.64
+59.96
+59.96
+Ternary
+mfcc
+densenet
+42.63
+48.48
+47.95
+43.72
+49.66
+51.52
+51.86
+51.62
+5s
+Binary
+opensmile
+resnet
+60.61
+60.61
+60.02
+60.02
+62.12
+62.12
+62.11
+62.11
+Ternary
+mfcc
+densenet
+41.29
+42.42
+42.82
+39.38
+41.71
+50.00
+48.18
+41.31
+evaluation scripts are available through our official repository to
+support future research. We invite the community to participate
+in this challenge and contribute to advancing personalized mental
+health assessment.
+Acknowledgment
+This work was supported by the National Natural Science Founda-
+tion of China (62306068), the Natural Science Foundation of Hebei
+Province, China (F2024501002).
+References
+[1] Hanshu Cai, Zhenqin Yuan, Yiwen Gao, Shuting Sun, Na Li, Fuze Tian, Han Xiao,
+Jianxiu Li, Zhengwu Yang, Xiaowei Li, et al. 2022. A multi-modal open dataset
+for mental-disorder analysis. Scientific Data 9, 1 (2022), 178.
+[2] Hamdi Dibeklioğlu, Zakia Hammal, and Jeffrey F Cohn. 2017. Dynamic mul-
+timodal measurement of depression severity using deep autoencoding. IEEE
+journal of biomedical and health informatics 22, 2 (2017), 525–536.
+[3] Jonathan Gratch, Ron Artstein, Gale M Lucas, Giota Stratou, Stefan Scherer,
+Angela Nazarian, Rachel Wood, Jill Boberg, David DeVault, Stacy Marsella, et al.
+2014. The distress analysis interview corpus of human and computer interviews..
+In LREC. Reykjavik, 3123–3128.
+[4] Daniel N Klein, Roman Kotov, and Sara J Bufferd. 2011. Personality and depres-
+sion: explanatory models and review of the evidence. Annual review of clinical
+psychology 7, 1 (2011), 269–295.
+[5] Sander Koelstra, Christian Muhl, Mohammad Soleymani, Jong-Seok Lee, Ashkan
+Yazdani, Touradj Ebrahimi, Thierry Pun, Anton Nijholt, and Ioannis Patras. 2011.
+Deap: A database for emotion analysis; using physiological signals. IEEE transac-
+tions on affective computing 3, 1 (2011), 18–31.
+[6] Min-Tzu Lo, David A Hinds, Joyce Y Tung, Carol Franz, Chun-Chieh Fan, Yunpeng
+Wang, Olav B Smeland, Andrew Schork, Dominic Holland, Karolina Kauppi, et al.
+2017. Genome-wide analyses for personality traits identify six genomic loci
+and show correlations with psychiatric disorders. Nature genetics 49, 1 (2017),
+152–156.
+[7] Juan Abdon Miranda-Correa, Mojtaba Khomami Abadi, Nicu Sebe, and Ioannis
+Patras. 2018. Amigos: A dataset for affect, personality and mood research on
+individuals and groups. IEEE transactions on affective computing 12, 2 (2018),
+479–493.
+[8] Saba Moussavi, Somnath Chatterji, Emese Verdes, Ajay Tandon, Vikram Patel,
+and Bedirhan Ustun. 2007. Depression, chronic diseases, and decrements in
+health: results from the World Health Surveys. The Lancet 370, 9590 (2007),
+851–858.
+[9] World Health Organization et al. 2017. Depression and other common mental
+disorders: global health estimates. (2017).
+[10] Fabien Ringeval, Björn Schuller, Michel Valstar, Nicholas Cummins, Roddy Cowie,
+Leili Tavabi, Maximilian Schmitt, Sina Alisamir, Shahin Amiriparian, Eva-Maria
+Messner, et al. 2019. AVEC 2019 workshop and challenge: state-of-mind, detecting
+depression with AI, and cross-cultural affect recognition. In Proceedings of the
+9th International on Audio/visual Emotion Challenge and Workshop. 3–12.
+[11] Fabien Ringeval, Björn Schuller, Michel Valstar, Jonathan Gratch, Roddy Cowie,
+Stefan Scherer, Sharon Mozgai, Nicholas Cummins, Maximilian Schmitt, and Maja
+Pantic. 2017. Avec 2017: Real-life depression, and affect recognition workshop
+and challenge. In Proceedings of the 7th annual workshop on audio/visual emotion
+challenge. 3–9.
+[12] Ying Shen, Huiyu Yang, and Lin Lin. 2022. Automatic depression detection:
+An emotional audio-textual corpus and a gru/bilstm-based model. In ICASSP
+2022-2022 IEEE International Conference on Acoustics, Speech and Signal Processing
+(ICASSP). IEEE, 6247–6251.
+[13] Michel Valstar, Jonathan Gratch, Björn Schuller, Fabien Ringeval, Denis Lalanne,
+Mercedes Torres Torres, Stefan Scherer, Giota Stratou, Roddy Cowie, and Maja
+Pantic. 2016. Avec 2016: Depression, mood, and emotion recognition workshop
+and challenge. In Proceedings of the 6th international workshop on audio/visual
+emotion challenge. 3–10.
+[14] Michel Valstar, Björn Schuller, Kirsty Smith, Timur Almaev, Florian Eyben, Jarek
+Krajewski, Roddy Cowie, and Maja Pantic. 2014. Avec 2014: 3d dimensional affect
+and depression recognition challenge. In Proceedings of the 4th international
+workshop on audio/visual emotion challenge. 3–10.
+[15] Michel Valstar, Björn Schuller, Kirsty Smith, Florian Eyben, Bihan Jiang, San-
+jay Bilakhia, Sebastian Schnieder, Roddy Cowie, and Maja Pantic. 2013. Avec
+2013: the continuous audio/visual emotion and depression recognition challenge.
+In Proceedings of the 3rd ACM international workshop on Audio/visual emotion
+challenge. 3–10.
+[16] Jeewoo Yoon, Chaewon Kang, Seungbae Kim, and Jinyoung Han. 2022. D-vlog:
+Multimodal vlog dataset for depression detection. In Proceedings of the AAAI
+Conference on Artificial Intelligence, Vol. 36. 12226–12234.
+[17] Wei-Long Zheng and Bao-Liang Lu. 2015. Investigating critical frequency bands
+and channels for EEG-based emotion recognition with deep neural networks.
+IEEE Transactions on autonomous mental development 7, 3 (2015), 162–175.
+[18] Bochao Zou, Jiali Han, Yingxue Wang, Rui Liu, Shenghui Zhao, Lei Feng, Xiang-
+wen Lyu, and Huimin Ma. 2022. Semi-structural interview-based Chinese multi-
+modal depression corpus towards automatic preliminary screening of depressive
+disorders. IEEE Transactions on Affective Computing 14, 4 (2022), 2823–2838.
+13929
+

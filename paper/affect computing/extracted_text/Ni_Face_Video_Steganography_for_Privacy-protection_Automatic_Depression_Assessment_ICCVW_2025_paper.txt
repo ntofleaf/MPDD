@@ -1,0 +1,659 @@
+Face Video Steganography for Privacy-protection Automatic Depression
+Assessment
+Xinyi Ni
+University of Exeter
+Exeter, United Kingdom
+xn217@exeter.ac.uk
+Zijian Wu
+Nanjing University of Science and Technology
+Nanjing, China
+wuzijian@njust.edu.cn
+Lu Liu
+University of Exeter
+Exeter, United Kingdom
+l.liu3@exeter.ac.uk
+Siyang Song
+University of Exeter, Exeter
+United Kingdom
+s.song@exeter.ac.uk
+Abstract
+Video-based automatic depression assessment (ADA)
+system have been widely explored and deployed for real-
+world usage. While face videos recorded for ADA contains
+sensitive and private contents, existing standard depression
+face video delivery and storage strategies lack effective pri-
+vacy protection mechanism. To address this, this paper pro-
+poses the first depression face video steganography strat-
+egy which enables the invertible concealment of sensitive
+depression face videos, while ensuring user privacy. We
+decompose the facial secret video into individual frames
+and hide each secret frame into a cover image of the same
+size, enabling high-capacity steganography for video data.
+Meanwhile, we leverage Stable Diffusion to allow users to
+generate their own cover videos, enhancing controllability.
+During the hiding process, we propose a novel Invertible
+Network to ensure the precise recovery of facial attributes
+and behavioral information. Experimental results demon-
+strate that our video steganography method largely pre-
+serves the accuracy of the assessment of depression from
+facial videos. Our code will be provided upon acceptance.
+1. Introduction
+Depression is a prevalent mental disorder that affects more
+than 300 million people worldwide [9].
+With the con-
+tinuous advancement of machine learning, facial video-
+based automatic depression assessment (ADA) methods
+[6, 14, 15, 17, 18, 22, 23, 29–31] that infer depression from
+human facial behaviour dynamics have been widely ex-
+plored. Despite the promising prospects of face video-based
+ADA in real-world applications, such face videos typically
+contain highly sensitive personal information (e.g., identity,
+age and gender) However, existing mainstream mechanisms
+for face video transmission and storage offer limited pri-
+vacy protections, posing a significant risk of sensitive men-
+tal health-related behavioral data leakage. Therefore, there
+is an urgent need for more secure depression face video pro-
+tection strategy, where face video steganography that allows
+sensitive facial information to be embedded into visually
+plausible non-face videos and transmitted covertly [34], of-
+fers a novel perspective and a practical solution.
+In recent years, benchmark datasets have played a cru-
+cial role in advancing Automatic Depression Assessment
+(ADA) from facial videos. Early datasets such as AVEC
+2013 [26], AVEC 2014 [27], VLOG [1], and CMDC [36]
+provided raw or lightly processed face videos. While hu-
+man facial behaviours contain rich cues in reflecting human
+emotional and affect status [3, 11, 12], these videos pose se-
+rious privacy risks due to their identity-revealing nature. To
+mitigate this, later datasets like AVEC 2016 [28], 2017 [19],
+and 2019 [20] avoid releasing raw videos and instead of-
+fer extracted facial features such as AUs, head poses, and
+expressions.
+Although this reduces privacy exposure, it
+comes at the cost of losing contextual and emotional in-
+formation critical for accurate depression analysis. In in-
+dustry, raw patient videos are still commonly recorded for
+telehealth or mental health screening, often without strong
+privacy-preserving protocols for sharing or storage
+[7].
+These limitations highlight the urgent need for a secure,
+information-preserving video sharing method. Motivated
+by this, we propose a novel steganographic framework tai-
+lored for ADA, which enables effective analysis while safe-
+guarding sensitive facial data.
+Traditional image steganography methods [2, 8] can only
+This ICCV Workshop paper is the Open Access version, provided by the Computer Vision Foundation.
+Except for this watermark, it is identical to the accepted version;
+the final published version of the proceedings is available on IEEE Xplore.
+80
+Figure 1. The pipeline of our face video steganography (called DepFaceSteg (DFS)). (1) Blue part: the secret face video is first decomposed
+into a sequence of frames, while a text-guided diffusion model generates an unrelated cover video that matches the resolution, frame rate and
+length of the secret face video from a user-customized text prompt. (2) Green part: Each secret frame is embedded into its corresponding
+cover frame via an invertible steganography network, resulting in a series of stego-frames. These frames are assembled into the final stego-
+video for secure transmission and storage; and (3) Gray part: During the reveal stage, the stego frames, along with an auxiliary variable
+z sampled from a Gaussian distribution, are decoded using the same invertible network to accurately reconstruct the original secret video.
+embed a small amount of information, which fails to meet
+the high-capacity requirements of the depression face video
+hiding task. In recent years, deep learning-based steganog-
+raphy [13, 16, 24, 32] has shown remarkable potential in ad-
+dressing this limitation by enabling the hiding of an entire
+image within another image of the same size, using end-
+to-end trained neural networks, where Generative Adver-
+sial Network (GAN) [25] and Diffusion [33, 35] have been
+widely extended. Despite these advancements, directly ap-
+plying such methods for depression face video hiding re-
+mains challenging as existing face-based ADA approaches
+typically predict depression status based on subtle facial be-
+havioural cues expressed by the target subjects, i.e. this re-
+quires steganography methods to ensure the recovered face
+videos to have the same subtle facial behaviours as their
+original face videos (called secret videos in this paper). On
+the other hand, relying on fixed or unrelated cover videos
+limits practical deployment. In real-world scenarios, users
+often need control over the visual appearance of the cover
+video (e.g., contents, background, or style) to ensure consis-
+tency with other shared content. To achieve this, we lever-
+age a text-guided diffusion model (e.g., Stable Diffusion)
+[21] to generate customized cover videos with controllable
+semantics, enabling flexible and context-aware depression
+face video steganography.
+In this paper, we propose the pioneering, simple but
+effective depression face video steganography framework
+(called DepFaceSteg (DFS)) encoding all frames in the
+secret face video of an arbitrary length into another un-
+relevant non-face video containing the same of more
+frames, which can be almost fully re-constructed at the re-
+veal stage. In the face video steganography stage, our DFS
+starts with automatically generating a customized cover
+video that matches the target resolution, length, and de-
+sired appearance using a text-conditioned diffusion model,
+allowing flexible and user-defined visual control. Then, it
+decomposes all face frames from the secret face video, and
+involves an invertible network to encode them into the syn-
+thesised cover video, allowing high-capacity hiding while
+preserving fine-grained facial behaviors crucial for depres-
+sion analysis. In the reveal stage, the same invertible net-
+work is employed to accurately reconstruct the original se-
+cret video frames from the stego video without any auxil-
+iary information, preserving not only the pixel-level fidelity
+but also subtle facial attributes and behavioral cues essen-
+tial for downstream depression assessment tasks. The entire
+framework of our approach is illustrated in Fig. 1. The main
+contributions of this paper can be summarized as follows:
+• We propose the first depression face video steganography
+framework to enhance user privacy protection for face
+video-based ADA task, which enables the generation of
+customized cover videos for effective face video hiding.
+• Experimental results confirms the effectiveness of our pi-
+oneering face video steganography approach in securing
+user face video data transmission, suggesting that our ap-
+proach allows not only effective face video hiding but also
+recovering high-quality face video (evidenced by almost
+the same ADA results achieved by original and recovered
+81
+face videos).
+2. Methodology
+Overview: This section presents our pioneering face video
+steganography framework DFS for the task of automatic de-
+pression assessment (ADA). As illustrated in Fig. 1, the
+secret face video to be hidden (denoted as Vsec) is first
+decomposed into a sequence of frames Isec
+1 , Isec
+2 , · · · , Isec
+T .
+Meanwhile, a visually irrelevant cover video (denoted as
+Vcov) that have the same resolution and duration as Vsec is
+automatically synthesised via a text-conditioned diffusion
+model (denoted as Diff), offering controllable semantics for
+the synthesised cover video, such as background, object
+motions, and style as:
+V cov = Diff(TC)
+(1)
+where TC denotes the input textual prompt controlling the
+cover video generation. Each secret frame Isec
+t
+is then paired
+with its corresponding cover frame Icov
+t
+∈Vcov, and pro-
+cessed by our invertible image steganography network (i-
+Net), resulting in a stego-image Isteg
+t
+that include the secret
+facial frame Isec
+t
+as:
+Isteg
+t
+= i-Net(Isec
+t , Icov
+t
+)
+(2)
+These stego-images are subsequently assembled as the
+stego-video Vsteg, ensuring the smoothness and continuity
+among frames. At the reveal stage, the Vsteg is split into in-
+dividual frames, where is processed by the decoder of our to
+recover the sequence of secret video frames Irev
+1 , · · · , Irev
+T ,
+ultimately reconstructing V rev that is expected to be almost
+the same as the original face video V sec.
+2.1. Controllable cover video generation
+To enhance the imperceptibility, flexibility, and security of
+the steganographic process, we extend a diffusion-based
+video generation model — AnimateDiff [5]. Unlike fixed
+cover videos, which may introduce semantic or structural
+correlations that risk exposing hidden content, using gener-
+ative diffusion models allows us to synthesize cover videos
+that are both visually realistic and semantically irrelevant
+to facial data, significantly improving the security of the
+hidden transmission. Users can specify the desired con-
+tent of the generated video using natural language prompts,
+such as ”a sunset beach with waves” or ”a futuristic city in
+anime style.” AnimateDiff encodes the prompt and gener-
+ates a video sequence that matches the number of frames
+and spatial resolution of the target face video to be con-
+cealed, serving as Vcov. This generation approach offers
+several advantages:
+• Controllability: Users have full flexibility to define the
+video style and content.
+Figure 2. The architecture of our invertible i-Net.
+• High Imperceptibility: The generated video is semanti-
+cally unrelated to facial data, making it difficult to infer
+the hidden content.
+• Structural Alignment: Techniques such as motion guid-
+ance can be employed to ensure that the generated video
+aligns with the secret video in both dimensions and tem-
+poral rhythm.
+In practice, we utilize the DDIM sampler to accelerate the
+generation process, and apply frame alignment to the output
+video to ensure consistency with Vsec in terms of resolution
+and frame count. which not only preserves the visual real-
+ism of the generated cover video but also securely hides the
+depression-relevant facial signals, thereby enabling privacy-
+preserving video transmission and storage.
+2.2. Invertible network for face video steganogra-
+phy and recover
+The key challenge of depression face video steganogra-
+phy lies in embedding and restoring fine-grained facial be-
+havioural information (e.g., micro-expressions, gaze, and
+posture) for ADA while maintaining high visual quality and
+imperceptibility. This is particularly critical in applications
+like ADA, where even subtle distortions may compromise
+downstream performance.
+To address this, we design a
+frame-level steganographic module based on invertible net-
+work architectures, enabling lossless and high-capacity en-
+coding of facial frames into unrelated cover videos. Our
+method is built upon on a Invertible Network, which allows
+for bijective mappings between the input and output spaces.
+This means the same model can be used both for hiding and
+revealing, without requiring any side information.
+Network architecture: As illustrated in Fig. 2, our i-
+Net employs a set of invertible conceal and reveal blocks,
+which share the same network parameters but operate in op-
+posite information flow directions. The i-th hiding block in
+the forward process takes Icov(i) and Isec(i) as the input,
+and outputs Icov(i + 1) and Isec(i + 1) as:
+Icov(i + 1) = Icov(i) + ϕ(Isec(i)),
+Isec(i + 1) = Isec(i) ⊙exp (α(ρ(Icov(i + 1)))) + η(Icov(i + 1))
+(3)
+82
+where α(·) is a sigmoid function scaled by a constant factor
+for clamping purposes, and ⊙denotes element-wise mul-
+tiplication. The functions ρ(·), ϕ(·), and η(·) are imple-
+mented using dense blocks, which are widely adopted for
+their strong representational capacity [4]. After the final
+conceal block, we obtain the stego image Isteg along with
+the lost information. Here each conceal block applies re-
+versible transformations: the update to the cover image is
+an additive function, and the secret image transformation
+combines element-wise operations (exponentiation and ad-
+dition) with functions that can be inverted using the same
+network structure in reverse. In addition, sharing param-
+eters between forward and reverse passes ensures symme-
+try for perfect reconstruction. As a result, our i-Net is in-
+vertible, which enables the model to embed rich facial de-
+tails into a visually natural frame, thereby preserving the
+semantic fidelity essential for downstream ADA task. In
+particular, our invertible design not only ensures lossless
+reconstruction where facial details—such as expressions,
+gaze, and posture—are fully recoverable, preserving both
+visual and semantic fidelity, but also minimal perceptual
+distortion where the generated stego frames remain indis-
+tinguishable from the original cover frames. Consequently,
+the standard invertible network training [10] used in this pa-
+per jointly optimize the embedding and extraction processes
+to maximize hiding capacity while preserving visual simi-
+larity between the stego and cover images.
+Depression face video conceal process: In this stage,
+the model operates in the forward propagation mode of the
+invertible network, taking Isec
+i
+and Icov
+i
+as inputs. These in-
+puts are passed through multiple hidden blocks to undergo
+feature transformations, embedding the semantic informa-
+tion of the secret image into the cover image while main-
+taining a visual appearance that closely resembles the origi-
+nal cover. The final output channels of the last hidden block
+produce the stego image Isteg
+i
+along with the Lost Informa-
+tion. The resulting stego image Isteg
+i
+visually approximates
+the original cover image while implicitly containing the em-
+bedded facial features. The optimization objective at this
+stage is to minimize perceptual distortion, ensuring that the
+secret image remains imperceptible to the human eye.
+Depression face video reveal process: The decoding
+process runs the same network architecture in reverse. Tak-
+ing the stego image Isteg
+i
+and an auxiliary variable z sampled
+from a Gaussian distribution as inputs, the model passes
+them through a series of reveal blocks to reconstruct the
+original image pair (Icov
+i
+, Isec
+i ). Owing to the strictly in-
+vertible transformations, the recovered Isec
+i
+achieves high
+fidelity at both pixel and structural levels, preserving fine-
+grained facial attributes such as expressions, gaze, and pos-
+ture—thus providing a reliable foundation for subsequent
+depression analysis.
+3. Experiment
+3.1. Experimental settings
+Datasets: We adopt the AVEC 2014 face video depression
+assessment dataset to evaluate the effectiveness of our pro-
+posed depression face video steganography method. It in-
+volves two types of recording conditions: Northwind and
+Freeform, each of which records 150 clips ranging from 6
+seconds to 4 mins 8 seconds. Both datasets were evenly di-
+vided into three subsets: training, development and testing.
+Metrics: We adopt two quantitative metrics to evaluate the
+quality of both cover/stego video pairs and secret/recovery
+video pairs: Peak Signal-to-Noise Ratio (PSNR) and Struc-
+tural Similarity Index (SSIM). PSNR is used to measure
+the pixel-level fidelity between corresponding frames, while
+SSIM evaluates structural similarity and perceptual qual-
+ity.
+Higher values of PSNR and SSIM indicate better
+visual quality and more faithful reconstruction.
+To fur-
+ther assess the semantic fidelity of the recovered video
+in the context of ADA, we follow [23] and employ a set
+of evaluation metrics including Root Mean Square Error
+(RMSE), Mean Absolute Error (MAE), Pearson Correla-
+tion Coefficient (PCC), and Concordance Correlation Coef-
+ficient (CCC). These metrics jointly capture the regression
+accuracy and consistency between predicted and ground-
+truth depression scores.
+Implementation details: Each video from the AVEC 2014
+dataset is used as a secret video input. The secret video
+is first decomposed into individual frames, which are then
+one-to-one aligned with the frames of a generated cover
+video. Each secret frame is embedded into its correspond-
+ing cover frame using the reversible steganographic net-
+work. The resulting stego frames are then reassembled into
+a stego video, and we compute PSNR and SSIM to evaluate
+the quality of the hiding process. Next, the stego frames
+are passed through the decoding phase of the reversible
+network to reveal the recovered secret frames, which are
+subsequently reassembled into the recovered secret video.
+This recovered video is then fed into the ADA evaluation
+pipeline. The affective analysis results are compared with
+those obtained from the original AVEC2014 videos to as-
+sess the semantic fidelity of the recovered content.
+3.2. Face video steganography and recover results
+Table 1. Quantitative Evaluation of Steganographic Video Quality
+Video Pair
+PSNR ↑
+SSIM ↑
+Cover/Stego
+49.82 dB
+0.9939
+Cover/Stego(LSB)
+33.89 dB
+0.9486
+Secret/Recovery
+48.88 dB
+0.9956
+Secret/Recovery(LSB)
+32.05 dB
+0.9120
+83
+To further validate the performance of our framework,
+we compare it with the classical Least Significant Bit (LSB)
+method, a widely used baseline in traditional steganogra-
+phy. As reported in Table 1, we evaluate both cover/stego
+and secret/recovery video pairs using PSNR and SSIM met-
+rics. Our method achieves a PSNR of 49.82 dB and a SSIM
+of 0.9939 for the cover/stego pair, indicating minimal visual
+distortion. For the secret/recovery pair, it preserves fine-
+grained facial details crucial for ADA, significantly outper-
+forming the LSB method in terms of fidelity and structure.
+These results demonstrate the advantage of our approach in
+achieving high imperceptibility while maintaining seman-
+tic integrity. This performance gain can be attributed to the
+integration of the invertible network module and the cus-
+tomized diffusion-based cover video generation, which to-
+gether enable faithful concealment and accurate recovery.
+3.3. Depression assessment results
+Table 2. ADA evaluation metrics of original and stego videos,
+where Ff denotes the Freeform task; Nw represents the Northwind
+task; and Cb represents their combination.
+Metric
+RMSE
+MAE
+PCC
+CCC
+Original Cb
+6.6222
+5.4473
+0.8170
+0.7988
+Steg Cb
+6.6416
+5.4550
+0.8158
+0.7976
+Original Ff
+6.6796
+5.4529
+0.8136
+0.7957
+Steg Ff
+6.6946
+5.4633
+0.8127
+0.7947
+Original Nw
+6.6963
+5.4523
+0.8123
+0.7955
+Steg Nw
+6.7176
+5.4605
+0.8110
+0.7943
+Table 2 compares the results obtained from performing
+ADA on both the original dataset videos and the recov-
+ered videos after being steganographically encoded with our
+DFS framework. We analyzed the results for two types of
+recording conditions: Northwind and Freeform, and also
+computed the combined values. As shown in the table, the
+recovered videos after DFS encoding and restoration main-
+tain RMSE, MAE, PCC, and CCC values that are close to
+those of the original dataset. Specifically, both RMSE and
+MAE show slight increases, with the maximum rise not ex-
+ceeding 0.3%, while PCC and ACC experience slight de-
+creases, with the maximum drop not exceeding 2%. These
+results suggest that our video steganography framework
+achieves high fidelity in preserving the affective character-
+istics of the original videos. The recovered videos remain
+suitable for ADA tasks, with negligible impact on affective
+evaluation performance, demonstrating the robustness and
+semantic consistency of our approach.
+4. Conclusion
+This paper proposes the first ADA-oriented face video
+steganography framework that leverages a reversible hid-
+ing mechanism and controllable cover video generation,
+which achieves high-capacity and high-fidelity information
+hiding with enhanced imperceptibility and enables flexible,
+prompt-driven control over the cover content. Extensive ex-
+periments demonstrated that our framework achieves strong
+performance in terms of PSNR and SSIM, indicating min-
+imal visual distortion in both stego and recovered videos,
+validating the semantic integrity of our approach.
+References
+[1] Tuka Alhanai, Mohammad Ghassemi, and James Glass. De-
+tecting depression with audio/text sequence modeling of in-
+terviews. In Proceedings of Interspeech 2018, pages 1716–
+1720, 2018. 1
+[2] Abbas Cheddad, Joan Condell, Kevin Curran, and Paul
+Mc Kevitt. Digital image steganography: Survey and anal-
+ysis of current methods. Signal processing, 90(3):727–752,
+2010. 1
+[3] Paul Ekman. Facial expressions of emotion: New findings,
+new questions, 1992. 1
+[4] Zhenyu Guan, Junpeng Jing, Xin Deng, Mai Xu, Lai Jiang,
+Zhou Zhang, and Yipeng Li.
+Deepmih: Deep invertible
+network for multiple image hiding. IEEE Transactions on
+Pattern Analysis and Machine Intelligence, 45(1):372–390,
+2022. 4
+[5] Yuwei Guo, Ceyuan Yang, Anyi Rao, Zhengyang Liang,
+Yaohui Wang, Yu Qiao, Maneesh Agrawala, Dahua Lin,
+and Bo Dai. Animatediff: Animate your personalized text-
+to-image diffusion models without specific tuning.
+arXiv
+preprint arXiv:2307.04725, 2023. 3
+[6] Lang He, Zheng Li, Prayag Tiwari, Cui Cao, Jize Xue, Feng
+Zhu, and Di Wu. Depressformer: Leveraging video swin
+transformer and fine-grained local features for depression
+scale estimation. Biomedical Signal Processing and Control,
+96:106490, 2024. 1
+[7] Shannon H Houser, Cathy A Flite, and Susan L Foster. Pri-
+vacy and security risk factors related to telehealth services–a
+systematic review. Perspectives in health information man-
+agement, 20(1):1f, 2023. 1
+[8] Mehdi Hussain, Ainuddin Wahid Abdul Wahab, Yamani
+Idna Bin Idris, Anthony TS Ho, and Ki-Hyun Jung. Image
+steganography in spatial domain: A survey. Signal Process-
+ing: Image Communication, 65:46–66, 2018. 1
+[9] Spencer L James, Degu Abate, Kalkidan Hassen Abate,
+Solomon M Abay, Cristiana Abbafati, Nooshin Abbasi, He-
+dayat Abbastabar, Foad Abd-Allah, Jemal Abdela, Ahmed
+Abdelalim, et al. Global, regional, and national incidence,
+prevalence, and years lived with disability for 354 diseases
+and injuries for 195 countries and territories, 1990–2017: a
+systematic analysis for the global burden of disease study
+2017. The lancet, 392(10159):1789–1858, 2018. 1
+[10] Junpeng Jing, Xin Deng, Mai Xu, Jianyi Wang, and Zhenyu
+Guan. Hinet: Deep image hiding by invertible network. In
+84
+Proceedings of the IEEE/CVF international conference on
+computer vision, pages 4733–4742, 2021. 4
+[11] Dimitrios Kollias and Stefanos Zafeiriou. Exploiting multi-
+cnn features in cnn-rnn based dimensional emotion recogni-
+tion on the omg in-the-wild dataset. IEEE Transactions on
+Affective Computing, 12(3):595–606, 2020. 1
+[12] Dimitrios Kollias, Panagiotis Tzirakis, Mihalis A Nicolaou,
+Athanasios Papaioannou, Guoying Zhao, Bj¨orn Schuller,
+Irene Kotsia, and Stefanos Zafeiriou. Deep affect prediction
+in-the-wild: Aff-wild database and challenge, deep architec-
+tures, and beyond. International Journal of Computer Vision,
+127(6):907–929, 2019. 1
+[13] Fengyong Li, Yang Sheng, Xinpeng Zhang, and Chuan Qin.
+iscmis: Spatial-channel attention based deep invertible net-
+work for multi-image steganography. IEEE Transactions on
+Multimedia, 26:3137–3152, 2023. 2
+[14] Zhenyu Liu, Bailin Chen, Shimao Zhang, Jiaqian Yuan, Yang
+Wu, Hanshu Cai, Xin Chen, Lin Liu, Yimiao Zhao, Huan
+Mei, et al. Mpdrm: A multi-scale personalized depression
+recognition model via facial movements. Neurocomputing,
+632:129669, 2025. 1
+[15] Haifeng Lu, Zhiyang You, Yi Guo, and Xiping Hu. Mast-
+gcn: Multi-scale adaptive spatial-temporal graph convolu-
+tional network for eeg-based depression recognition. IEEE
+Transactions on Affective Computing, 2024. 1
+[16] Shao-Ping Lu, Rong Wang, Tao Zhong, and Paul L Rosin.
+Large-capacity image steganography based on invertible
+neural networks.
+In Proceedings of the IEEE/CVF con-
+ference on computer vision and pattern recognition, pages
+10816–10825, 2021. 2
+[17] Mingyue Niu, Xu Wang, Jibing Gong, Bin Liu, Jianhua Tao,
+and Bj¨orn W Schuller. Depression scale dictionary decompo-
+sition framework for multimodal automatic depression level
+prediction. IEEE Transactions on Circuits and Systems for
+Video Technology, 2025. 1
+[18] Yuchen Pan, Junjun Jiang, Kui Jiang, and Xianming Liu.
+Disentangled-multimodal privileged knowledge distillation
+for depression recognition with incomplete multimodal data.
+In Proceedings of the 32nd ACM international conference on
+multimedia, pages 5712–5721, 2024. 1
+[19] Fabien Ringeval, Bj¨orn Schuller, Michel Valstar, Roddy
+Cowie, Nicholas Cummins, Maximilian Schmitt, and Maja
+Pantic. Avec 2017: Real-life depression, and affect recogni-
+tion workshop and challenge. In Proceedings of the 7th An-
+nual Workshop on Audio/Visual Emotion Challenge, pages
+3–9. ACM, 2017. 1
+[20] Fabien Ringeval, Bj¨orn Schuller, Michel Valstar, Roddy
+Cowie, Nicholas Cummins, et al. Avec 2019 workshop and
+challenge: State-of-mind, detecting depression with ai, and
+cross-cultural affect recognition. In Proceedings of the 9th
+International on Audio/Visual Emotion Challenge and Work-
+shop, pages 3–12. ACM, 2019. 1
+[21] Robin Rombach, Andreas Blattmann, Dominik Lorenz,
+Patrick Esser, and Bj¨orn Ommer.
+High-resolution image
+synthesis with latent diffusion models.
+In Proceedings of
+the IEEE/CVF conference on computer vision and pattern
+recognition, pages 10684–10695, 2022. 2
+[22] Siyang Song, Linlin Shen, and Michel Valstar.
+Human
+behaviour-based automatic depression analysis using hand-
+crafted statistics and deep learned spectral features. In 2018
+13th IEEE international conference on automatic face &
+gesture recognition (FG 2018), pages 158–165. IEEE, 2018.
+1
+[23] Siyang Song, Shashank Jaiswal, Linlin Shen, and Michel
+Valstar. Spectral representation of behaviour primitives for
+depression analysis. IEEE Transactions on Affective Com-
+puting, 13(2):829–844, 2022. 1, 4
+[24] Nandhini Subramanian, Omar Elharrouss, Somaya Al-
+Maadeed, and Ahmed Bouridane. Image steganography: A
+review of the recent advances. IEEE access, 9:23409–23423,
+2021. 2
+[25] Jingxuan Tan, Xin Liao, Jiate Liu, Yun Cao, and Hongbo
+Jiang. Channel attention image steganography with gener-
+ative adversarial networks. IEEE transactions on network
+science and engineering, 9(2):888–903, 2021. 2
+[26] Michel Valstar, Bj¨orn Schuller, Kirsty Smith, Timur Almaev,
+Florian Eyben, Jarek Krajewski, Roddy Cowie, and Maja
+Pantic.
+Avec 2013: The continuous audio/visual emotion
+and depression recognition challenge. In Proceedings of the
+3rd ACM international workshop on Audio/visual emotion
+challenge, pages 3–10. ACM, 2013. 1
+[27] Michel Valstar, Bj¨orn Schuller, Kevin Smith, Timur Almaev,
+Florian Eyben, Jarek Krajewski, Roddy Cowie, and Maja
+Pantic. Avec 2014: 3d dimensional affect and depression
+recognition challenge.
+In Proceedings of the 4th interna-
+tional workshop on audio/visual emotion challenge, pages
+3–10. ACM, 2014. 1
+[28] Michel Valstar, Jonathan Gratch, Bj¨orn Schuller, Fabien
+Ringeval, Denis Lalanne, Marwa Torres Torres, Stefan
+Scherer, Giota Stratou, Roddy Cowie, and Maja Pantic. Avec
+2016: Depression, mood, and emotion recognition workshop
+and challenge. In Proceedings of the 6th International Work-
+shop on Audio/Visual Emotion Challenge, pages 3–10. ACM,
+2016. 1
+[29] Yaowei Wang, Zulong Lin, Yan Teng, Yuqi Cheng, Hongyan
+Jiang, and Yun Yang. Simma: Multimodal automatic depres-
+sion detection via spatiotemporal ensemble and cross-modal
+alignment. IEEE Transactions on Computational Social Sys-
+tems, 2025. 1
+[30] Zijian Wu, Leijing Zhou, Shuanglin Li, Changzeng Fu, Jun
+Lu, Jing Han, Yi Zhang, Zhuang Zhao, and Siyang Song.
+Depmgnn: Matrixial graph neural network for video-based
+automatic depression assessment.
+In Proceedings of the
+AAAI Conference on Artificial Intelligence, pages 1610–
+1619, 2025.
+[31] Jiaqi Xu, Hatice Gunes, Keerthy Kusumam, Michel Valstar,
+and Siyang Song. Two-stage temporal modelling framework
+for video-based depression recognition using graph repre-
+sentation. IEEE Transactions on Affective Computing, 2024.
+1
+[32] Youmin Xu, Chong Mou, Yujie Hu, Jingfen Xie, and Jian
+Zhang. Robust invertible image steganography. In Proceed-
+ings of the IEEE/CVF conference on computer vision and
+pattern recognition, pages 7875–7884, 2022. 2
+85
+[33] Jiwen Yu, Xuanyu Zhang, Youmin Xu, and Jian Zhang.
+Cross: Diffusion model makes controllable, robust and se-
+cure image steganography. Advances in Neural Information
+Processing Systems, 36:80730–80743, 2023. 2
+[34] Jin Zhao, Zhenxing Liu, Xingming Zhang, Xiaochun Li, and
+Qiong Liu. Video steganography: A comprehensive review.
+IEEE Access, 8:209622–209641, 2020. 1
+[35] Qing Zhou, Ping Wei, Zhenxing Qian, Xinpeng Zhang, and
+Sheng Li. Improved generative steganography based on dif-
+fusion model. IEEE Transactions on Circuits and Systems
+for Video Technology, 2025. 2
+[36] Bochao Zou, Jiahui Han, and Yujie Wang. Semi-structural
+interview-based chinese multimodal depression corpus to-
+wards automatic preliminary screening of depressive disor-
+ders. IEEE Transactions on Affective Computing, 2022. 1
+86

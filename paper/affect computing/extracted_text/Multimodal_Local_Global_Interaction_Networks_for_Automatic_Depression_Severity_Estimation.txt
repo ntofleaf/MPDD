@@ -1,0 +1,1439 @@
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+2649
+Multimodal Local Global Interaction Networks for
+Automatic Depression Severity Estimation
+Mingyue Niu , Zhuhong Shao, Yongjun He, Member, IEEE, Jianhua Tao, Senior Member, IEEE,
+and Bj¨orn W. Schuller , Fellow, IEEE
+Abstract—Physiological studies have shown that diﬀerences
+between depressed and healthy individuals are manifested in the
+audio and video modalities. Hence, some researchers have com-
+bined local and global information from audio or video modality
+to obtain the unimodal representation. Attention mechanisms or
+Multi-Layer Perceptrons (MLPs) are then used to complete the
+fusion of diﬀerent representations. However, attention mecha-
+nisms or MLPs is essentially a linear aggregation manner, and
+lacks the ability to explore the element-wise interaction between
+local and global representations within and across modalities,
+which aﬀects the accuracy of estimating the depression severity.
+To this end, we propose a Representation Interaction (RI) module,
+which uses the mutual linear adjustment to achieve element-
+wise interaction between representations. Thus, the RI module
+can be seen as an mutual observation of two representations,
+which helps to achieve complementary advantages and improve
+the model’s ability to characterize depression cues. Furthermore,
+since the interaction process generates multiple representations,
+we propose a Multi-representation Prediction (MP) module.
+This module implements multi-representation vectorization in a
+hierarchical manner from summarizing a single representation
+to aggregating multiple representations, and adopts the attention
+mechanism to obtain the estimation of an individual depression
+severity. In this way, we use the RI and MP modules to construct
+Received 12 March 2025; revised 2 June 2025, 8 July 2025, and 1 Septem-
+ber 2025; accepted 18 September 2025. Date of publication 22 September
+2025; date of current version 5 February 2026. This work was supported
+in part by the Basic Innovation and Scientiﬁc Research Cultivation Project
+of Yanshan University under Grant 2023LGQN006, in part by the National
+Natural Science Foundation of China under Grant 62576302 and Grant
+62473111, in part by Hebei Natural Science Foundation of China under
+Grant F2025203083, and in part by the S&T Program of Hebei under Grant
+246Z5309G. This article was recommended by Associate Editor S. T. Kim.
+(Corresponding author: Jianhua Tao.)
+Mingyue Niu is with the School of Information Science and Engineer-
+ing, Yanshan University, Qinhuangdao, Hebei 066004, China, and also
+with the Key Laboratory for Computer Virtual Technology and System
+Integration of Hebei Province, Qinhuangdao 066004, China (e-mail: nium-
+ingyue@ysu.edu.cn).
+Zhuhong Shao is with the College of Information Engineering, Capital
+Normal University, Beijing 100048, China, and also with Beijing Engineering
+Research Center of Highly Reliable Embedded System, Beijing 100048, China
+(e-mail: zhshao@cnu.edu.cn).
+Yongjun He is with the School of Computer Science and Tech-
+nology, Harbin Institute of Technology, Harbin 150001, China (e-mail:
+heyongjun@hit.edu.cn).
+Jianhua Tao is with the Department of Automation, Tsinghua University,
+Beijing 100190, China, and also with the School of Artiﬁcial Intelligence,
+University of Chinese Academy of Sciences, Beijing 100049, China (e-mail:
+jhtao@tsinghua.edu.cn).
+Bj¨orn W. Schuller is with the ZD.B Chair of Embedded Intelligence
+for Health Care and Wellbeing, University of Augsburg, 86159 Augs-
+burg, Germany, and also with the Group on Language, Audio, and Music
+(GLAM), Imperial College London, SW7 2AZ London, U.K. (e-mail:
+bjoern.schuller@imperial.ac.uk).
+Digital Object Identiﬁer 10.1109/TCSVT.2025.3612697
+the Multimodal Local Global Interaction (MLGI) network. The
+experimental performance on AVEC 2013 and AVEC 2014
+depression datasets demonstrates the eﬀectiveness of our method.
+Index Terms—Multimodal depression severity estimation, local
+and global representations, interaction.
+I. INTRODUCTION
+C
+URRENTLY, with the increase of uncertain factors, peo-
+ple have to bear more psychological pressure than before.
+Chronic psychological stress can cause individuals to develop
+mental illnesses. Among these diseases, depression is a mental
+disorder that cannot be ignored. Some studies [1], [2] have
+shown that depression can take away a person’s enjoyment
+of life and cause serious damage to physical and mental
+health. More regrettably, the diagnosis of depression lacks a
+gold standard and relies on the results of a joint consultation
+with experienced doctors. As a result, the complexity of the
+diagnostic process not only accelerates physician fatigue but
+also makes it diﬃcult for many patients to understand their
+condition in a timely manner. Therefore, the use of AI tech-
+nology to assist doctors in making diagnoses would go a long
+way towards improving the current healthcare environment.
+What gives hope is that physiological studies have shown
+diﬀerences in audio [3], [4] and video [5], [6] modalities
+between depressed and healthy individuals. Those facts pro-
+vide a feasibility guarantee for estimating an individual’s
+depression severity by examining speech signals and facial
+dynamics. Therefore, many researchers have proposed vari-
+ous methods [7], [8], [9], [10], [11], [12], [13] to capture
+depression cues from audio and video modalities to predict
+BDI-II scores, which are used to quantify an individual’s
+depression level as shown in Table I. Those works tend to
+extract unimodal features and then use diﬀerent fusion strate-
+gies to achieve multimodal depression severity estimation.
+For unimodal feature extraction, the works of [7], [8], [9],
+[10], and [11] adopt Convolutional Neural Networks (CNN)
+to obtain the representation of depression cues. Moreover,
+the methods in [12] and [13] combine local and global
+information to obtain unimodal features for enhancing the
+characterization of depression cues. For multimodal feature
+fusion, those works employ the attention mechanism [8], [9],
+[10], [11], [13], element-wise multiplication [7] or Multi-Layer
+Perceptrons (MLPs) [12] to complete the mixture of diﬀerent
+representations. However, attention mechanisms or MLPs are
+essentially a linear aggregation process, which is insuﬃcient
+1051-8215 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and
+similar technologies. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2650
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+TABLE I
+BDI-II SCORE RANGES AND CORRESPONDING DEPRESSION DEGREES
+to achieve interaction between diﬀerent representations. In
+fact, for the representations of A and B (one token per row),
+although the attention mechanism linearly aggregates the rows
+of A using the weights generated by B (i.e., A · WB, where
+WB is produced by B), this manner is an operation at the
+token level and is weak in reﬂecting the impact of B on each
+element of A. Similarly, the linear combination implemented
+by MLPs on A and B is not suﬃcient to reﬂect the impact
+of B on the all elements of A. Besides, the above works also
+lack the exploration of the interaction between local and global
+representations within and across modalities. Therefore, those
+previous methods are limited in achieving complementary
+advantages of various depression cue representations from
+diﬀerent modalities.
+To alleviate the above problems, we construct a Multi-
+modal Local Global Interaction (MLGI) network to estimate
+an individual’s depression severity via audio and video
+modalities. In our model, two novel modules are proposed,
+namely the Representation Interaction (RI) and the Multiple-
+representation Prediction (MP) modules.The RI module uses
+the representation A (B) to generate the coeﬃcient wA (wB)
+and bias bA (bB) to linearly adjust each element in representa-
+tion B (A), i.e., B⊙wA ⊕bA (A⊙wB ⊕bB), where ⊙and ⊕are
+element-wise multiplication and addition, respectively. In this
+way, the RI module achieves the interaction between A and
+B at the element level. In fact, the mutual linear adjustment
+between sequences in the RI module is a way to achieve
+element-wise interaction. Thus, we can use the RI module to
+enable interactions between local and global representations
+within and across modalities, which not only promotes the
+complementary advantages of diﬀerent representations but also
+improves the model’s ability to characterize depression cues.
+During the execution of RI module, multiple representations
+are generated. The MP module is able to summarize each rep-
+resentation as a vector and use a linear layer to aggregate the
+summary vectors of diﬀerent representations. Furthermore, the
+attention mechanism is adopted to obtain the depression sever-
+ity estimation result for multiple representations. Thus, the
+MP module is a process for implementing multi-representation
+vectorization in a hierarchical manner and estimating BDI-II
+scores.
+In this way, we can estimate the depression severity of an
+individual via several steps: First, we gain the Mel-Frequency
+Cepstral Coeﬃcients (MFCC) of a subject’s long-term speech
+signal and divide it into MFCC segments with a ﬁxed size.
+Similarity, we divide the subject’s long-term facial video into
+segments with a ﬁxed length and encode the frames in the
+video segments with a pre-trained ResNet50. Second, those
+MFCC segments and encoded video segments are fed into the
+constructed MLGI network to obtain BDI-II scores. Finally,
+the average of those predicted BDI-II scores from the segments
+is viewed as the depression severity estimation result for
+the corresponding subject. Experiments on two benchmark
+datasets i.e., Audio/Video Emotion Challenge (AVEC) 2013
+[14] and AVEC 2014 [15] show that our method is eﬀective
+on the task of multimodal automatic depression severity esti-
+mation. Our contribution can be summarized as follows:
+(1) Our proposed RI module examines the impact of one
+representation on each element of the other representation
+in a mutually linear adjustable manner, thereby achieving
+interaction between the two representations. Furthermore, we
+use the RI module to complete the interaction between local
+and global representations within and across modalities, which
+is beneﬁcial for the complementary advantages of diﬀerent
+representations and improves the model’s ability to character-
+ize depression cues.
+(2) Our proposed MP module implements vectorization on
+multiple representations in a hierarchical manner by aggregat-
+ing the summary results from each representation and adopts
+the attention mechanism to obtain the estimation of depression
+severity.
+(3) We construct an end-to-end multimodal depression
+severity estimation model i.e. MLGI network using RI and
+MP modules. Experimental results on two benchmark datasets
+not only demonstrate the eﬀectiveness of MLGI network,
+but also show that interactions between local representations
+across modalities are better able to capture diﬀerences between
+individuals with diﬀerent depression levels than interactions
+between other representations.
+II. RELATED WORKS
+In this paper, we construct the MLGI network to estimate
+an individual’s depression severity by examining local and
+global representations of audio and video modalities. Thus,
+some relevant research works be brieﬂy reviewed.
+A. Combination of Local and Global Information
+Architectural design approaches that combine local and
+global information to enhance the perception ability of the
+model have been widely adopted [16], [17], [18], [19], [20].
+Considering the strengths of CNN and Transformer to model
+local and global dependencies of data, Gulati et al. [21]
+designed an architecture called Conformer to concatenate
+Multi-Head Self-Attention (MHSA) and convolution module
+to improve the accuracy of speech recognition. Similarly,
+Peng et al. [22] proposed a network architecture also named
+Conformer in the ﬁeld of image processing. The model was
+designed with a CNN branch and a Transformer branch, and
+the coupling between those two branches was accomplished
+by down-sampling and up-sampling operations. Dai et al. [23]
+considered the advantages of CNN and Transformer in
+terms of generalization and modeling capabilities, respectively.
+Therefore, they used the relative attention to unify CNN and
+Transformer into one basic computational module to enhance
+the model’s representation ability.
+In the work of [24], Li et al. argued that CNNs, while
+reducing computational redundancy, could only examine local
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2651
+neighborhoods. On the contrary, the tranformer is able to
+capture global dependencies despite its high redundancy.
+Therefore, to integrate the merits of convolutional layers and
+self-attention into a concise form, they proposed a Uniﬁed
+transFormer model. In the shallow layers of this model, a
+small matrix with learnable parameters was used to capture the
+local token aﬃnity and reduced the computational redundancy
+in the process of aggregating the contextual content of the
+local regions. With the same consideration, Guo et al. [25]
+used Depth-Wise Convolution (DWC) to reduce the spatial
+resolution of the data and injected the results into the self-
+attention mechanism to balance the representation ability and
+computational cost. Similarly, Wu et al. [26] also used DWC to
+reduce the dimensionality of tokens in the self-attention mech-
+anism for ﬁnding a trade-oﬀbetween local-global information
+extraction and computational cost.
+From the above works, we can see that the combination
+of local and global information improves the model’s perfor-
+mance on the target tasks. However, the above methods mainly
+adopt sequential connections of the convolutional module and
+MHSA to achieve the interaction between local and global
+representations, which makes it diﬃcult to examine the impact
+of local (global) representations on every element of global
+(local) representations.
+B. Multimodal Depression Severity Estimation
+In recent years, the research on multimodal-based automatic
+depression severity estimation has received increasing atten-
+tion. The method proposed by Chordia et al. [27] contained
+two streams. For the visual stream, the pre-trained VGG-
+Face model was used to encode all the frames. The Feature
+Dynamic History Histogram (FDHH) algorithm was to capture
+the dynamic patterns related to depression. Singular Value
+Decomposition (SVD) was applied to reduce the dimension-
+ality. For the audio stream, they extracted the Mel-frequency
+cepstral coeﬃcients (MFCCs), zero-crossing, and short-term
+energy features. Finally, the estimation of depression severity
+was obtained by a decision-level fusion strategy. Fan et al. [11]
+adopted CNNs to extract the high-level audio and video
+features. Then, multiple Transformers were used to capture
+the dynamics among each time step within and between
+modalities. Finally, they used the graph neural network and
+fully connected layers for multimodal fusion and BDI-II
+score prediction, respectively. Considering the global temporal
+properties of audio and video data, Li et al. [10] proposed a
+cross-modal fusion network. This model examined the global
+information of the audio and video representations using
+the self-attention mechanism, and obtained the multimodal
+depression cue representation in the form of feature weighting.
+In order to take into account the spatio-temporal properties
+of audio and video data in the depression severity estimation
+task, Uddin et al. [7] combined CNN and LSTM to extract
+unimodal features. Then, they implemented multimodal fusion
+through sum pooling and obtained the estimation result with
+a fully connected layer. Similarly, in [9], the authors extracted
+audio and video spatio-temporal features by using a combina-
+tion of CNN and LSTM. Moreover, a cross-modal attention
+module was used to achieve inter-modal complementarity and
+Fig. 1.
+The complete ﬂowchart of our constructed MLGI network for
+automatic depression severity estimation. “R” refers to encoding video
+segments into sequences using the pre-trained ResNet50. “bXA” and “bXV”
+denote the representations of MFCC segment and video segment, respectively.
+“LRE” and “GRE” are short for Local Representation Extraction and Global
+Representation Extraction. The whole estimation process consists of three
+steps: (a) the long-term MFCC and video are divided into ﬁxed-size segments;
+(b) our constructed MLGI network is used to estimate the BDI-II scores
+of the MFCC and video segments; and (c) the average value of scores of
+those segments is the judgment of depression severity for the corresponding
+individual. The loss function is Root Mean Square Error (RMSE).
+fusion. To enhance the representation of depression cues,
+Wei et al. [12] used convolutional layers to extract local
+features of audio and video modalities, and then achieved
+multimodal fusion through concatenation operations. Finally,
+they used the attention mechanism to embed the global infor-
+mation into the multimodal representation and linear layers to
+obtain the prediction result. Likewise, Zhou et al. [13] used
+the attention mechanism to embed the global information into
+unimodal representations extracted with convolutional layers.
+Moreover, they achieved the multimodal fusion through the
+concatenation operation and fully connected layers.
+As mentioned above, previous works lack the examination
+of interaction relationship between local and global repre-
+sentations within and across modalities. Hence, the above
+approaches are inadequate in terms of achieving complemen-
+tary advantages of diﬀerent representations, which aﬀects the
+model’s ability to capture depressive cues from audio and
+video modalities.
+III. OUR MULTIMODAL LOCAL GLOBAL INTERACTION
+NETWORK FOR ESTIMATING DEPRESSION SEVERITY
+In this paper, our MLGI network is constructed to estimate
+an individual’s depression severity through audio and video
+modalities. Speciﬁcally, we ﬁrst divide the MFCC extracted
+from the long-term speech signal and facial video into MFCC
+and video segments with ﬁxed sizes. Then, those MFCC and
+video segments are fed into our constructed MLGI network to
+obtain estimates of BDI-II scores. Finally, the average of those
+estimated scores is regarded as the judgment of depression
+severity for the corresponding individual. Fig. 1 shows the
+complete ﬂowchart of our method. As can be seen from the
+Fig. 1, RI and MP modules are the two main components
+of the architecture. Therefore, in the following section, we
+present the details of those two modules.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2652
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Fig. 2. Local representation extraction process for XA and XV.
+Fig. 3. Global representation extraction process for XA and XV.
+A. Local and Global Representations Extraction for MFCC
+and Video Segments
+As mentioned earlier, we examine the interaction between
+local and global representations within and across modalities
+to enhance the model’s ability to characterize depression cues.
+Thus, in this section, we describe the process of extract-
+ing local and global representations for audio and video
+modalities.
+For the audio modality, we extract the MFCC of a long-term
+audio and divide it into MFCC segments with ﬁxed length. In
+this paper, a MFCC segment is denoted as bXA ∈RDA×bTA,
+where DA and bTA refer to the number of frequency bands
+and frames, respectively. Next, for balancing the computational
+eﬃciency, we use a “Conv2D 1” layer, as shown in Fig. 1, to
+merge the adjacent frames of bXA. The corresponding result is
+denoted as XA ∈RDA×TA(TA < bTA). Fig. 2 and Fig. 3 show the
+extracting process of obtaining local and global representations
+for XA. Speciﬁcally, we use Eq. (1) to extract local information
+at diﬀerent scales, namely X1
+A, X2
+A, X3
+A. Then, Eq. (2) is used
+to aggregate X1
+A, X2
+A, X3
+A to obtain the local representation of
+XA. The corresponding result is recorded as XAL. Besides,
+as shown in Eq. (3), we use the small kernel convolution
+to transform XA to generate KA, QA and VA. Moreover,
+Eq. (4) is used to obtain the global representation of XA. The
+corresponding result is recorded as XAG.
+8
+ˆ<
+ˆ:
+X1
+A = δ
+ C2
+ XA; k1
+A
+
+∈RDA×TA×CA
+X2
+A = δ
+ C2
+ XA; k2
+A
+
+∈RDA×TA×CA
+X3
+A = δ
+ C2
+ XA; k3
+A
+
+∈RDA×TA×CA
+(1)
+where C2(X; k) refers to processing X using a 2D convolutional
+layer with a kernel size of k. δ(·) is the ReLU activation
+function. CA is the number of channels.
+XAL = δ(C2(Concat(X1
+A, X2
+A, X3
+A))) ∈RDA×TA,
+(2)
+where Concat(·, ·, ·) refers to the concatenation operation
+along the channel dimension.
+8
+ˆ<
+ˆ:
+KA = δ (C2 (XA; kK)) ∈RDA×TA
+QA = δ
+ C2
+ XA; kQ
+
+∈RDA×TA
+VA = δ (C2 (XA; kV)) ∈RDA×TA
+(3)
+XAG = VA · Softmax
+(KA)⊤· QA
+√DA
+
+∈RDA×TA.
+(4)
+For the video modality, we divide a long-term video into
+short-term video segments. In this paper, each frame in a
+video segment is encoded using the pre-trained ResNet50
+on the ImageNet dataset. It should be noted that the BDI-
+II score estimation is a regression task. Therefore, as in [28],
+[29], and [30], we use the Euclidean loss as the objective
+function instead of using the Softmax layer with ReLU in the
+architecture of ResNet50. Therefore, a video segment can be
+encoded into a sequence bXV ∈RbDV×TV, where bDA and TA
+refer to the number of dimension and frames, respectively.
+Moreover, we use the “Conv2D 2” layer in Fig. 1 to reduce
+the dimensionality of bXV and obtain the XV
+∈RDV×TV
+(DV < bDV). Similarity, we process XV according to the
+procedure of extracting local and global representations shown
+in Fig. 2 and Fig. 3. The corresponding results are denoted as
+XVL ∈RDV×TV and XVG ∈RDV×TV.
+B. The Representation Interaction Module
+Based on the above steps, we get four representations i.e.
+XAL, XAG, XVL and XVG. Therefore, it is necessary to perform
+the two-by-two interaction of those four representations to
+enhance the model’s ability to characterize depression cues. To
+this end, we propose the RI module to achieve element-wise
+interaction between two representations through the mutual
+linear adjustment. For the sake of brevity, in the process
+of describing the RI module, we use X1 ∈RD1×T1 and
+X2 ∈RD2×T2 to denote the two representations to be interacted.
+Fig. 4 illustrates the ﬂowchart of our proposed RI module.
+For the linear adjustment of X1 to X2, we perform a row
+transformation on X1 to obtain P2 as shown in Eq. (5).
+Next, we perform a column transformation on P2 according
+to Eq. (6) to obtain Q2. The bias term b2 of linear adjustment
+can then be generated through Eq. (7). Similar to the above
+process, the coeﬃcient term w2 ∈RD2×T2 of linear adjustment
+can also be produced following Eq. (5)
+to Eq. (7). In this
+way, we can complete the linear adjustment of X1 to X2 using
+Eq. (8). The corresponding result is denoted as bYX1→X2.
+P2 = δ(C1(X1)) ∈RD1×T2,
+(5)
+where C1(·) is the 1-dimensional convolutional layer, δ(·) is
+the ReLU activation function.
+Q2 = δ(C1(P⊤
+2 )) ∈RT2×D2,
+(6)
+where ⊤refers to matrix transpose.
+b2 = NLN(Q⊤
+2 ) ∈RD2×T2,
+(7)
+where NLN(·) is the LayerNormalization layer.
+bYX1→X2 = X2 ⊙w2 ⊕b2 ∈RD2×T2,
+(8)
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2653
+Fig. 4.
+Our proposed RI module. “⊕” and “⊙” refer to element-wise addition and element-wise multiplication, respectively. “LN” refers to the Layer-
+Normalization layer. “⊎” is deﬁned as Eq. (10).
+where “⊙” and “⊕” refer to element-wise multiplication and
+element-wise addition, respectively.
+Furthermore, to balance the original representation and the
+linear adjustment result, we concatenate X2 and bYX1→X2 and
+input them into a 2-dimensional convolutional layer to obtain
+CX1→X2, as shown in Eq. (9). Next, Eq. (10) is used to
+aggregate X2 and bYX1→X2. The corresponding result is denoted
+as YX1→X2. Analogous to the linear adjustment of X1 to X2,
+we can also complete the linear adjustment of X2 to X1 and
+record the corresponding result as YX2→X1 ∈RD1×T1.
+CX1→X2 = γ(C2(Concat(bYX1→X2, X2))) ∈RD2×T2×2,
+(9)
+where Concat(·, ·) refers to concatenating along the channel
+dimension. C2(·) is the 2-dimensional convolutional layer. γ(·)
+is a Softmax function along the channel dimension.
+YX1→X2 = ⊎
+
+CX1→X2, X2, bYX1→X2
+
+≜(C1
+X1→X2 ⊙X2) ⊕(C2
+X1→X2 ⊙bYX1→X) ∈RD2×T2,
+(10)
+where C1
+X1→X2 (C2
+X1→X2) is the ﬁrst (second) channel of
+CX1→X2.
+After the calculation process of the RI module is deter-
+mined, we replace X1 and X2 in Fig. 4 with XAL and
+XAG respectively to achieve the interaction between audio
+local representation and the audio global representation. The
+corresponding results are denoted as YAL→AG ∈RDA×TA and
+YAG→AL ∈RDA×TA. Through the pairwise interaction, we can
+obtain 12 interaction results. To avoid confusion, Table II lists
+all the representations.
+From the above process, it is not diﬃcult to see that
+the proposed RI module is able to use one representation
+to linearly adjust each element of another representation. In
+other words, the RI module embodies the interaction between
+representations on each elements. Therefore, the RI module
+can also be seen as completing the mutual observation between
+local and global representations within and across modalities,
+which promotes complementary advantages and the capture of
+depression cues.
+TABLE II
+NOTATIONS, DIMENSIONS, AND DESCRIPTIONS FOR DIFFERENT
+TYPES OF REPRESENTATIONS
+C. The Multi-Representation Prediction Module
+As mentioned above, we utilize the RI module to achieve
+the interaction between diﬀerent representations and obtain
+multiple results in Table II. Therefore, how to aggregate those
+representation results to estimate the BDI-II scores becomes
+an issue to be considered. For this purpose, we propose the
+MP module, whose ﬂowchart is displayed in Fig. 5.
+The input of MP module is 16 representations as listed in
+Table II. In this paper, we classify those 16 representations into
+4 classes: (XAL, YAG→AL, YVL→AL, YVG→AL), (XAG, YAL→AG,
+YVL→AG, YVG→AG), (XVL, YAL→VL, YAG→VL, YVG→VL) and
+(XVG, YAL→VG, YAG→VG, YVL→VG). It should be noted that
+four representations in each class have the same size. Besides,
+our proposed MP module mainly utilizes four representations
+of each class to estimate the BDI-II score. For simplicity,
+we use S1 ∈RDS×TS, S2 ∈RDS×TS, S3 ∈RDS×TS and
+S4 ∈RDS×TS instead of the four representations in each class
+to describe the main function of the MP module. In this way,
+we use Eq. (11) to summarize the temporal changes of each
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2654
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Fig. 5. Our proposed MP module. “⊗” refers to the matrix multiplication operation. “FC” is an acronym for Fully Connected layer.
+dimension of Si (i = 1, 2, 3, 4) to obtain the ri (i = 1, 2, 3, 4).
+Moreover, as in Eq. (12), r1, r2, r3 and r4 are concatenated
+and aggregated through a one-dimensional convolution layer.
+The corresponding result is denoted as r.
+ri = δ(C1(Si)) ∈RDS×1, (i = 1, 2, 3, 4).
+(11)
+r = C1(Concat(r1, r2, r3, r4)) ∈RDS×1,
+(12)
+where Concat(·, ·, ·, ·) refers to concatenating along the col-
+umn dimension.
+From the above process, r can be considered as the aggre-
+gation result of S1, S2, S3 and S4. Therefore, we use Eq. (13)
+to obtain the estimated BDI-II score for each dimension of r.
+The result is recorded as rB. It is necessary to point out that
+since the range of BDI-II score is 0-63, we use the Sigmoid
+function to transform the value of r on each dimension to the
+[0, 1] interval and multiply by 63. Next, as shown in Eq. (14),
+we fuse the estimated BDI-II scores for each dimension of rB
+through the attention mechanism.
+rB = 63 × σ(r) ∈RDS×1,
+(13)
+where σ(·) is the Sigmoid activation function.
+s = rB
+⊤· Softmax(C1(C1(rB))) ∈R1×1.
+(14)
+After the calculation process of the MP module is deter-
+mined, we replace (S1, S2, S3, S4) with (XAL, YAG→AL,
+YVL→AL, YVG→AL) or (XAG, YAL→AG, YVL→AG, YVG→AG)
+or (XVL, YAL→VL, YAG→VL, YVG→VL) or (XVG, YAL→VG,
+YAG→VG, YVL→VG) to obtain the corresponding scores, denoted
+as (sAL, sAG, sVL, sVG). Moreover, a fully connected layer is
+used to process the concatenation results of (sAL, sAG, sVL,
+sVG) to obtain the estimated BDI-II score for the combination
+of a MFCC segment and a video segment.
+From the above description, one can observe that the
+proposed MP module implements multi-representation vec-
+torization and BDI-II score estimation though a hierarchical
+manner and the attention mechanism. In addition, each value
+of rB can be seen as an estimate of the BDI-II score for
+each dimension of the aggregation result of multiple repre-
+sentations. Therefore, the MP module can also be seen as the
+process of estimating BDI-II scores using decision-level fusion
+strategies.
+IV. EXPERIMENTS AND ANALYSIS
+Our MLGI network will be validated through some experi-
+ments on the AVEC 2013 and AVEC 2014 depression datasets.
+Therefore, in this section, we ﬁrst brieﬂy describe the collec-
+tion process of those two datasets and give the network layer
+details in the MLGI network. Then, some ablation experiments
+are conducted to demonstrate the eﬀectiveness of our proposed
+RI and MP modules. Finally, the comparison with previous
+works shows the progressiveness of our method.
+A. Dataset Description
+In the 2013 and 2014 Audio/Video Emotion Challenge,
+Valstar et al. [14], [15] set up a sub track to estimate the
+depression severity of an individual through audio and video
+modalities, and publicly disclosed the datasets used in the
+competition. In the following years, other depression datasets
+[31], [32], [33], [34], [35] also are released. However, they
+don’t provide the original video data. Therefore, we only
+conduct experiments on the AVEC 2013 and AVEC 2014
+depression datasets.
+As for the AVEC 2013 depression dataset, the 82 partic-
+ipants are asked to complete 14 diﬀerent human-computer
+interaction tasks. During this process, the subjects sit in front
+of a computer and complete the corresponding tasks according
+to the instructions on the screen. While those participants
+complete the tasks, the microphone and camera are used to
+record the audio and video content they produce. Under such
+experimental settings, 150 samples are collected from those
+82 subjects, with durations ranging from 20 minutes to 50
+minutes. And those 150 samples are divided into three equal
+parts by the publishers: training, development, and test sets. It
+should be noted that the 82 participants are all native German
+speakers, with an age range of 18 to 63. In addition, those
+participants need to ﬁll out the BDI-II scale before completing
+the tasks, and the scale scores are the labels of participants.
+As for the AVEC 2014 depression dataset, it comes from
+the AVEC 2013 depression dataset. That is to say, the AVEC
+2014 dataset has the same audio/video collection settings and
+subject conditions as AVEC 2013. Diﬀerently, the AVEC 2014
+dataset only include data on participants completing two tasks
+(named “Northwind” and “FreeForm”). In each task, there
+are 150 samples with a duration ranging from 6 seconds
+to 4 minutes. In addition, the publisher evenly divide those
+150 samples for each task into three equal parts: training,
+development, and test sets. It should be noted that, in our
+experiment, we merge the data from two tasks. Therefore, the
+merged dataset (still known as AVEC 2014 dataset) has 100
+samples for training, development, and test, respectively.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2655
+When the AVEC 2013 and AVEC 2014 datasets are
+released, the publishers use Root Mean Square Error (RMSE)
+and Mean Absolute Error (MAE) as evaluation metrics for
+diﬀerent depression severity estimation algorithms. After-
+wards, many researchers also use those two metrics to
+illustrate the eﬀectiveness of their methods. In this paper, to
+comprehensively evaluate the eﬀectiveness of our proposed
+modules, we also use Pearson Correlation Coeﬃcient (PCC)
+and Concordance Correlation Coeﬃcient (CCC) in the ablation
+experiments. Due to the familiarity of the formulas for RMSE
+and MAE, we only provide the formulas for PCC and CCC
+in Eqs. (15) and (17).
+PCC =
+PK
+k=1 (yk −µ)
+ byk −bµ
+
+qPK
+k=1 (yk −µ)2 ·
+qPK
+k=1
+ byk −bµ
+,
+(15)
+where µ and bµ can be calculate via Eq. (16).
+(
+µ = 1
+K
+PK
+k=1 yk
+bµ = 1
+K
+PK
+k=1 byk
+,
+(16)
+where yk and byk (k = 1, 2, · · · , K) are the true and predicted
+BDI-II scores. K is the number of samples.
+CCC =
+2 · PCC · η ·bη
+η2 +bη2 +
+ µ −bµ
+2 ,
+(17)
+where η and bη can be calculate via Eq. (18).
+8
+ˆˆˆˆˆˆ<
+ˆˆˆˆˆˆ:
+η =
+v
+u
+u
+t 1
+K
+K
+X
+k=1
+(yk −µ)2
+bη =
+v
+u
+u
+t 1
+K
+K
+X
+k=1
+(byk −bµ)2
+(18)
+B. Preprocessing and Model Settings
+1) Data Preprocessing: As mentioned earlier, this paper
+uses audio and video data to estimate the depression severity
+of participants. During the data preprocessing process, we
+resample the audio of the AVEC 2013 and AVEC 2014
+depression datasets using a frequency of 8KHZ. Furthermore,
+as shown in the experimental results of [29] and [30], the
+best accuracy is achieved when the sampling rate is 6fps.
+Therefore, we adjust the video frame rate of the samples
+in the AVEC 2013 and AVEC 2014 datasets from 30fps to
+6fps using Format Factory software. In this way, the audio
+of each sample is ﬁrst extracted and its corresponding MFCC
+are obtained. Meanwhile, the mean and standard deviation of
+each dimension of MFCC are calculated, denoted as µM and
+ηM. Then, a window with 3 seconds is used to divide a long-
+term video into short-term video segments with 18 frames.
+Note that the repetition rate of adjacent two video segments is
+50%. Moreover, each frame in the video segment is adjusted
+to 224 × 224 pixels and input into the trained ResNet50 to
+obtain the encoding result of the frame. Therefore, a video
+segment with 18 frames (3 seconds) can be encoded into a
+representation bXV ∈R2048×18. In addition, we extract the audio
+from each video segment to obtain the corresponding MFCC,
+which is normalized using µM and ηM. Therefore, the MFCC
+of an audio segment is obtained, i.e. bXA ∈R39×517.
+TABLE III
+NETWORK LAYER PARAMETER SETTINGS IN OUR PROPOSED MODULES.
+“NF” AND “KS” ARE ABBREVIATIONS FOR NUMBER OF FILTERS AND
+KERNEL SIZE, RESPECTIVELY. THERE ARE TWO SIZES FOR ALL
+REPRESENTATIONS TO BE INTERACTED WITH, SO THERE ARE
+TWO PARAMETER SETTINGS FOR THE CONV1D
+LAYERS IN THE RI MODULE
+2) The Architecture of MLGI Network: In this paper, we
+construct the MLGI network to estimate the depression sever-
+ity of an individual through audio and video modalities. In
+the constructed MLGI network, RI and MP modules are the
+two main components. Fig. 1 shows the architecture of our
+MLGI network. Fig. 4 and Fig. 5 show the structure of RI and
+MP modules. Table III provides the parameter settings for the
+corresponding network layers. Note that the RI module needs
+to be repeated 3 times.
+The RMSE is used as the loss function when training our
+MLGI network. In this paper, we use the Keras deep learning
+framework to implement model training. And Adam is used
+as the optimizer with default momentum values of β1 = 0.9
+and β2 = 0.999. The weight decay is set as 0.0001, and the
+learning rate is initialized to 0.00015.
+C. Ablation Experiments and Analysis
+As mentioned earlier, we construct the MLGI network to
+estimate the depression severity of an individual. In our model,
+RI and MP modules are proposed. Thus, in this section,
+we illustrate the eﬀectiveness of components involved in our
+method through some ablation experiments.
+1) Eﬀectiveness of RI Module: To enable the interaction of
+local and global representations, we propose the RI module. In
+this subsection, some ablation experiments are done to show
+that the RI module is eﬀective for enhancing the model’s
+ability to characterize depressive cues. Table IV presents
+corresponding metric results.
+As can be seen from the results in Table IV, for the single
+modality situation, XAL has better experimental performance
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2656
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+TABLE IV
+THE METRIC RESULTS OF BDI-II SCORE ESTIMATION USING DIFFERENT REPRESENTATIONS ON THE AVEC 2013 AND AVEC 2014 DEVELOPMENT
+SETS. “1” REFERS TO THE REPRESENTATION IN TABLE II WITH AN INDEX VALUE OF 1, I.E., XAL. THE OTHER NUMBERS IN THE FIRST COLUMN
+HAVE THE SIMILAR MEANINGS. “1-16” REFERS TO THE REPRESENTATIONS IN TABLE II WITH INDEX VALUES FROM 1 TO 16
+compared to XAG. This result indicates that the diﬀerences in
+audio modality among individuals with diﬀerent depression
+levels are more reﬂected in the local change of frequency
+bands. Interestingly, for the video modality, there are similar
+situations as well. Moreover, it can be seen that YAL→AG
+(YVL→VG) has better prediction accuracy than XAG (XVG).
+This is because XAL (XVL) has a stronger ability than XAG
+(XVG) to characterize depression cues. Therefore, the linear
+adjustment of XAL to XAG brings about the improvement in
+prediction accuracy. The similar explanation can also be used
+for the comparison of YVL→VG and XVG. In addition, YAG→AL
+(YVG→VL) has better metric values than XAL (XVL). The reason
+is that our proposed RI module integrates bYAG→AL and XAL
+(bYVG→VL and XVL) using Eq. (10). In other words, YAG→AL
+(YVG→VL) is the result of the complementary advantages of
+bYAG→AL and XAL (bYVG→VL and XVL), which leads to the
+improvement in terms of metrics. Of course, it can be inferred
+that (XAL, XAG) has better prediction accuracy compared to
+XAL or XAG, indicating that the combination of local and
+global representations of audio is eﬀective in helping the
+model capture the information related to depression. The fact
+that (XAL, XAG, YAG→AL, YAL→AG) can further improve the
+experimental performance indicates that the mutual linear
+adjustment between local and global representations is nec-
+essary for the task of estimating the severity of depression.
+Similar analysis also can be applies to the video modality.
+For the multimodal situation, we ﬁnd that YAL→VL has
+better experimental performance compared to XVL. In the
+processing of generating YAL→VL, on the one hand, we achieve
+the element-wise adjustment of audio to video (i.e., bYAL→VL)
+through the linear transformation of XAL to XVL. On the other
+hand, the RI module uses the attention mechanism as shown
+in Eq. (10) to highlight the useful elements in the bYAL→VL
+and XVL. That is to say, YAL→VL obtains eﬀective information
+compensation across modalities. In addition, the prediction
+of YAG→VL is not as good as that of YAL→VL, mainly due
+to the inferior performance of XAG in estimating individual
+BDI-II scores compared to XAL. Similar explanations can
+also be applied to the comparison of YAG→VG and YAG→VL.
+Moreover, (XAL, XAG, XVL, XVG) achieves good experimental
+performance. This result is indicates that the fusion of local
+and global representations of audio and video modalities is
+feasible in estimating the depression severity of an individ-
+ual. As expected, the metrics have been further improved
+by combining local and global interaction representations of
+diﬀerent modalities. This fact also indicates that the interaction
+results obtained using our proposed RI module is beneﬁcial for
+helping the model capture depressive cues.
+In order to show that the RI module can better realize the
+interaction between diﬀerent representations than the attention
+mechanism, we use cross attention instead of the RI module
+to conduct ablation experiments. It should be noted that the
+similar representations with indexes of 5 to 16 in Table II
+can also be obtained through the cross attention. In order to
+show that the RI module can better realize the interaction
+between diﬀerent representations than MLPs, we directly
+concatenate diﬀerent representations and use fully connected
+layers to predict BDI-II scores. The corresponding experimen-
+tal results are shown in Table V. Obviously, the RI module has
+the best experimental performance in both single mode and
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2657
+TABLE V
+THE METRIC RESULTS OF BDI-II SCORE ESTIMATION USING DIFFERENT MODULES ON THE AVEC 2013 AND AVEC 2014 DEVELOPMENT SETS. FOR
+“RI” PART, “1” REFERS TO THE REPRESENTATION IN TABLE II WITH AN INDEX VALUE OF 1, I.E., XAL. THE OTHER NUMBERS IN THE FIRST
+COLUMN HAVE THE SIMILAR MEANINGS. “1-16” REFERS TO THE REPRESENTATIONS IN TABLE II WITH INDEX VALUES FROM 1 TO 16.
+FOR “CROSS ATTENTION” PART, REPRESENTATIONS OTHER THAN 1-4 CAN BE OBTAINED BY USING THE CROSS
+ATTENTION MECHANISM INSTEAD OF THE RI MODULE. “RI (G)” REFERS TO THE USE OF GATING
+MECHANISMS RATHER THAN LINEAR ADJUSTMENT IN THE RI MODULE
+multi-mode cases. This is because the RI module can realize
+element by element interaction of diﬀerent representations,
+while the attention mechanism and MLPs aggregate tokens
+(not elements) in a linear way, which is not enough to
+make interaction suﬃcient. Similarly, the cross attention is
+also diﬃcult to achieve element-wise interaction between two
+representations, which results in its experimental performance
+being inferior to our proposed RI module. Furthermore, to
+verify the eﬀectiveness of linear adjustment, we conduct exper-
+iments using a gating mechanism as an interaction manner.
+By comparison, we can ﬁnd that the gating mechanism is
+weaker than the linear adjustment. This is because the gating
+mechanism only stimulates or suppresses elements, and is not
+as ﬂexible as linear adjustment.
+To demonstrate the eﬀectiveness of RI module, we give the
+visual presentation of XAL, XAG and their interaction results
+in Fig. 6. It should be noted that we only present the visual
+results of the audio modality here. The video modality is also
+similar. For Fig. 6, the ﬁrst (second) row refers to the audio
+local (global) representation sequences i.e., XAL (XAG) for four
+individuals with diﬀerent depression levels using the module
+shown in Fig. 2 (Fig. 3). The third (fourth) row refers to
+the visual display of YAL→AG (YAG→AL) obtained through the
+linear adjustment of XAL (XAG) to XAG (XAL). By comparing
+the second and third rows (or the ﬁrst and fourth rows) of
+Fig. 6, we can ﬁnd that the linear adjustment can enhance
+discriminative ability. As shown in the third row of Fig. 6, the
+deeper the level of depression, the more yellow areas there
+are. Similar phenomena is diﬃcult to observe in the second
+row of Fig. 6. This result further indicates that our proposed
+RI module can improve the model’s discriminative ability
+and enhance the performance of depression level prediction
+through mutual linear adjustment.
+On the contrary, for individuals with high BDI-II scores,
+there are more yellow parts in YAL→AG than in XAG. The
+reason for this situation is that the linear adjustment of XAL
+to XAG can transform the elements of XAG into a more
+discriminative space. This can also be interpreted to mean
+that observing XAG from the perspective of XAL not only
+enhances the XAG’s ability to characterize depressive cues
+but also achieve the supplementation of XAL to XAG. While,
+from a visual presentation, YAG→AL has weaker discriminative
+power than YAL→AG. The explanation for this result is that
+XAG is weaker XAL in capturing depressive cues, so the
+linear adjustment of XAG to XAL is not as eﬀective as the
+linear adjustment of XAL to XAG. The linear adjustment across
+modalities also has a similar eﬀect. Thus, for the sake of
+simplicity, we do not repeat the presentation.
+2) Eﬀectiveness of MP Module: As shown in Fig. 5, our
+proposed MP module implements multi-representation vec-
+torization in a hierarchical manner that summarizes single
+representation along time direction and aggregates multiple
+representations (as shown in Eq. (11) - Eq. (12)), and then
+adopts the attention mechanism to estimate the BDI-II score.
+Therefore, on the one hand, we investigate the impact of
+summarizing representations on the accuracy of BDI-II score
+prediction in two other scenarios: (1) summarize the represen-
+tation ﬁrst along time and then along dimension as shown
+in Fig. 7 (a); (2) summarize the representation along the
+dimension direction as shown in Fig. 7 (b). Fig. 7 (a) (Fig. 7
+(b)) can be formulated as Eq. (19) - Eq. (20) (Eq. (21) -
+Eq. (22)). On the other hand, we also examine the necessity
+of the attention mechanism in the BDI-II score estimation
+process. The corresponding results are listed in Table VI.
+si = C1
+ (C1 (Si))⊤
+∈R1×1, i = 1, 2, 3, 4.
+(19)
+s = Concat(s1, s2, s3, s4) ∈R4×1.
+(20)
+si = C1
+ S⊤
+i
+
+∈RTS×1, i = 1, 2, 3, 4.
+(21)
+s = C1(Concat(s1, s2, s3, s4)) ∈RTS×1.
+(22)
+From the Table VI, we can see that Fig. 7 (a) has the
+worst metric results. This is because the process shown in
+Fig. 7 (a) summarizes each representation into one element
+and uses linear layers to mix those elements to obtain the
+estimated BDI-II score. Therefore, the prediction method
+shown in Fig. 7 (a) cannot explore the relationship between
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2658
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Fig. 6. Visual presentation of XAL, XAG, YAL→AG, YAG→AL for individuals with diﬀerent depression levels. “320 2 8” refers to the BDI-II score of 8 for
+subjects 320 2. “317 3 17”, “306 2 22” and “234 1 31” also have the same meaning.
+TABLE VI
+THE METRIC RESULTS OF BDI-II SCORE ESTIMATION USING DIFFERENT MULTI-REPRESENTATION PREDICTION
+METHODS ON THE AVEC 2013 AND AVEC 2014 DEVELOPMENT SETS
+frames or dimensions across multiple representations, which
+aﬀects the experimental performance. Unlike this, Fig. 7 (b)
+ﬁrst summarizes the frames of each representation along
+time direction and adopts a linear layer to obtain the frame
+mixing results across diﬀerent representations, which is used
+to estimate the individual’s BDI-II score. Therefore, Fig. 7 (b)
+improve the prediction accuracy. Our proposed MP module as
+shown in Fig. 5 achieves the best metric results. The diﬀerence
+between Fig. 5 and Fig. 7 (b) is that Fig. 5 summarizes
+the representations along the dimension direction. This result
+also indicates that it is more helpful to examine the temporal
+changes of each dimension for estimating the depression
+severity of an individual.
+Furthermore, it is not diﬃcult to observe that all metrics are
+improved when the attention mechanism is adopted. This is
+mainly because the attention mechanism is able to emphasize
+the useful information while suppressing irrelevant informa-
+tion. In fact, the method shown in Fig. 7 (a) is not conductive
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2659
+TABLE VII
+THE METRIC RESULTS OF BDI-II SCORE ESTIMATION REGARDING WHETHER TO USE THE COMBINATION OF RI AND MP MODULES ON THE AVEC
+2013 AND AVEC 2014 DEVELOPMENT SET. %REFERS TO CONCATENATING LOCAL AND GLOBAL REPRESENTATIONS OF DIFFERENT MODALITIES
+AND INPUTTING THEM INTO A FULLY CONNECTED LAYER TO ESTIMATE BDI-II SCORES. ✓REFERS TO INPUTTING LOCAL AND GLOBAL
+REPRESENTATION SEQUENCES OF DIFFERENT MODALITIES INTO OUR MODEL TO ESTIMATE BDI-II SCORES
+Fig. 7. Two multi-representation prediction methods.
+to the attention mechanism emphasizing eﬀective information
+at the frame or dimension level. From the comparison between
+Fig. 7 (b) and Fig. 5, we can understand that the attention
+mechanism can be more eﬀectively implemented at the dimen-
+sion level compared to the frame level.
+3) The Experimental Performance of Combination of RI and
+MP Modules: In this section, we examine the eﬀectiveness of
+the combination of RI and MP (i.e. our overall model) for the
+task of estimating depression levels. The corresponding exper-
+iments are shown in Table VII. From the metric results shown
+in the Table VII, it can be seen that the combination of RI and
+MP modules can achieve better experimental performance in
+both single modal and multimodal scenarios. This indicates
+that the combination of RI and MP modules is eﬀective in
+improving the accuracy of depression level prediction. On the
+other hand, it also indicates that the combination of RI and
+MP modules can achieve complementary advantages.
+D. Signiﬁcance Analysis of RI and MP Modules
+From the indicator values listed in Tables IV and VI, we
+can see that RI and MP modules are eﬀective in improving
+the accuracy of BDI-II score estimation. To illustrate the
+signiﬁcance of those improvements, in this section, we perform
+the Friedman test for the indicator values in Tables IV and VI.
+The corresponding results are displayed in Table VIII.
+As shown in Table VIII, for the RI module, the p-values
+of the four indicators (i.e. RMSE, MAE, PCC, CCC) are
+all less than 0.01. That is to say, we can set the parameter
+TABLE VIII
+p-VALUES OF FRIEDMAN TEST FOR RI AND MP MODULES
+ON DIFFERENT METRICS
+α in the Friedman test to 0.01, indicating that the RI module
+signiﬁcantly improves the accuracy of BDI-II score estimation
+at a 99% conﬁdence level. Similarly, for the MP module, the
+p-values of all four indicators are less than 0.1, indicating
+that the accuracy improvement of BDI-II score estimation by
+the MP module is reliable at a 90% conﬁdence level. It is
+necessary to point out that the 90% conﬁdence level, although
+not very signiﬁcant, can still reﬂect the eﬀectiveness of the
+MP module to a certain extent in statistical signiﬁcance. It
+is necessary to explain that the p-values of the MP module
+regarding the MAE, PCC, CCC metrics are the same. The
+reason for this result is that the ordering of the indicator values
+for those modules shown in Fig. 7 (a), Fig. 7 (b) and Fig. 5 is
+the same for the AVEC 2013 and AVEC 2014 datasets. With
+the above discussion, we can see that our proposed RI and
+MP modules are statistically eﬀective on the task of estimating
+individual depression severity.
+Furthermore, we also draw the Q-Q plots in Fig. 8 to illus-
+trate the regression performance of the RI and MP modules. By
+comparing Fig. 8 (a) and Fig. 8 (c) (Fig. 8 (a) and Fig. 8 (d)),
+it is not diﬃcult to see that the interaction within and across
+modalities achieved by the RI module is eﬀective in promoting
+the estimated BDI-II scores closer to the true values. Similarly,
+comparing Fig. 8 (h) with Fig. 8 (e), Fig. 8 (f), Fig. 8 (g), we
+can observe that the MP module does signiﬁcantly reduce the
+diﬀerence between estimated and true BDI-II scores.
+E. Analysis of Depression Categories
+As shown in Table I, the BDI-II score can be used to
+identify depression categories. Therefore, in this section, we
+examine the recognition eﬀect of RI and MP modules on
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2660
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Fig. 8. Q-Q plots of diﬀerent representations or modules on the AVEC 2013 development set.
+TABLE IX
+EXPERIMENTAL PERFORMANCE OF DIFFERENT MODELS FOR DEPRESSION SEVERITY CATEGORY ON THE AVEC 2013 AND AVEC 2014
+DEVELOPMENT SETS. BOLDED NUMBERS ARE THE BEST RESULTS AND NUMBERS WITH UNDERLINING ARE
+THE SECOND BEST RESULTS. “(1)–(16)+MP” IS OUR MLGI NETWORK
+depression categories. It is necessary to point out that we
+conduct two-category and four-category experiments. The two-
+category experiment refers to making individuals with BDI-II
+score of 0-13 as “None” (labeled as 0) and the remaining
+individuals as “Depression” (labeled as 1). The four-category
+experiment refers to dividing individuals into “None” (labeled
+as 0), “Mild” (labeled as 1), “Moderate” (labeled as 2), and
+“Severe” (labeled as 3) according to the division of BDI-II
+scores shown in Table I. The indicator results for depression
+category identiﬁcation are displayed in Table IX. Overall,
+“(1)–(16)+MP” achieves the best experimental performance.
+This fact indicates that our proposed RI and MP modules are
+also eﬀective in identifying individual depression categories.
+F. Comparison With Previous Studies
+To illustrate the progressiveness of our method, in this
+section, we compare previous works on AVEC 2013 and
+AVEC 2014 test sets. Tables X and XI present the experimental
+performance of diﬀerent methods for predicting BDI-II scores.
+As shown in Tables X and XI, our MLGI network
+doesn’t perform better than previous works on single modal-
+ity. This is because our method focuses on examining
+the eﬀects of local and global representations of audio
+(video) and the interactions between them on depression
+severity. While, those methods [7], [8], [37], [41], [42],
+[51], [53], [59] with good experimental performance mainly
+extract the diﬀerences among individuals with diﬀerent
+depression levels from the perspective of spatial-temporal or
+time-dimension.
+Interestingly, our method has the competitive experimen-
+tal performance on the multimodality situation. This can
+be explained by the fact that our proposed RI module
+can fully explore the interaction between local and global
+representations within and across modalities to enhance the
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2661
+TABLE X
+EXPERIMENTAL PERFORMANCE OF DIFFERENT METHODS ON THE AVEC
+2013 TEST SET. BOLDED NUMBERS ARE THE BEST RESULTS
+model’s ability to characterize depressive cues. Meanwhile,
+our proposed MP module can integrate prediction results from
+multiple representations to improve the estimation of BDI-II
+scores. On the contrary, previous works [7], [9], [10], [11],
+[68] mainly focus on obtaining multimodal depression cue
+representations through unimodal feature concatenation or
+the attention mechanism, without examining the element-
+wise interaction between representations, which aﬀects the
+experimental performance. Although we don’t gain a smaller
+RMSE value on the AVEC 2014 dataset than provided by
+[45], our method has advantages in terms of parameter
+(1.09M) and computation (94.19M) complexity compared
+TABLE XI
+EXPERIMENTAL PERFORMANCE OF DIFFERENT METHODS ON THE AVEC
+2014 TEST SET. BOLDED NUMBERS ARE THE BEST RESULTS
+to the corresponding parameter (1.33M) and computation
+(1234.79M) complexity shown in [45].
+Moreover, we also draw a comparison plot between true
+and the estimated values obtained using our MLGI network
+in Fig. 9. From this ﬁgure, we can observe that our method
+can provide good estimation values for relatively large BDI-II
+scores, while it is weak for smaller BDI-II scores, especially
+0. This may be because our MLGI network has diﬃculty in
+producing small values or exactly 0 during the calculation
+process. In contrast, our MLGI network prefers to produce
+relatively large values through addition and multiplication
+operations between input representations and network weights.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2662
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Fig. 9. True and estimated values of BDI-II on AVEC 2013 and AVEC 2014
+test sets. The green and red dots represent the true and estimated BDI-II
+scores, respectively. The blue vertical line represents the error.
+V. CONCLUSION
+Physiological and psychological studies demonstrate dif-
+ferences between healthy and depressed individuals in audio
+and video modalities. Based on this fact, we construct an
+MLGI network to estimate an individual’s depression severity.
+In our constructed MLGI network, we propose two novel
+modules: RI and MP modules. The RI module is able to
+achieve the element-wise interaction between local and global
+representations within and across modalities through the linear
+adjustment. The MP module ﬁrst summarizes a single rep-
+resentation along the time direction, then aggregates those
+summary results to implement the vectorization of multi-
+representations, and ﬁnally obtains the estimation result of
+BDI-II score through the attention mechanism. Experiments
+on the AVEC 2013 and AVEC 2014 datasets illustrate the
+eﬀectiveness of our MLGI network on the task of estimating
+individual depression severity. Meanwhile, the experimental
+results in this paper also show that examining the inter-
+action between local and global representations within and
+cross modalities is beneﬁcial for improving the accuracy of
+estimating BDI-II scores. In the future, we will considering
+embedding spatiotemporal information of data in the process
+of extracting local and global representations, and trans-
+forming sample labels to reduce the diﬃculty of estimating
+small BDI-II scores for further improving the experimental
+performance. Furthermore, in this paper, we use facial images
+to predict an individual’s depression level, which carries the
+risk of privacy breaches. Therefore, we will consider how to
+achieve depression assessment while ensuring that individual
+privacy is not compromised.
+REFERENCES
+[1]
+C. Otte et al., “Major depressive disorder,” Nature Rev. Disease primers,
+vol. 2, no. 1, pp. 1–20, 2016.
+[2]
+A. Thapar, O. Eyre, V. Patel, and D. A. Brent, “Depression in young
+people,” Lancet, vol. 400, no. 10352, pp. 617–631, 2022.
+[3]
+S. Koops, S. G. Brederoo, J. N. de Boer, F. G. Nadema, A. E. Voppel,
+and I. E. Sommer, “Speech as a biomarker for depression,” CNS Neurol.
+Disorders-Drug Targets, vol. 22, no. 2, pp. 152–160, Feb. 2023.
+[4]
+L. Hansen, Y.-P. Zhang, D. Wolf, K. Sechidis, N. Ladegaard, and
+R. Fusaroli, “A generalizable speech emotion recognition model reveals
+depression and remission,” Acta Psychiatrica Scandinavica, vol. 145,
+no. 2, pp. 186–199, Feb. 2022.
+[5]
+L. I. Reed, M. A. Sayette, and J. F. Cohn, “Impact of depression on
+response to comedy: A dynamic facial coding analysis,” J. Abnormal
+Psychol., vol. 116, no. 4, pp. 804–809, Nov. 2007.
+[6]
+R. C. Gur, R. J. Erwin, R. E. Gur, A. S. Zwil, C. Heimberg, and
+H. C. Kraemer, “Facial emotion discrimination: II. behavioral ﬁndings
+in depression,” Psychiatry Res., vol. 42, no. 3, pp. 241–251, Jun. 1992.
+[7]
+M. A. Uddin, J. B. Joolee, and K.-A. Sohn, “Deep multi-modal network
+based automated depression severity estimation,” IEEE Trans. Aﬀect.
+Comput., vol. 14, no. 3, pp. 2153–2167, Jul. 2023.
+[8]
+Y. Pan, Y. Shang, Z. Shao, T. Liu, G. Guo, and H. Ding, “Integrating
+deep facial priors into landmarks for privacy preserving multimodal
+depression recognition,” IEEE Trans. Aﬀect. Comput., vol. 15, no. 3,
+pp. 828–836, Jul. 2024.
+[9]
+M. Niu, J. Tao, B. Liu, J. Huang, and Z. Lian, “Multimodal spatiotempo-
+ral representation for automatic depression level detection,” IEEE Trans.
+Aﬀect. Comput., vol. 14, no. 1, pp. 294–307, Jan. 2023.
+[10] Y. Li et al., “An automatic depression detection method with cross-
+modal fusion network and multi-head attention mechanism,” in Proc.
+Chin. Conf. Pattern Recognit. Comput. Vis. (PRCV), 2023, pp. 252–264.
+[11] H. Fan et al., “Transformer-based multimodal feature enhancement
+networks for multimodal depression detection integrating video,” Inf.
+Fusion, vol. 104, Jun. 2024, Art. no. 102161.
+[12] P.-C. Wei, K. Peng, A. Roitberg, K. Yang, J. Zhang, and R. Stiefelhagen,
+“Multi-modal depression estimation based on sub-attentional fusion,” in
+Proc. Eur. Conf. Comput. Vis., 2022, pp. 623–639.
+[13] L. Zhou, Z. Liu, Z. Shangguan, X. Yuan, Y. Li, and B. Hu,
+“TAMFN: Time-aware attention multimodal fusion network for depres-
+sion detection,” IEEE Trans. Neural Syst. Rehabil. Eng., vol. 31,
+pp. 669–679, 2023.
+[14] M. Valstar et al., “AVEC 2013: The continuous audio/visual emotion
+and depression recognition challenge,” in Proc. 3rd ACM Int. Workshop
+Audio/visual Emotion Challenge, Oct. 2013, pp. 3–10.
+[15] M. Valstar et al., “AVEC 2014: 3D dimensional aﬀect and depression
+recognition challenge,” in Proc. 4th Int. Workshop Audio/Visual Emotion
+Challenge, Nov. 2014, pp. 3–10.
+[16] W. Zhang, L. Li, Y. Ding, W. Chen, Z. Deng, and X. Yu, “Detecting
+facial action units from global–local ﬁne-grained expressions,” IEEE
+Trans. Circuits Syst. Video Technol., vol. 34, no. 2, pp. 983–994,
+Feb. 2024.
+[17] Z.
+Chen,
+L.
+Wang,
+P.
+Wang,
+and
+P.
+Gao,
+“Question-aware
+global–local video understanding network for audio-visual question
+answering,” IEEE Trans. Circuits Syst. Video Technol., vol. 34, no. 5,
+pp. 4109–4119, May 2024.
+[18] Y. Ou, Z. Chen, and F. Wu, “Multimodal local–global attention network
+for aﬀective video content analysis,” IEEE Trans. Circuits Syst. Video
+Technol., vol. 31, no. 5, pp. 1901–1914, May 2021.
+[19] J. Yuan, A. Zhu, Q. Xu, K. Wattanachote, and Y. Gong, “CTIF-
+Net: A CNN-transformer iterative fusion network for salient object
+detection,” IEEE Trans. Circuits Syst. Video Technol., vol. 34, no. 5,
+pp. 3795–3805, May 2024.
+[20] Z. Feng, Z. Zeng, C. Guo, and Z. Li, “Temporal multimodal graph
+transformer with global-local alignment for video-text retrieval,” IEEE
+Trans. Circuits Syst. Video Technol., vol. 33, no. 3, pp. 1438–1453,
+Mar. 2023.
+[21] A. Gulati et al., “Conformer: Convolution-augmented transformer for
+speech recognition,” in Proc. Interspeech, Oct. 2020, pp. 5036–5040.
+[22] Z. Peng et al., “Conformer: Local features coupling global representa-
+tions for recognition and detection,” IEEE Trans. Pattern Anal. Mach.
+Intell., vol. 45, no. 8, pp. 9454–9468, Aug. 2023.
+[23] Z. Dai et al., “CoAtNet: Marrying convolution and attention for all data
+sizes,” in Proc. Conf. Neural Inf. Process. Syst., 2021, pp. 3965–3977.
+[24] K. Li et al., “UniFormer: Unifying convolution and self-attention for
+visual recognition,” IEEE Trans. Pattern Anal. Mach. Intell., vol. 45,
+no. 10, pp. 12581–12600, Oct. 2023.
+[25] J. Guo et al., “CMT: Convolutional neural networks meet vision
+transformers,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit.
+(CVPR), Jun. 2022, pp. 12175–12185.
+[26] H. Wu et al., “CvT: Introducing convolutions to vision transformers,” in
+Proc. IEEE/CVF Int. Conf. Comput. Vis. (ICCV), Oct. 2021, pp. 22–31.
+[27] A. Chordia, M. Kale, M. Mayee, P. Yadav, and S. Itkar, “Automatic
+depression level analysis using audiovisual modality,” in Smart Comput.
+Techn. Applications: Proc. 4th Int. Conf. Smart Comput. Informat., 2021,
+pp. 425–439.
+[28] M. Niu, Z. Zhao, J. Tao, Y. Li, and B. W. Schuller, “Dual atten-
+tion and element recalibration networks for automatic depression level
+prediction,” IEEE Trans. Aﬀect. Comput., vol. 14, no. 3, pp. 1954–1965,
+Jul. 2023.
+[29] M. Al Jazaery and G. Guo, “Video-based depression level analysis by
+encoding deep spatiotemporal features,” IEEE Trans. Aﬀect. Comput.,
+vol. 12, no. 1, pp. 262–268, Jan. 2021.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+NIU et al.: MLGI NETWORKS FOR AUTOMATIC DEPRESSION SEVERITY ESTIMATION
+2663
+[30] M. A. Uddin, J. B. Joolee, and Y.-K. Lee, “Depression level prediction
+using deep spatiotemporal features and multilayer Bi-LTSM,” IEEE
+Trans. Aﬀect. Comput., vol. 13, no. 2, pp. 864–870, Apr. 2022.
+[31] J. Gratch et al., “The distress analysis interview corpus of human and
+computer interviews,” in Proc. LREC, 2014, pp. 3123–3128.
+[32] D. DeVault et al., “SimSensei kiosk: A virtual human interviewer for
+healthcare decision support,” in Proc. Int. Conf. Auto. Agents Multi-agent
+Syst., 2014, pp. 1061–1068.
+[33] M. Valstar, “AVEC 2016: Depression,” in Proc. 6th Int. Workshop
+Audio/Visual Emotion Challenge, 2016, pp. 3–10.
+[34] F. Ringeval et al., “AVEC 2019 workshop and challenge: State-of-
+mind,” in Proc. 9th Int. Audio/Visual Emotion Challenge Workshop,
+2019, pp. 3–12.
+[35] H. Cai et al., “MODMA dataset: A multi-modal open dataset for mental-
+disorder analysis,” 2020, arXiv:2002.09283.
+[36] L. He and C. Cao, “Automated depression analysis using convolu-
+tional neural networks from speech,” J. Biomed. Informat., vol. 83,
+pp. 103–111, Jul. 2018.
+[37] M. Niu, B. Liu, J. Tao, and Q. Li, “A time-frequency channel attention
+and vectorization network for automatic depression level prediction,”
+Neurocomputing, vol. 450, pp. 208–218, Aug. 2021.
+[38] C. Cai, M. Niu, B. Liu, J. Tao, and X. Liu, “TDCA-Net: Time-
+domain channel attention network for depression detection,” in Proc.
+Interspeech, Aug. 2021, pp. 2511–2515.
+[39] C. Fan, Z. Lv, S. Pei, and M. Niu, “CSENET: Complex squeeze-and-
+excitation network for speech depression level prediction,” in Proc.
+IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP), May 2022,
+pp. 546–550.
+[40] Y. Li, M. Niu, Z. Zhao, and J. Tao, “Automatic depression level
+assessment from speech by long-term global information embedding,”
+in Proc. IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP),
+May 2022, pp. 8507–8511.
+[41] Q. Li, D. Wang, Y. Ren, Y. Gao, and Y. Li, “FTA-Net: A frequency
+and time attention network for speech depression detection,” in Proc.
+INTERSPEECH, Aug. 2023, pp. 1723–1727.
+[42] M. Niu, J. Tao, Y. Li, Y. Qin, and Y. Li, “WavDepressionNet: Automatic
+depression level prediction via raw speech signals,” IEEE Trans. Aﬀect.
+Comput., vol. 15, no. 1, pp. 285–296, Jan. 2024.
+[43] S. Li, Z. Xie, and S. M. Naqvi, “Eﬃcient long speech sequence
+modelling for time-domain depression level estimation,” in Proc. IEEE
+Int. Conf. Acoust., Speech Signal Process. (ICASSP), Apr. 2025, pp. 1–5.
+[44] M. Niu, J. Tao, Y. He, S. Zhang, and M. Li, “Examining the Fourier
+spectrum of speech signal from a time-frequency perspective for auto-
+matic depression level prediction,” IEEE Trans. Aﬀect. Comput., early
+access, Apr. 29, 2025, doi: 10.1109/TAFFC.2025.3565654.
+[45] M. Niu, X. Wang, J. Gong, B. Liu, J. Tao, and B. W. Schuller,
+“Depression scale dictionary decomposition framework for multimodal
+automatic depression level prediction,” IEEE Trans. Circuits Syst. Video
+Technol., vol. 35, no. 6, pp. 6195–6210, Jun. 2025.
+[46] Y. Wang, Z. Lin, Y. Teng, Y. Cheng, H. Jiang, and Y. Yang, “SIMMA:
+Multimodal automatic depression detection via spatiotemporal ensemble
+and cross-modal alignment,” IEEE Trans. Computat. Social Syst., early
+access, Mar. 19, 2025, doi: 10.1109/TCSS.2025.3542986.
+[47] S. Song, S. Jaiswal, L. Shen, and M. Valstar, “Spectral representation
+of behaviour primitives for depression analysis,” IEEE Trans. Aﬀect.
+Comput., vol. 13, no. 2, pp. 829–844, Apr. 2022.
+[48] M. Niu, Z. Zhao, J. Tao, Y. Li, and B. W. Schuller, “Selective element
+and two orders vectorization networks for automatic depression severity
+diagnosis via facial changes,” IEEE Trans. Circuits Syst. Video Technol.,
+vol. 32, no. 11, pp. 8065–8077, Nov. 2022.
+[49] Y. Shang et al., “LQGDNet: A local quaternion and global deep network
+for facial depression recognition,” IEEE Trans. Aﬀect. Comput., vol. 14,
+no. 3, pp. 2557–2563, Jul. 2023.
+[50] W. C. de Melo, E. Granger, and M. B. L´opez, “MDN: A deep
+maximization-diﬀerentiation network for spatio-temporal depression
+detection,” IEEE Trans. Aﬀect. Comput., vol. 14, no. 1, pp. 578–590,
+Jan. 2023.
+[51] Y. Pan et al., “Spatial–temporal attention network for depression recog-
+nition from facial videos,” Expert Syst. Appl., vol. 237, Mar. 2024, Art.
+no. 121410.
+[52] W. C. de Melo, E. Granger, and M. B. Lopez, “Facial expression analysis
+using decomposed multiscale spatiotemporal networks,” Expert Syst.
+Appl., vol. 236, Feb. 2024, Art. no. 121276.
+[53] M. Niu, Y. Li, J. Tao, X. Zhou, and B. W. Schuller, “DepressionMLP:
+A multi-layer perceptron architecture for automatic depression level
+prediction via facial keypoints and action units,” IEEE Trans. Circuits
+Syst. Video Technol., vol. 34, no. 9, pp. 8924–8938, Sep. 2024.
+[54] S. Zhang et al., “MTDAN: A lightweight multi-scale temporal diﬀerence
+attention networks for automated video depression detection,” IEEE
+Trans. Aﬀect. Comput., vol. 15, no. 3, pp. 1078–1089, Jul. 2024.
+[55] J. Xu, H. Gunes, K. Kusumam, M. Valstar, and S. Song, “Two-stage
+temporal modelling framework for video-based depression recognition
+using graph representation,” IEEE Trans. Aﬀect. Comput., vol. 16, no. 1,
+pp. 161–178, Jan. 2025.
+[56] Y. Wang, Z. Lin, C. Yang, Y. Zhou, and Y. Yang, “Automatic depression
+recognition with an ensemble of multimodal spatio-temporal routing
+features,” IEEE Trans. Aﬀect. Comput., vol. 16, no. 3, pp. 1855–1872,
+Mar. 2025.
+[57] Y. Li, Z. Wei, G. Guo, and X. Zhou, “MemRank: Memory-augmented
+similarity ranking for video-based depression severity estimation,” IEEE
+Trans. Aﬀect. Comput., vol. 16, no. 3, pp. 2062–2073, Jul. 2025.
+[58] L. He et al., “LMTformer: Facial depression recognition with lightweight
+multi-scale transformer from videos,” Int. J. Speech Technol., vol. 55,
+no. 3, p. 195, Feb. 2025.
+[59] Z. Wu et al., “Depmgnn: Matrixial graph neural network for video-based
+automatic depression assessment,” in Proc. AAAI Conf. Artif. Intell.,
+vol. 39, 2025, pp. 1610–1619.
+[60] M. K¨achele, M. Glodek, D. Zharkov, S. Meudt, and F. Schwenker,
+“Fusion of audio-visual features using hierarchical classiﬁer systems
+for the recognition of aﬀective states and the state of depression,”
+Depression, vol. 1, no. 1, pp. 671–678, 2014.
+[61] N. Cummins, J. Joshi, A. Dhall, V. Sethu, R. Goecke, and J. Epps,
+“Diagnosis of depression by behavioural signals: A multimodal
+approach,” in Proc. 3rd ACM Int. Workshop Audio/Visual Emotion
+Challenge, Oct. 2013, pp. 11–20.
+[62] H. Meng, D. Huang, H. Wang, H. Yang, M. AI-Shuraiﬁ, and Y. Wang,
+“Depression recognition based on dynamic facial and vocal expression
+features using partial least square regression,” in Proc. 3rd ACM Int.
+Workshop Audio/Visual Emotion Challenge, Oct. 2013, pp. 21–30.
+[63] H. Kaya, F. C¸ illi, and A. A. Salah, “Ensemble CCA for continuous
+emotion prediction,” in Proc. 4th Int. Workshop Audio/Visual Emotion
+Challenge, Nov. 2014, pp. 19–26.
+[64] X. Ma, D. Huang, Y. Wang, and Y. Wang, “Cost-sensitive two-stage
+depression prediction using dynamic visual clues,” in Proc. 13th Asian
+Conf. Comput. Vis., Taipei, Taiwan. Cham, Switzerland: Springer, Nov.
+2017, pp. 338–351.
+[65] P. Kumar, S. Misra, Z. Shao, B. Zhu, B. Raman, and X. Li, “Multimodal
+interpretable depression analysis using visual,” in Proc. IEEE/CVF
+Winter Conf. Appl. Comput. Vis. (WACV), Oct. 2025, pp. 5305–5315.
+[66] Z. Lin, Y. Wang, Y. Zhou, F. Du, and Y. Yang, “STE-Mamba: Automated
+multimodal depression detection through emotional analysis and spatio-
+temporal information ensemble,” in Proc. IEEE Int. Conf. Acoust.,
+Speech Signal Process. (ICASSP), Apr. 2025, pp. 1–5.
+[67] J. Liu, Y. Shang, M. Yang, Z. Shao, J. Lu, and T. Liu, “MFMamba:
+A multimodal fusion state space model for depression recognition,” in
+Proc. IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP), Apr.
+2025, pp. 1–5.
+[68] R. Gupta et al., “Multimodal prediction of aﬀective dimensions and
+depression in human–computer interactions,” in Proc. 4th Int. Workshop
+Audio/Visual Emotion Challenge, Nov. 2014, pp. 33–40.
+[69] J. R. Williamson, T. F. Quatieri, B. S. Helfer, G. Ciccarelli, and
+D. D. Mehta, “Vocal and facial biomarkers of depression based on motor
+incoordination and timing,” in Proc. 4th Int. Workshop Audio/Visual
+Emotion Challenge, Nov. 2014, pp. 65–72.
+[70] S. Cholet, H. Paugam-Moisy, and S. Regis, “Bidirectional associative
+memory for multimodal fusion: A depression evaluation case study,” in
+Proc. Int. Joint Conf. Neural Netw. (IJCNN), Jul. 2019, pp. 1–6.
+Mingyue Niu received the Ph.D. degree from the
+National Laboratory of Pattern Recognition (NLPR),
+Institute of Automation, Chinese Academy of Sci-
+ences (CASIA). He is a Lecturer with the School
+of Information Science and Engineering, Yanshan
+University. He’s building a human-centered intel-
+ligent computing team. He had published many
+articles in IEEE TRANSACTIONS ON AFFECTIVE
+COMPUTING, ICASSP, and INTERSPEECH. His
+research interests include aﬀective computing and
+multimodal learning.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
+2664
+IEEE TRANSACTIONS ON CIRCUITS AND SYSTEMS FOR VIDEO TECHNOLOGY, VOL. 36, NO. 2, FEBRUARY 2026
+Zhuhong Shao received the M.S. degree in elec-
+trical engineering from Beijing Jiaotong University,
+Beijing, China, in 2011, and the Ph.D. degree in
+computer science and technology from Southeast
+University, Nanjing, China, in 2015. He is cur-
+rently an Associate Professor with the College of
+Information Engineering, Capital Normal University,
+Beijing. His research interests include computer
+vision and multimedia information security.
+Yongjun He (Member, IEEE) received the Ph.D.
+degree from the School of Computer Science, Harbin
+Institute of Technology, Harbin, in 2008. He is
+currently a Full Professor with the School of Com-
+puter Science and Technology, Harbin University
+of Science and Technology. His research interests
+include speaker recognition, speech recognition, and
+machine learning.
+Jianhua Tao (Senior Member, IEEE) received the
+Ph.D. degree from Tsinghua University in 2001. He
+is a Professor with the Department of Automation,
+Tsinghua University. He has directed many national
+projects, including “863” and the National Natural
+Science Foundation of China. He has published
+more than 80 articles in journals and proceed-
+ings, including IEEE TRANSACTIONS ON AUDIO,
+SPEECH, AND LANGUAGE PROCESSING, ICASSP,
+and INTERSPEECH. His interests include speech
+synthesis, aﬀective computing, and pattern recogni-
+tion. He serves as a Steering Committee Member for IEEE TRANSACTIONS
+ON AFFECTIVE COMPUTING and the chair or a program committee member
+for major conferences, including ICPR and INTERSPEECH.
+Bj¨orn W. Schuller (Fellow, IEEE) received the
+Ph.D. degree from Technische Universit¨at M¨unchen,
+Germany. He is a Professor of artiﬁcial intelligence
+with the Department of Computing, Imperial College
+London, U.K., and a Full Professor and the Head of
+the Chair of Embedded Intelligence for Health Care
+and Wellbeing, University of Augsburg, Germany.
+He (co-)authored ﬁve books and more than 1000
+publications in peer-reviewed books, journals, and
+conference proceedings. He is a Fellow of ISCA and
+a Senior Member of ACM. He is the Field Chief
+Editor of Frontiers in Digital Health, the President-Emeritus of AAAC, and
+Golden Core Awardee of the IEEE Computer Society.
+Authorized licensed use limited to: Yanshan University. Downloaded on April 20,2026 at 00:36:17 UTC from IEEE Xplore.  Restrictions apply. 
