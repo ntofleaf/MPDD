@@ -36,6 +36,12 @@ class ModalityEncoder(nn.Module):
         self.norm = nn.LayerNorm(hidden_dim)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # flatten_parameters() is required when using nn.DataParallel:
+        # DataParallel spawns one thread per GPU and all threads call LSTM forward
+        # simultaneously. Without this call, the LSTM's internal weight storage
+        # (managed by cuDNN) is in a non-contiguous layout that causes a CUDA
+        # memory deadlock across threads, hanging the process indefinitely.
+        self.lstm.flatten_parameters()
         if self.pre_proj is not None:
             x = F.relu(self.pre_proj(x))
         x = F.relu(self.proj(x))

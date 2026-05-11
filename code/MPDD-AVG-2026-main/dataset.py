@@ -392,6 +392,9 @@ class MPDDElderDataset(Dataset):
                 f"No valid samples found for task={task}, subtrack={subtrack}, "
                 f"audio_feature={audio_feature}, video_feature={video_feature}"
             )
+        # In-memory cache: {index -> dict of tensors}
+        # Populated lazily on first access; avoids repeated disk I/O across epochs.
+        self._cache: dict[int, dict[str, torch.Tensor]] = {}
 
     def _collect_samples(self) -> list[dict[str, Any]]:
         samples: list[dict[str, Any]] = []
@@ -436,6 +439,8 @@ class MPDDElderDataset(Dataset):
         return len(self.samples)
 
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
+        if index in self._cache:
+            return self._cache[index]
         sample = self.samples[index]
         person_id = int(sample["pid"])
         label = torch.tensor(int(sample["label"]), dtype=torch.long)
@@ -477,4 +482,5 @@ class MPDDElderDataset(Dataset):
 
         personality = self.personality_map.get(person_id, np.zeros(1024, dtype=np.float32))
         result["personality"] = torch.from_numpy(personality.astype(np.float32))
+        self._cache[index] = result
         return result

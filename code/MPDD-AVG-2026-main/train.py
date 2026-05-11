@@ -257,7 +257,7 @@ def main() -> None:
         num_classes=num_classes,
         device=device,
     )
-    criterion = (nn.CrossEntropyLoss(weight=class_weights), nn.MSELoss())
+    criterion = (nn.CrossEntropyLoss(weight=class_weights, label_smoothing=0.1), nn.MSELoss())
     selection_metric_name = get_selection_metric_name(args.task)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
