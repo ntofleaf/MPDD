@@ -5,7 +5,6 @@ from typing import Any
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from sklearn.metrics import accuracy_score, cohen_kappa_score, confusion_matrix, f1_score
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -28,50 +27,25 @@ def ccc(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return safe_float(2 * cov / denom) if denom > 1e-10 else 0.0
 
 
-# =============================================================================
-#  修复 #1 (Bug 根本层): CCCLoss + 方差惩罚项
-# =============================================================================
 class CCCLoss(nn.Module):
+    """可微分 CCC 损失，用于直接优化训练目标（最大化 CCC = 最小化 1-CCC）。
+
+    相比 MSE，CCC Loss 显式惩罚预测方差为 0 的情况，
+    从根本上避免模型退化为"只预测均值"的常数预测器。
     """
-    可微分 CCC 损失 + 方差惩罚项。
-
-    【修复原因】
-    原始 CCCLoss 在小样本（val ~18 个样本）下容易退化：
-      - CCC 分母 = pred_var + true_var + (均值差)^2 + eps
-      - 当 pred_var -> 0，整个 CCC -> 0，梯度方向彻底混乱
-      - 模型退化为"只预测均值"的常数预测器（val CCC < 0.15）
-
-    【修复方式】
-    新增方差惩罚项：var_penalty = relu(min_var - pred_var)
-    当预测方差低于 min_var 时，惩罚项产生梯度，强制把方差往上推，
-    阻止模型坍缩为均值预测器。方差正常时 relu 输出为 0，不影响训练。
-
-    【参数说明】
-    var_weight : 方差惩罚系数，默认 0.5（可以设 0.2~1.0 之间）
-    min_var    : 预测方差的最低期望值，默认 0.05
-                 对应 log1p 空间约 +-0.22 的标准差，是合理的最低下限
-    """
-
-    def __init__(self, var_weight: float = 0.5, min_var: float = 0.05) -> None:
-        super().__init__()
-        self.var_weight = var_weight
-        self.min_var = min_var
 
     def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
         y_pred = y_pred.float().reshape(-1)
         y_true = y_true.float().reshape(-1)
-        pred_mean  = y_pred.mean()
-        true_mean  = y_true.mean()
-        pred_var   = ((y_pred - pred_mean) ** 2).mean()
-        true_var   = ((y_true - true_mean) ** 2).mean()
+        pred_mean = y_pred.mean()
+        true_mean = y_true.mean()
+        pred_var  = ((y_pred - pred_mean) ** 2).mean()
+        true_var  = ((y_true - true_mean) ** 2).mean()
         covariance = ((y_pred - pred_mean) * (y_true - true_mean)).mean()
-        denom      = pred_var + true_var + (pred_mean - true_mean) ** 2 + 1e-8
-        ccc_val    = 2.0 * covariance / denom
-        ccc_loss   = 1.0 - ccc_val   # 越接近 0 越好（CCC->1 时 loss->0）
+        denom = pred_var + true_var + (pred_mean - true_mean) ** 2 + 1e-8
+        ccc_val = 2.0 * covariance / denom
+        return 1.0 - ccc_val   # 越接近 0 越好（CCC→1 时 loss→0）
 
-        # 方差惩罚: relu(min_var - pred_var) >= 0，完全可微
-        var_penalty = F.relu(self.min_var - pred_var)
-        return ccc_loss + self.var_weight * var_penalty
 
 
 def classification_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, Any]:
@@ -88,53 +62,14 @@ def classification_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, 
     return metrics
 
 
-# =============================================================================
-#  修复 #2 (Bug 中间层): regression_metrics 同时输出两套指标
-# =============================================================================
-def regression_metrics(
-    y_true: np.ndarray,
-    y_pred: np.ndarray,
-    phq_log1p: bool = True,
-) -> dict[str, Any]:
-    """
-    计算回归指标，同时输出 log1p 空间和原始 PHQ-9 空间两套指标。
-
-    【修复原因】
-    原来只在 log1p 空间计算 rmse/mae，导致 val_rmse=0.578 看起来"还行"，
-    实际上隐藏了模型完全没有区分度的问题（预测值集中在均值附近）。
-
-    【修复方式】
-    当 phq_log1p=True 时，额外对 y_true/y_pred 做 expm1() 还原，
-    计算原始 PHQ-9 空间（0~27）的 rmse/mae/ccc，并加入 metrics 字典。
-
-    新增字段：
-      phq9_rmse       : 原始 PHQ-9 空间的 RMSE（直觉上更好理解，e.g. 误差 3 分）
-      phq9_mae        : 原始 PHQ-9 空间的 MAE
-      phq9_ccc        : 原始 PHQ-9 空间的 CCC（与提交评测一致）
-      phq9_pred_mean  : 预测值均值（还原后），用于快速判断是否退化为均值预测
-      phq9_pred_std   : 预测值标准差（还原后），接近 0 说明退化
-      phq9_true_mean  : 真实值均值（还原后），与 phq9_pred_mean 对比
-    """
+def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, Any]:
     metrics = {
-        # log1p 空间（训练时直接优化的目标）
-        "ccc":  ccc(y_true, y_pred),
+        "ccc": ccc(y_true, y_pred),
         "rmse": safe_float(np.sqrt(mean_squared_error(y_true, y_pred))),
-        "mae":  safe_float(mean_absolute_error(y_true, y_pred)),
-        "r2":   safe_float(r2_score(y_true, y_pred)),
+        "mae": safe_float(mean_absolute_error(y_true, y_pred)),
+        "r2": safe_float(r2_score(y_true, y_pred)),
     }
     metrics["selection_score"] = metrics["ccc"]
-
-    if phq_log1p:
-        # 原始 PHQ-9 空间（还原后，更直观的误差量级）
-        phq_true_orig = np.clip(np.expm1(y_true), 0, 27)
-        phq_pred_orig = np.clip(np.expm1(y_pred), 0, 27)
-        metrics["phq9_rmse"]      = safe_float(np.sqrt(mean_squared_error(phq_true_orig, phq_pred_orig)))
-        metrics["phq9_mae"]       = safe_float(mean_absolute_error(phq_true_orig, phq_pred_orig))
-        metrics["phq9_ccc"]       = ccc(phq_true_orig, phq_pred_orig)
-        metrics["phq9_pred_mean"] = float(phq_pred_orig.mean())
-        metrics["phq9_pred_std"]  = float(phq_pred_orig.std())
-        metrics["phq9_true_mean"] = float(phq_true_orig.mean())
-
     return metrics
 
 
@@ -188,7 +123,7 @@ def evaluate_model(
                 pair_mask=batch["pair_mask"].to(device) if "pair_mask" in batch else None,
             )
             if is_pure_regression:
-                # 纯回归模式（新）：模型直接输出 1 个标量，无辅助分类头
+                # ── 纯回归模式（新）：模型直接输出 1 个标量，无辅助分类头 ──
                 phq9 = batch["phq9"].to(device)
                 reg_out = outputs.squeeze(-1)  # [batch_size]
                 loss = criterion(reg_out, phq9)
@@ -199,7 +134,7 @@ def evaluate_model(
                 batch_labels = labels.cpu().numpy().tolist()
                 total_reg_loss += float(loss.item()) * len(batch_labels)
             elif is_joint_regression:
-                # 联合模式（旧）：分类头 + 回归头共存
+                # ── 联合模式（旧）：分类头 + 回归头共存 ──
                 criterion_cls, criterion_reg = criterion
                 phq9 = batch["phq9"].to(device)
                 logits, reg_out = outputs
@@ -213,7 +148,7 @@ def evaluate_model(
                 total_cls_loss += float(loss_cls.item()) * len(batch_labels)
                 total_reg_loss += float(loss_reg.item()) * len(batch_labels)
             else:
-                # 纯分类模式
+                # ── 纯分类模式 ──
                 logits = outputs
                 loss = criterion(logits, labels)
                 batch_preds = logits.argmax(dim=-1).cpu().numpy().tolist()
@@ -230,8 +165,9 @@ def evaluate_model(
     if is_pure_regression:
         phq_true = np.asarray(all_phq_labels, dtype=np.float64)
         phq_pred = np.asarray(all_phq_preds, dtype=np.float64)
-        # phq_log1p=True: 同时计算 log1p 空间和原始 PHQ-9 空间两套指标
-        metrics = regression_metrics(phq_true, phq_pred, phq_log1p=True)
+        y_true_cls = np.asarray(all_labels, dtype=np.int64)  # 仅用于 kappa 等参考
+        metrics = regression_metrics(phq_true, phq_pred)
+        # 补充空的分类指标占位（keep API 兼容）
         metrics.setdefault("f1", 0.0)
         metrics.setdefault("acc", 0.0)
         metrics.setdefault("kappa", 0.0)

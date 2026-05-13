@@ -1,0 +1,14 @@
+{
+  "task": "regression",
+  "n_folds": 5,
+  "seed": 42,
+  "split_csv": "/home/niutao/data/datasets_MPDD/Train-MPDD-Young/split_labels_train.csv",
+  "total_samples": 88,
+  "strat_bin_counts": {
+    "0": 25,
+    "1": 10,
+    "2": 18,
+    "3": 19,
+    "4": 16
+  }
+}

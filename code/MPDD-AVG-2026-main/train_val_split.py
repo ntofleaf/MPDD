@@ -36,6 +36,7 @@ def create_train_val_split(
     task: str,
     val_ratio: float = 0.1,
     regression_label: str = "label2",
+    seed: int | None = None,
 ) -> dict[str, Any]:
     rows = _load_train_rows(split_csv)
     sample_ids = [int(row["ID"]) for row in rows]
@@ -46,14 +47,53 @@ def create_train_val_split(
     if not 0.0 < val_ratio < 1.0:
         raise ValueError(f"val_ratio must be between 0 and 1, got {val_ratio}")
 
-    label_counts = Counter(int(label) for label in sample_labels)
-    splitter: StratifiedShuffleSplit | ShuffleSplit
-    if label_counts and min(label_counts.values()) >= 2:
-        splitter = StratifiedShuffleSplit(n_splits=1, train_size=1.0 - val_ratio)
-        train_indices, val_indices = next(splitter.split(sample_ids, sample_labels))
+    # ── 分层策略：回归任务按 PHQ-9 分箱，分类任务按类别标签 ──────────────────
+    # 【修复原因】
+    # 回归任务的 sample_labels 是 PHQ-9 分数（float），若按类别计数（Counter）
+    # 判断能否分层，大多数 PHQ-9 值出现 1~2 次，落入"不可分层"分支，退用纯随机
+    # ShuffleSplit。18 个 val 样本的 PHQ-9 分布完全随机，可能与训练集分布差异
+    # 很大，导致某些 seed 下 val CCC 为负。
+    #
+    # 【修复方案】
+    # 对回归任务单独处理：把 PHQ-9 分成 N_REG_BINS 个等频箱（每箱样本量均等），
+    # 再按箱标签做 StratifiedShuffleSplit。这确保 val 集覆盖 PHQ-9 的全部范围，
+    # 不会出现 val 集全是低分或全是高分的极端情况。
+    N_REG_BINS = 4   # PHQ-9 分 4 箱，每箱约 22 个样本
+    if task == REGRESSION_TASK:
+        # 回归任务：按真实 PHQ-9 分数分箱做分层抽样
+        # 注意：sample_labels 对回归任务是 label2(0/1)，不是 PHQ-9！
+        # 必须单独读取 PHQ-9 原始分数来做分箱。
+        import numpy as _np
+        from dataset import get_phq9_target as _get_phq9
+        phq_vals = _np.array([_get_phq9(row) for row in rows])
+        try:
+            sorted_vals = _np.sort(phq_vals)
+            quantiles = [sorted_vals[int(len(sorted_vals) * q / N_REG_BINS)]
+                         for q in range(1, N_REG_BINS)]
+            strat_labels = [int(_np.searchsorted(quantiles, v)) for v in phq_vals]
+        except Exception:
+            strat_labels = [int(float(l)) for l in sample_labels]
+        bin_counts = Counter(strat_labels)
+        if min(bin_counts.values()) >= 2:
+            splitter = StratifiedShuffleSplit(n_splits=1, train_size=1.0 - val_ratio,
+                                              random_state=seed)
+            train_indices, val_indices = next(splitter.split(sample_ids, strat_labels))
+        else:
+            splitter = ShuffleSplit(n_splits=1, train_size=1.0 - val_ratio,
+                                    random_state=seed)
+            train_indices, val_indices = next(splitter.split(sample_ids))
     else:
-        splitter = ShuffleSplit(n_splits=1, train_size=1.0 - val_ratio)
-        train_indices, val_indices = next(splitter.split(sample_ids))
+        # 分类任务：按类别标签做分层抽样（原逻辑，增加 random_state）
+        label_counts = Counter(int(label) for label in sample_labels)
+        splitter: StratifiedShuffleSplit | ShuffleSplit
+        if label_counts and min(label_counts.values()) >= 2:
+            splitter = StratifiedShuffleSplit(n_splits=1, train_size=1.0 - val_ratio,
+                                              random_state=seed)
+            train_indices, val_indices = next(splitter.split(sample_ids, sample_labels))
+        else:
+            splitter = ShuffleSplit(n_splits=1, train_size=1.0 - val_ratio,
+                                    random_state=seed)
+            train_indices, val_indices = next(splitter.split(sample_ids))
 
     train_id_split = [sample_ids[index] for index in train_indices]
     val_id_split = [sample_ids[index] for index in val_indices]
@@ -107,6 +147,76 @@ def save_split_preview(
                     new_row["split"] = "val"
             writer.writerow(new_row)
     return save_path
+
+
+def load_fold_split(
+    fold_csv: str | Path,
+    task: str,
+    regression_label: str = "label2",
+) -> dict[str, Any]:
+    """
+    从预先生成的 fold CSV（split 列 = "train" 或 "val"）直接加载分割。
+
+    不做任何随机操作，完全确定性——无论运行多少次结果都相同。
+    适用于与 generate_kfold_splits.py 配合使用的五折交叉验证流程。
+
+    参数
+    ----
+    fold_csv         : generate_kfold_splits.py 生成的 fold_k.csv 路径
+    task             : "binary" / "ternary" / "regression"
+    regression_label : 回归任务使用的标签列（"label2" 或 "label3"）
+
+    返回
+    ----
+    与 create_train_val_split() 完全相同结构的 dict，
+    可直接传给 train.py 的 split_payload 变量。
+    """
+    csv_path = resolve_project_path(fold_csv)
+    with open(csv_path, "r", encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.DictReader(f))
+
+    if not rows:
+        raise ValueError(f"Fold CSV 为空: {csv_path}")
+
+    train_rows = [r for r in rows if r.get("split", "").strip().lower() == "train"]
+    val_rows   = [r for r in rows if r.get("split", "").strip().lower() == "val"]
+
+    if not train_rows:
+        raise ValueError(f"fold CSV 中没有 split=train 的行: {csv_path}")
+    if not val_rows:
+        raise ValueError(f"fold CSV 中没有 split=val 的行: {csv_path}")
+
+    # source_split_map：Dataset 用来找特征文件所在的物理目录（"train" 或 "test"）
+    # fold CSV 里所有样本都是原始训练集，物理文件均在 train 目录下
+    source_split_map = {int(r["ID"]): "train" for r in rows}
+
+    train_map = {
+        int(r["ID"]): get_task_label(r, task, regression_label)
+        for r in train_rows
+    }
+    val_map = {
+        int(r["ID"]): get_task_label(r, task, regression_label)
+        for r in val_rows
+    }
+    train_phq_map = {int(r["ID"]): get_phq9_target(r) for r in train_rows}
+    val_phq_map   = {int(r["ID"]): get_phq9_target(r) for r in val_rows}
+
+    split_label = (
+        regression_label if task == REGRESSION_TASK
+        else ("label2" if task == "binary" else "label3")
+    )
+
+    return {
+        "train_ids":        sorted(train_map.keys()),
+        "val_ids":          sorted(val_map.keys()),
+        "train_map":        train_map,
+        "val_map":          val_map,
+        "source_split_map": source_split_map,
+        "rows":             rows,
+        "split_label":      split_label,
+        "train_phq_map":    train_phq_map,
+        "val_phq_map":      val_phq_map,
+    }
 
 
 def to_project_relative_path(path_like: str | Path) -> str:

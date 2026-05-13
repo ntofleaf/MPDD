@@ -57,7 +57,9 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_logits_and_phq(ckpt_path: str | Path) -> tuple[list[int], np.ndarray, list[float]]:
-    """返回 (ids, logits_np [N,C], phq_preds)"""
+    """返回 (ids, logits_np [N,C], phq_preds_raw)
+    phq_preds_raw: 已反变换到原始 PHQ-9 尺度 [0, 27]
+    """
     ckpt_path = PROJECT_ROOT / ckpt_path
     print(f"  Loading: {ckpt_path.name}")
     ckpt = torch.load(ckpt_path, map_location="cpu")
@@ -69,6 +71,9 @@ def get_logits_and_phq(ckpt_path: str | Path) -> tuple[list[int], np.ndarray, li
     target_t      = int(ckpt["target_t"])
     model_kwargs  = dict(ckpt["model_kwargs"])
     reg_label     = ckpt.get("regression_label", "label2") or "label2"
+    # 读取是否使用 log1p 归一化
+    # 旧 checkpoint 无此字段，默认 False（直接输出原始 PHQ-9）
+    phq_log1p = bool(ckpt.get("phq_log1p_normalized", False))
 
     task_maps = load_task_maps(TEST_SPLIT_CSV, task, reg_label)
     dataset = MPDDElderDataset(
@@ -104,7 +109,15 @@ def get_logits_and_phq(ckpt_path: str | Path) -> tuple[list[int], np.ndarray, li
             )
             if use_reg:
                 logits, reg_out = outputs
-                phq_batch = reg_out.cpu().numpy().tolist()
+                phq_raw = reg_out.cpu().numpy()        # log1p 或原始，取决于训练配置
+                if phq_log1p:
+                    # 新 checkpoint：输出是 log1p 空间，需要 expm1() 反变换
+                    # expm1(x) = exp(x) - 1，与 log1p(x) = log(1+x) 互为逆运算
+                    # 例：模型输出 1.792 → expm1(1.792) ≈ 5.0 → 原始 PHQ-9=5
+                    phq_batch = np.expm1(phq_raw).tolist()
+                else:
+                    # 旧 checkpoint：输出已在原始 PHQ-9 尺度，直接使用
+                    phq_batch = phq_raw.tolist()
             else:
                 logits = outputs
                 # 类别中心作为 PHQ-9 占位
@@ -120,6 +133,7 @@ def get_logits_and_phq(ckpt_path: str | Path) -> tuple[list[int], np.ndarray, li
     return (
         [int(x) for x in all_ids],
         np.concatenate(all_logits, axis=0),   # [N, num_classes]
+        # clip 到 [0, 27]，确保 PHQ-9 在合法范围内
         [float(np.clip(x, 0, 27)) for x in all_phq],
     )
 

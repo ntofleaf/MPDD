@@ -17,9 +17,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from dataset import REGRESSION_TASK, MPDDElderDataset, collate_batch, infer_input_dims, resolve_project_path
-from metrics import evaluate_model
+from metrics import CCCLoss, evaluate_model
 from models import TorchcatBaseline
-from train_val_split import create_train_val_split
+from train_val_split import create_train_val_split, load_fold_split
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -66,6 +66,21 @@ def build_parser(defaults: dict[str, Any]) -> argparse.ArgumentParser:
     parser.add_argument("--checkpoints_dir", default=defaults["checkpoints_dir"])
     parser.add_argument("--logs_dir", default=defaults["logs_dir"])
     parser.add_argument("--experiment_name", default="")
+    # 是否关闭回归头：
+    #   分类任务（binary/ternary）默认关闭回归头，避免分类梯度和回归梯度竞争；
+    #   回归任务（regression）始终开启回归头，无视此参数。
+    #   若在分类任务里也想保留回归头（旧行为），传入 --force_regression_head 即可。
+    parser.add_argument("--force_regression_head", action="store_true", default=False,
+                        help="分类任务时强制保留回归头（旧行为，默认关闭）")
+    # [Fix #1] MSE 预热：前 N epoch 用 MSE Loss 稳定方向，之后切换到 CCCLoss + 方差惩罚
+    # 对于小样本回归（~70 个训练样本），建议设为 30~50，默认 0 表示从第1轮直接用CCCLoss
+    parser.add_argument("--mse_warmup_epochs", type=int, default=0,
+                        help="回归任务：前 N epoch 用 MSELoss 预热，之后切换到 CCCLoss（默认 0=不预热）")
+    # 五折交叉验证：指定预生成的 fold CSV（由 generate_kfold_splits.py 生成）
+    # 若指定此参数，则忽略 --val_ratio 直接读取固定分割（完全确定性）
+    parser.add_argument("--fold_csv", default="",
+                        help="预生成的 fold CSV 路径（如 kfold_splits/fold_0.csv），"
+                             "指定后忽略 --val_ratio 随机分割，直接读取固定分割")
     return parser
 
 
@@ -183,15 +198,37 @@ def main() -> None:
     logger = setup_logger(log_dir / f"result_{timestamp}.log")
     device = torch.device(args.device if args.device != "cuda" or torch.cuda.is_available() else "cpu")
 
-    split_payload = create_train_val_split(
-        split_csv=args.split_csv,
-        task=args.task,
-        val_ratio=args.val_ratio,
-        regression_label=args.regression_label,
-    )
+    # 先传 seed 给 split（确保分割可复现），再 setup_seed 全局固定随机态
+    fold_csv = getattr(args, "fold_csv", "").strip()
+    if fold_csv:
+        # 五折模式：直接读取预生成的固定分割，不做任何随机操作
+        split_payload = load_fold_split(
+            fold_csv=fold_csv,
+            task=args.task,
+            regression_label=args.regression_label,
+        )
+    else:
+        # 旧有模式：按 val_ratio + seed 随机分割（向下兼容）
+        split_payload = create_train_val_split(
+            split_csv=args.split_csv,
+            task=args.task,
+            val_ratio=args.val_ratio,
+            regression_label=args.regression_label,
+            seed=args.seed,   # 回归任务按 PHQ-9 分箱分层，用 seed 确保可复现
+        )
     setup_seed(args.seed)
-    use_regression_head = True
     is_regression_task = args.task == REGRESSION_TASK
+    # 回归任务：纯回归模式—— is_regression=True 使 classifier 输出 1 个标量，
+    #                      use_regression_head=False 彻底去掉辅助分类头，
+    #                      避免 CrossEntropy 梯度与回归梯度竞争。
+    # 分类任务：默认关闭回归头，除非用户显式传入 --force_regression_head。
+    if is_regression_task:
+        use_regression_head = False   # 纯回归模式：无辅助分类头
+    else:
+        use_regression_head = getattr(args, "force_regression_head", False)
+    # dataset.py 的 normalize_phq_target() 使用 log1p 归一化，记录到 checkpoint
+    # 推理脚本读到此标志后会自动调用 np.expm1() 将预测值还原到原始 PHQ-9 尺度
+    phq_log1p_normalized = True
     train_dataset = MPDDElderDataset(
         data_root=args.data_root,
         label_map=split_payload["train_map"],
@@ -237,7 +274,11 @@ def main() -> None:
     model_kwargs = {
         "subtrack": args.subtrack,
         "num_classes": num_classes,
-        "is_regression": False,
+        # 回归任务使用 is_regression=True：
+        #   classifier 头改为 Linear(hidden, 1)，直接输出 PHQ-9 标量。
+        # 分类任务使用 is_regression=False：
+        #   classifier 头输出 num_classes 个 logits。
+        "is_regression": is_regression_task,
         "use_regression_head": use_regression_head,
         "audio_dim": input_dims["audio_dim"],
         "video_dim": input_dims["video_dim"],
@@ -257,7 +298,23 @@ def main() -> None:
         num_classes=num_classes,
         device=device,
     )
-    criterion = (nn.CrossEntropyLoss(weight=class_weights, label_smoothing=0.1), nn.MSELoss())
+    # criterion 的类型决定了 evaluate_model 的行为：
+    #   CCCLoss  单个 → evaluate_model 按「纯回归」模式处理（task=regression 时）
+    #   tuple    → evaluate_model 按「分类+回归」模式处理（旧行为，已弃用）
+    #   单个 CE  → evaluate_model 按「纯分类」模式处理
+    if is_regression_task:
+        # 纯回归模式：直接用 CCC 作为训练目标，彻底避免均值坤踻问题
+        # CCC Loss = 1 - CCC(预测, 真实) ，等价于最大化 CCC
+        criterion: nn.Module | tuple = CCCLoss()
+    elif use_regression_head:
+        # 旧行为（分类+回归共存，现已弃用）
+        criterion = (
+            nn.CrossEntropyLoss(weight=class_weights, label_smoothing=0.1),
+            nn.MSELoss(),
+        )
+    else:
+        # 纯分类任务：不传 tuple，避免 evaluate_model 错误地期望回归输出
+        criterion = nn.CrossEntropyLoss(weight=class_weights, label_smoothing=0.1)
     selection_metric_name = get_selection_metric_name(args.task)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -287,10 +344,25 @@ def main() -> None:
                 personality=batch["personality"].to(device),
                 pair_mask=batch["pair_mask"].to(device) if "pair_mask" in batch else None,
             )
-            criterion_cls, criterion_reg = criterion
-            phq9 = batch["phq9"].to(device)
-            logits, reg_out = outputs
-            loss = criterion_cls(logits, labels) + criterion_reg(reg_out, phq9)
+            if is_regression_task:
+                # ── 纯回归模式：模型输出 1 个标量 ──
+                # [Fix #1] MSE 预热：前 mse_warmup_epochs 轮用 MSE，之后切换 CCC+方差惩罚
+                phq9 = batch["phq9"].to(device)
+                reg_out = outputs.squeeze(-1)  # [batch_size]
+                if epoch <= args.mse_warmup_epochs:
+                    loss = nn.functional.mse_loss(reg_out, phq9)
+                else:
+                    loss = criterion(reg_out, phq9)
+            elif use_regression_head:
+                # ── 旧行为（分类+回归共存） ──
+                criterion_cls, criterion_reg = criterion
+                phq9 = batch["phq9"].to(device)
+                logits, reg_out = outputs
+                loss = criterion_cls(logits, labels) + criterion_reg(reg_out, phq9)
+            else:
+                # ── 纯分类模式 ──
+                logits = outputs
+                loss = criterion(logits, labels)
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
@@ -310,16 +382,41 @@ def main() -> None:
         history_row["val_f1"] = round(val_metrics["f1"], 6)
         history_row["val_acc"] = round(val_metrics["acc"], 6)
         history_row["val_kappa"] = round(val_metrics["kappa"], 6)
-        history_row["val_cls_loss"] = round(val_metrics["cls_loss"], 6)
-        history_row["val_reg_loss"] = round(val_metrics["reg_loss"], 6)
+        history_row["val_cls_loss"] = round(
+            val_metrics.get("cls_loss", val_metrics["loss"]), 6
+        )
+        history_row["val_reg_loss"] = round(
+            val_metrics.get("reg_loss", 0.0), 6
+        )
         if is_regression_task:
             history_row["val_r2"] = round(val_metrics["r2"], 6)
-        logger.info(
-            "Epoch %d/%d | train_loss=%.6f | val_f1=%.6f val_acc=%.6f "
-            "val_kappa=%.6f val_ccc=%.6f val_rmse=%.6f val_mae=%.6f",
-            epoch, args.epochs, train_loss, val_metrics["f1"], val_metrics["acc"],
-            val_metrics["kappa"], val_metrics["ccc"], val_metrics["rmse"], val_metrics["mae"],
-        )
+            # [Fix #2] 记录原始 PHQ-9 空间的指标（expm1 还原后），更直观反映真实误差
+            history_row["phq9_rmse"]      = round(val_metrics.get("phq9_rmse", 0.0), 4)
+            history_row["phq9_mae"]       = round(val_metrics.get("phq9_mae", 0.0), 4)
+            history_row["phq9_ccc"]       = round(val_metrics.get("phq9_ccc", 0.0), 6)
+            history_row["phq9_pred_mean"] = round(val_metrics.get("phq9_pred_mean", 0.0), 3)
+            history_row["phq9_pred_std"]  = round(val_metrics.get("phq9_pred_std", 0.0), 3)
+        if is_regression_task:
+            _loss_mode = "MSE-warmup" if epoch <= args.mse_warmup_epochs else "CCC+VarPenalty"
+            logger.info(
+                "Epoch %d/%d [%s] | train_loss=%.6f | "
+                "[log1p] ccc=%.4f rmse=%.4f mae=%.4f | "
+                "[PHQ-9] ccc=%.4f rmse=%.2f mae=%.2f pred_mean=%.2f pred_std=%.2f",
+                epoch, args.epochs, _loss_mode, train_loss,
+                val_metrics["ccc"], val_metrics["rmse"], val_metrics["mae"],
+                val_metrics.get("phq9_ccc", 0.0),
+                val_metrics.get("phq9_rmse", 0.0),
+                val_metrics.get("phq9_mae", 0.0),
+                val_metrics.get("phq9_pred_mean", 0.0),
+                val_metrics.get("phq9_pred_std", 0.0),
+            )
+        else:
+            logger.info(
+                "Epoch %d/%d | train_loss=%.6f | val_f1=%.6f val_acc=%.6f "
+                "val_kappa=%.6f val_ccc=%.6f val_rmse=%.6f val_mae=%.6f",
+                epoch, args.epochs, train_loss, val_metrics["f1"], val_metrics["acc"],
+                val_metrics["kappa"], val_metrics["ccc"], val_metrics["rmse"], val_metrics["mae"],
+            )
         history_rows.append(history_row)
 
         current_score = float(val_metrics["selection_score"])
@@ -350,6 +447,9 @@ def main() -> None:
                     "best_epoch": epoch,
                     "best_val_metrics": best_val_summary,
                     "metric_split": "val",
+                    # 记录 PHQ-9 是否使用 log1p 归一化
+                    # 推理时若此字段为 True，需对回归输出做 expm1() 反变换
+                    "phq_log1p_normalized": phq_log1p_normalized,
                 },
                 best_checkpoint_path,
             )

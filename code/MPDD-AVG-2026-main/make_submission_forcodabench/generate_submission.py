@@ -36,12 +36,12 @@ from models import TorchcatBaseline
 BINARY_CKPT = PROJECT_ROOT / (
     "checkpoints/Track2/A-V-P/binary/"
     "track2_binary_A-V+P_bilstm_mean_mfcc__densenet/"
-    "best_model_2026-05-10-15.12.19.pth"          # mfcc+densenet seed=3407  val_F1=72.1%
+    "best_model_2026-05-11-18.54.15.pth"          # mfcc+densenet seed=3407  val_F1=72.1%
 )
 TERNARY_CKPT = PROJECT_ROOT / (
     "checkpoints/Track2/A-V-P/ternary/"
     "track2_ternary_A-V+P_bilstm_mean_mfcc__densenet/"
-    "best_model_2026-05-09-23.12.49.pth"          # mfcc+densenet seed=3407  val_F1=40.4%
+    "best_model_2026-05-11-17.56.56.pth"          # mfcc+densenet seed=42  val_F1=47.1%  val_Kappa=0.407
 )
 
 # 测试集路径
@@ -62,7 +62,9 @@ def load_ckpt(ckpt_path: Path):
 
 
 def run_inference(ckpt_path: Path) -> tuple[list[int], list[int], list[float]]:
-    """返回 (ids, class_preds, phq9_preds)"""
+    """返回 (ids, class_preds, phq9_preds_raw)
+    phq9_preds_raw: 已反变换到原始 PHQ-9 尺度 [0, 27]
+    """
     ckpt = load_ckpt(ckpt_path)
 
     task          = ckpt["task"]
@@ -72,6 +74,9 @@ def run_inference(ckpt_path: Path) -> tuple[list[int], list[int], list[float]]:
     target_t      = int(ckpt["target_t"])
     model_kwargs  = dict(ckpt["model_kwargs"])
     reg_label     = ckpt.get("regression_label", "label2") or "label2"
+    # 读取 checkpoint 是否用了 log1p 归一化
+    # 旧 checkpoint 不含此字段，默认 False（旧模型直接输出原始 PHQ-9）
+    phq_log1p = bool(ckpt.get("phq_log1p_normalized", False))
 
     task_maps = load_task_maps(TEST_SPLIT_CSV, task, reg_label)
     dataset = MPDDElderDataset(
@@ -101,11 +106,23 @@ def run_inference(ckpt_path: Path) -> tuple[list[int], list[int], list[float]]:
 
     ids         = [int(x) for x in metrics["ids"]]
     class_preds = [int(x) for x in metrics.get("class_pred", metrics["y_pred"])]
-    # phq9 预测：回归头输出，clamp 到 [0, 27]
+
+    # PHQ-9 反变换逻辑：
+    #   旧 checkpoint (phq_log1p=False): 回归头直接输出原始 PHQ-9 尺度，只需 clip
+    #   新 checkpoint (phq_log1p=True) : 回归头输出 log1p 尺度，需先 expm1() 再 clip
     if use_reg and "phq_pred" in metrics:
-        phq_preds = [float(np.clip(x, 0, 27)) for x in metrics["phq_pred"]]
+        if phq_log1p:
+            # expm1(x) = exp(x) - 1，是 log1p 的逆变换
+            # 示例: 模型输出 1.792 → expm1(1.792) ≈ 5.0 → 原始 PHQ-9=5
+            phq_preds = [float(np.clip(np.expm1(x), 0, 27)) for x in metrics["phq_pred"]]
+            print(f"  [log1p模式] 已应用 expm1() 反变换，输出范围: "
+                  f"[{min(phq_preds):.2f}, {max(phq_preds):.2f}]")
+        else:
+            phq_preds = [float(np.clip(x, 0, 27)) for x in metrics["phq_pred"]]
+            print(f"  [原始模式] 直接 clip，输出范围: "
+                  f"[{min(phq_preds):.2f}, {max(phq_preds):.2f}]")
     else:
-        # 没有回归头时，用类别中心值做占位 (0→3, 1→12, 2→22)
+        # 没有回归头时，用类别中心値做占位 (0→3, 1→12, 2→22)
         phq_center = {0: 3.0, 1: 12.0, 2: 22.0}
         phq_preds  = [phq_center.get(c, 0.0) for c in class_preds]
 
