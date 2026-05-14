@@ -187,8 +187,12 @@ def load_fold_split(
         raise ValueError(f"fold CSV 中没有 split=val 的行: {csv_path}")
 
     # source_split_map：Dataset 用来找特征文件所在的物理目录（"train" 或 "test"）
-    # fold CSV 里所有样本都是原始训练集，物理文件均在 train 目录下
-    source_split_map = {int(r["ID"]): "train" for r in rows}
+    # 优先读取 fold CSV 中的 data_source 列（由 generate_kfold_splits_expanded.py 写入）；
+    # 旧格式 fold CSV 无此列时自动 fallback 到 "train"，保持向后兼容。
+    source_split_map = {
+        int(r["ID"]): r.get("data_source", "train").strip().lower()
+        for r in rows
+    }
 
     train_map = {
         int(r["ID"]): get_task_label(r, task, regression_label)

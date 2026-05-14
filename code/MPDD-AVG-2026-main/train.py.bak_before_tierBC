@@ -226,9 +226,9 @@ def main() -> None:
         use_regression_head = False   # 纯回归模式：无辅助分类头
     else:
         use_regression_head = getattr(args, "force_regression_head", False)
-    # 【档位 B】2026-05-13: 改用原始 PHQ-9 尺度，不做 log1p 归一化
-    # 推理脚本读到 False 会直接 clip 到 [0, 27]，不做 expm1 反变换
-    phq_log1p_normalized = False
+    # dataset.py 的 normalize_phq_target() 使用 log1p 归一化，记录到 checkpoint
+    # 推理脚本读到此标志后会自动调用 np.expm1() 将预测值还原到原始 PHQ-9 尺度
+    phq_log1p_normalized = True
     train_dataset = MPDDElderDataset(
         data_root=args.data_root,
         label_map=split_payload["train_map"],

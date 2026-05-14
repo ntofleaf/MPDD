@@ -10,19 +10,6 @@ from .hybrid_temporal_encoder import HybridTemporalEncoder
 
 
 class ModalityEncoder(nn.Module):
-    """
-    【档位 C 修复】2026-05-13
-    旧版 forward 末尾 `self.norm(x.mean(dim=1))` 是回归塌缩的核心元凶：
-      1. mean(dim=1) 把整段时序平均，5 秒哭泣信号被 60 秒平均稀释 12 倍
-      2. LayerNorm 把每个样本归一化到 0 均值单位方差，
-         直接抹掉"严重抑郁特征幅度大、轻症幅度小"这个区分信号
-
-    现改为：
-      1. mean + max 双池化拼接，保留"整体趋势 + 最强烈片段"
-      2. pool_proj 把 2H 维投影回 H 维，保持下游接口不变
-      3. 去掉 LayerNorm，让样本间的特征幅度差异保留下来
-    """
-
     def __init__(
         self,
         input_dim: int,
@@ -46,8 +33,7 @@ class ModalityEncoder(nn.Module):
             bidirectional=True,
         )
         self.dropout = nn.Dropout(dropout)
-        # 新增：max+mean 拼接后的投影层，把 2H -> H 保持接口
-        self.pool_proj = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.norm = nn.LayerNorm(hidden_dim)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # flatten_parameters() is required when using nn.DataParallel:
@@ -60,11 +46,8 @@ class ModalityEncoder(nn.Module):
             x = F.relu(self.pre_proj(x))
         x = F.relu(self.proj(x))
         x = self.dropout(x)
-        x, _ = self.lstm(x)                         # [B, T, H]
-        mean_pool = x.mean(dim=1)                   # 整体平均
-        max_pool = x.max(dim=1).values              # 最强烈片段
-        pooled = torch.cat([mean_pool, max_pool], dim=-1)  # [B, 2H]
-        return self.pool_proj(pooled)               # [B, H]
+        x, _ = self.lstm(x)
+        return self.norm(x.mean(dim=1))
 
 
 class PersonalityEncoder(nn.Module):

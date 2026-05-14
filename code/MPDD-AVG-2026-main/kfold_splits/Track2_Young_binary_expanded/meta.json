@@ -1,0 +1,26 @@
+{
+  "task": "binary",
+  "n_folds": 5,
+  "val_size": 9,
+  "seed": 42,
+  "train_csv": "/home/niutao/data/datasets_MPDD/Train-MPDD-Young/split_labels_train.csv",
+  "test_label_csv": "/home/niutao/data/datasets_MPDD/Test-MPDD-Young/Young/labels_binary.csv",
+  "total_train_original": 88,
+  "total_test_added": 22,
+  "total_samples": 110,
+  "pool_a_size": 45,
+  "pool_b_size": 43,
+  "pool_c_size": 22,
+  "per_fold": {
+    "train": 101,
+    "val": 9
+  },
+  "train_label_counts": {
+    "0": 45,
+    "1": 43
+  },
+  "pool_a_label_counts": {
+    "0": 23,
+    "1": 22
+  }
+}

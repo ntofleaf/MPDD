@@ -44,12 +44,7 @@ YOUNG_VIDEO_EVENT_NAMES = {
 
 
 def normalize_phq_target(value: float | int) -> float:
-    # 【档位 B 修复】2026-05-13
-    # 旧版 log1p(PHQ-9) 把 PHQ=5 vs PHQ=18 的差距从 13 压缩到 1.15，
-    # 重症样本梯度被严重削弱，模型不愿意预测高分。
-    # 现改为不归一化，模型直接学习原始 [0, 27] 尺度。
-    # 推理脚本读到 phq_log1p_normalized=False 后会直接 clip 不做 expm1。
-    return float(max(float(value), 0.0))
+    return float(np.log1p(max(float(value), 0.0)))
 
 
 def resolve_project_path(path_like: str | Path) -> Path:

@@ -33,37 +33,29 @@ def ccc(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 # =============================================================================
 class CCCLoss(nn.Module):
     """
-    可微分 CCC 损失 + 方差惩罚项 + MSE 联合损失。
+    可微分 CCC 损失 + 方差惩罚项。
 
-    【档位 A 修复】2026-05-13
-    旧版只有 CCC + var_penalty 时模型仍然塌缩到 [2,8] 窄带：
-      - CCC 对绝对尺度不敏感（只看相关性），允许"猜均值"低损失
-      - var_penalty 阈值 min_var=0.05 对应 std≥0.22(log1p)，模型刚翻过去就停
-      - 没有任何项强制"预测高分样本要给高分"，重症被系统性低估
+    【修复原因】
+    原始 CCCLoss 在小样本（val ~18 个样本）下容易退化：
+      - CCC 分母 = pred_var + true_var + (均值差)^2 + eps
+      - 当 pred_var -> 0，整个 CCC -> 0，梯度方向彻底混乱
+      - 模型退化为"只预测均值"的常数预测器（val CCC < 0.15）
 
-    【本次改动】
-      1. mse_weight=0.5 加入 MSE 项：强制绝对值对齐，重罚高分被预测低
-      2. min_var 0.05 → 0.20：阈值对应 std≥0.45(log1p)，逼模型展开方差
-      3. var_weight 0.5 → 1.0：方差惩罚不再被 CCC 项盖过
+    【修复方式】
+    新增方差惩罚项：var_penalty = relu(min_var - pred_var)
+    当预测方差低于 min_var 时，惩罚项产生梯度，强制把方差往上推，
+    阻止模型坍缩为均值预测器。方差正常时 relu 输出为 0，不影响训练。
 
     【参数说明】
-    var_weight : 方差惩罚系数，默认 1.0
-    min_var    : 预测方差的最低期望值，默认 0.20
-                 (log1p 空间下接近真实方差的 30~40%，逼分布展开)
-    mse_weight : MSE 联合损失系数，默认 0.5
-                 (CCC loss 量级 ~1.0，log1p 空间 MSE 量级 ~0.3，0.5 平衡)
+    var_weight : 方差惩罚系数，默认 0.5（可以设 0.2~1.0 之间）
+    min_var    : 预测方差的最低期望值，默认 0.05
+                 对应 log1p 空间约 +-0.22 的标准差，是合理的最低下限
     """
 
-    def __init__(
-        self,
-        var_weight: float = 0.5,
-        min_var: float = 10.0,    # 原始空间真实方差~30，min_var=10 对应 std≥3.16
-        mse_weight: float = 0.05, # 原始空间 MSE~30，乘 0.05 后≈1.5，与 CCC 量级匹配
-    ) -> None:
+    def __init__(self, var_weight: float = 0.5, min_var: float = 0.05) -> None:
         super().__init__()
         self.var_weight = var_weight
         self.min_var = min_var
-        self.mse_weight = mse_weight
 
     def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
         y_pred = y_pred.float().reshape(-1)
@@ -75,12 +67,11 @@ class CCCLoss(nn.Module):
         covariance = ((y_pred - pred_mean) * (y_true - true_mean)).mean()
         denom      = pred_var + true_var + (pred_mean - true_mean) ** 2 + 1e-8
         ccc_val    = 2.0 * covariance / denom
-        ccc_loss   = 1.0 - ccc_val
+        ccc_loss   = 1.0 - ccc_val   # 越接近 0 越好（CCC->1 时 loss->0）
 
+        # 方差惩罚: relu(min_var - pred_var) >= 0，完全可微
         var_penalty = F.relu(self.min_var - pred_var)
-        mse = F.mse_loss(y_pred, y_true)
-
-        return ccc_loss + self.var_weight * var_penalty + self.mse_weight * mse
+        return ccc_loss + self.var_weight * var_penalty
 
 
 def classification_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, Any]:
@@ -133,20 +124,16 @@ def regression_metrics(
     }
     metrics["selection_score"] = metrics["ccc"]
 
-    # 始终输出 phq9_* 字段；区别仅在是否做 expm1 反变换
     if phq_log1p:
+        # 原始 PHQ-9 空间（还原后，更直观的误差量级）
         phq_true_orig = np.clip(np.expm1(y_true), 0, 27)
         phq_pred_orig = np.clip(np.expm1(y_pred), 0, 27)
-    else:
-        # 【档位 B】raw 空间：值已是 [0,27]，只需 clip 不做 expm1
-        phq_true_orig = np.clip(y_true, 0, 27)
-        phq_pred_orig = np.clip(y_pred, 0, 27)
-    metrics["phq9_rmse"]      = safe_float(np.sqrt(mean_squared_error(phq_true_orig, phq_pred_orig)))
-    metrics["phq9_mae"]       = safe_float(mean_absolute_error(phq_true_orig, phq_pred_orig))
-    metrics["phq9_ccc"]       = ccc(phq_true_orig, phq_pred_orig)
-    metrics["phq9_pred_mean"] = float(phq_pred_orig.mean())
-    metrics["phq9_pred_std"]  = float(phq_pred_orig.std())
-    metrics["phq9_true_mean"] = float(phq_true_orig.mean())
+        metrics["phq9_rmse"]      = safe_float(np.sqrt(mean_squared_error(phq_true_orig, phq_pred_orig)))
+        metrics["phq9_mae"]       = safe_float(mean_absolute_error(phq_true_orig, phq_pred_orig))
+        metrics["phq9_ccc"]       = ccc(phq_true_orig, phq_pred_orig)
+        metrics["phq9_pred_mean"] = float(phq_pred_orig.mean())
+        metrics["phq9_pred_std"]  = float(phq_pred_orig.std())
+        metrics["phq9_true_mean"] = float(phq_true_orig.mean())
 
     return metrics
 
@@ -243,11 +230,8 @@ def evaluate_model(
     if is_pure_regression:
         phq_true = np.asarray(all_phq_labels, dtype=np.float64)
         phq_pred = np.asarray(all_phq_preds, dtype=np.float64)
-        # 【档位 B 修复】2026-05-13: 自动检测目标空间
-        # log1p 空间下真实值不会超过 log1p(27)≈3.33；如果观察到 > 3.5 说明已是 raw 空间
-        # 这样旧 checkpoint（log1p）和新训练（raw）都能得到正确的 [PHQ-9] 诊断指标
-        _is_log1p = bool(np.max(phq_true) <= 3.5)
-        metrics = regression_metrics(phq_true, phq_pred, phq_log1p=_is_log1p)
+        # phq_log1p=True: 同时计算 log1p 空间和原始 PHQ-9 空间两套指标
+        metrics = regression_metrics(phq_true, phq_pred, phq_log1p=True)
         metrics.setdefault("f1", 0.0)
         metrics.setdefault("acc", 0.0)
         metrics.setdefault("kappa", 0.0)
