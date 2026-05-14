@@ -1,6 +1,8 @@
 # dataset / large data folders
 dataset/
 datasets/
+datasets_MPDD/
+.tmp_MPDD_stash/
 raw_data/
 processed_data/
 images/
@@ -33,6 +35,10 @@ MPDD_dataset/
 *.tif
 *.tiff
 
+# claude code credentials (never commit)
+.claude.credentials.json
+.claude/.credentials.json
+
 # cache
 __pycache__/
 *.pyc
@@ -48,3 +54,17 @@ logs/
 __pycache__/
 *.mp4
 *.zip
+
+# audio/video formats (datasets)
+*.avi
+*.AVI
+*.wav
+*.WAV
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.aac
+*.mov
+*.mkv
+*.webm

@@ -1,0 +1,11 @@
+{
+  "task": "binary",
+  "n_folds": 5,
+  "seed": 42,
+  "split_csv": "/home/niutao/data/datasets_MPDD/Train-MPDD-Elder/split_labels_train.csv",
+  "total_samples": 87,
+  "strat_bin_counts": {
+    "0": 61,
+    "1": 26
+  }
+}
