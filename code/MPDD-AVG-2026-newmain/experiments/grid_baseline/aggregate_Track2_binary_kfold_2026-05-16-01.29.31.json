@@ -1,0 +1,755 @@
+{
+  "args": {
+    "track": "Track2",
+    "task": "binary",
+    "mode": "kfold",
+    "subtrack": "A-V+P",
+    "audio_feature": "wav2vec",
+    "video_feature": "resnet",
+    "encoder": "bilstm_mean",
+    "grid_subtracks": [
+      "A-V+P"
+    ],
+    "grid_audios": [
+      "wav2vec"
+    ],
+    "grid_videos": [
+      "resnet"
+    ],
+    "eval": "frozen_val",
+    "seed": 42,
+    "seeds": null,
+    "n_splits": 5,
+    "gpus": "1,1,1",
+    "output_dir": "experiments/grid_baseline",
+    "quiet": true
+  },
+  "fixed_hparams": {
+    "epochs": "140",
+    "batch_size": "4",
+    "lr": "8e-5",
+    "weight_decay": "1e-5",
+    "hidden_dim": "128",
+    "dropout": "0.45",
+    "patience": "35",
+    "min_delta": "1e-4",
+    "target_t": "128",
+    "val_ratio": "0.1"
+  },
+  "groups": {
+    "A_VpP__wav2vec__resnet__bilstm_mean": {
+      "combo": {
+        "track": "Track2",
+        "task": "binary",
+        "subtrack": "A-V+P",
+        "audio_feature": "wav2vec",
+        "video_feature": "resnet",
+        "encoder": "bilstm_mean"
+      },
+      "summary_all": {
+        "n_runs": 5,
+        "collapse_count": 0,
+        "metrics": {
+          "acc": {
+            "mean": 0.6581699346405229,
+            "std": 0.07349672476075024,
+            "min": 0.5882352941176471,
+            "max": 0.7777777777777778
+          },
+          "f1": {
+            "mean": 0.6315147123407993,
+            "std": 0.10121888426773565,
+            "min": 0.5296442687747036,
+            "max": 0.7777777777777778
+          },
+          "kappa": {
+            "mean": 0.30933253397282173,
+            "std": 0.15530214600420114,
+            "min": 0.14388489208633082,
+            "max": 0.5555555555555556
+          },
+          "ccc": {
+            "mean": 0.03840288415468892,
+            "std": 0.05168156009557731,
+            "min": -0.01621177126242507,
+            "max": 0.1164638593280596
+          },
+          "rmse": {
+            "mean": 0.7160612878485877,
+            "std": 0.09343231917144242,
+            "min": 0.6308552404773549,
+            "max": 0.8497617269276557
+          },
+          "mae": {
+            "mean": 0.5739126509311153,
+            "std": 0.09196394492918687,
+            "min": 0.4766828351550632,
+            "max": 0.7219578822453817
+          }
+        },
+        "per_class_recall_mean": [
+          0.8222222222222222,
+          0.48611111111111105
+        ],
+        "per_class_recall_min": [
+          0.6666666666666666,
+          0.2222222222222222
+        ]
+      },
+      "summary_by_fold": {
+        "fold0": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.6666666666666666,
+              "std": 0.0,
+              "min": 0.6666666666666666,
+              "max": 0.6666666666666666
+            },
+            "f1": {
+              "mean": 0.6625,
+              "std": 0.0,
+              "min": 0.6625,
+              "max": 0.6625
+            },
+            "kappa": {
+              "mean": 0.33333333333333337,
+              "std": 0.0,
+              "min": 0.33333333333333337,
+              "max": 0.33333333333333337
+            },
+            "ccc": {
+              "mean": 0.044833929056041624,
+              "std": 0.0,
+              "min": 0.044833929056041624,
+              "max": 0.044833929056041624
+            },
+            "rmse": {
+              "mean": 0.6308552404773549,
+              "std": 0.0,
+              "min": 0.6308552404773549,
+              "max": 0.6308552404773549
+            },
+            "mae": {
+              "mean": 0.4766828351550632,
+              "std": 0.0,
+              "min": 0.4766828351550632,
+              "max": 0.4766828351550632
+            }
+          },
+          "per_class_recall_mean": [
+            0.7777777777777778,
+            0.5555555555555556
+          ],
+          "per_class_recall_min": [
+            0.7777777777777778,
+            0.5555555555555556
+          ]
+        },
+        "fold1": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.6111111111111112,
+              "std": 0.0,
+              "min": 0.6111111111111112,
+              "max": 0.6111111111111112
+            },
+            "f1": {
+              "mean": 0.5418181818181818,
+              "std": 0.0,
+              "min": 0.5418181818181818,
+              "max": 0.5418181818181818
+            },
+            "kappa": {
+              "mean": 0.2222222222222222,
+              "std": 0.0,
+              "min": 0.2222222222222222,
+              "max": 0.2222222222222222
+            },
+            "ccc": {
+              "mean": -0.00019981501760923053,
+              "std": 0.0,
+              "min": -0.00019981501760923053,
+              "max": -0.00019981501760923053
+            },
+            "rmse": {
+              "mean": 0.8497617269276557,
+              "std": 0.0,
+              "min": 0.8497617269276557,
+              "max": 0.8497617269276557
+            },
+            "mae": {
+              "mean": 0.7219578822453817,
+              "std": 0.0,
+              "min": 0.7219578822453817,
+              "max": 0.7219578822453817
+            }
+          },
+          "per_class_recall_mean": [
+            1.0,
+            0.2222222222222222
+          ],
+          "per_class_recall_min": [
+            1.0,
+            0.2222222222222222
+          ]
+        },
+        "fold2": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.7777777777777778,
+              "std": 0.0,
+              "min": 0.7777777777777778,
+              "max": 0.7777777777777778
+            },
+            "f1": {
+              "mean": 0.7777777777777778,
+              "std": 0.0,
+              "min": 0.7777777777777778,
+              "max": 0.7777777777777778
+            },
+            "kappa": {
+              "mean": 0.5555555555555556,
+              "std": 0.0,
+              "min": 0.5555555555555556,
+              "max": 0.5555555555555556
+            },
+            "ccc": {
+              "mean": 0.1164638593280596,
+              "std": 0.0,
+              "min": 0.1164638593280596,
+              "max": 0.1164638593280596
+            },
+            "rmse": {
+              "mean": 0.6362735233687948,
+              "std": 0.0,
+              "min": 0.6362735233687948,
+              "max": 0.6362735233687948
+            },
+            "mae": {
+              "mean": 0.5490144756105211,
+              "std": 0.0,
+              "min": 0.5490144756105211,
+              "max": 0.5490144756105211
+            }
+          },
+          "per_class_recall_mean": [
+            0.7777777777777778,
+            0.7777777777777778
+          ],
+          "per_class_recall_min": [
+            0.7777777777777778,
+            0.7777777777777778
+          ]
+        },
+        "fold3": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.5882352941176471,
+              "std": 0.0,
+              "min": 0.5882352941176471,
+              "max": 0.5882352941176471
+            },
+            "f1": {
+              "mean": 0.5296442687747036,
+              "std": 0.0,
+              "min": 0.5296442687747036,
+              "max": 0.5296442687747036
+            },
+            "kappa": {
+              "mean": 0.14388489208633082,
+              "std": 0.0,
+              "min": 0.14388489208633082,
+              "max": 0.14388489208633082
+            },
+            "ccc": {
+              "mean": -0.01621177126242507,
+              "std": 0.0,
+              "min": -0.01621177126242507,
+              "max": -0.01621177126242507
+            },
+            "rmse": {
+              "mean": 0.6934536268081133,
+              "std": 0.0,
+              "min": 0.6934536268081133,
+              "max": 0.6934536268081133
+            },
+            "mae": {
+              "mean": 0.533543537644779,
+              "std": 0.0,
+              "min": 0.533543537644779,
+              "max": 0.533543537644779
+            }
+          },
+          "per_class_recall_mean": [
+            0.8888888888888888,
+            0.25
+          ],
+          "per_class_recall_min": [
+            0.8888888888888888,
+            0.25
+          ]
+        },
+        "fold4": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.6470588235294118,
+              "std": 0.0,
+              "min": 0.6470588235294118,
+              "max": 0.6470588235294118
+            },
+            "f1": {
+              "mean": 0.6458333333333333,
+              "std": 0.0,
+              "min": 0.6458333333333333,
+              "max": 0.6458333333333333
+            },
+            "kappa": {
+              "mean": 0.29166666666666663,
+              "std": 0.0,
+              "min": 0.29166666666666663,
+              "max": 0.29166666666666663
+            },
+            "ccc": {
+              "mean": 0.04712821866937768,
+              "std": 0.0,
+              "min": 0.04712821866937768,
+              "max": 0.04712821866937768
+            },
+            "rmse": {
+              "mean": 0.7699623216610194,
+              "std": 0.0,
+              "min": 0.7699623216610194,
+              "max": 0.7699623216610194
+            },
+            "mae": {
+              "mean": 0.5883645239998313,
+              "std": 0.0,
+              "min": 0.5883645239998313,
+              "max": 0.5883645239998313
+            }
+          },
+          "per_class_recall_mean": [
+            0.6666666666666666,
+            0.625
+          ],
+          "per_class_recall_min": [
+            0.6666666666666666,
+            0.625
+          ]
+        }
+      },
+      "run_records": [
+        {
+          "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42",
+          "run_tag": "fold0_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold0_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 1067.6,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42__gpu1.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "wav2vec",
+            "video_feature": "resnet",
+            "regression_label": "",
+            "best_epoch": 24,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.6666666666666666,
+              "f1": 0.6625,
+              "kappa": 0.33333333333333337,
+              "ccc": 0.044833929056041624,
+              "rmse": 0.6308552404773549,
+              "mae": 0.4766828351550632,
+              "confusion_matrix": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  4,
+                  5
+                ]
+              ],
+              "selection_score": 0.6625,
+              "r2": -0.15252920199759057,
+              "cls_loss": 0.6515988773769803,
+              "reg_loss": 0.3979783397581842,
+              "loss": 1.0495772030618455
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "wav2vec",
+              "video_feature": "resnet",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold0_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold0_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42",
+          "run_tag": "fold1_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold1_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 794.8,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42__gpu1.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "wav2vec",
+            "video_feature": "resnet",
+            "regression_label": "",
+            "best_epoch": 14,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.6111111111111112,
+              "f1": 0.5418181818181818,
+              "kappa": 0.2222222222222222,
+              "ccc": -0.00019981501760923053,
+              "rmse": 0.8497617269276557,
+              "mae": 0.7219578822453817,
+              "confusion_matrix": [
+                [
+                  9,
+                  0
+                ],
+                [
+                  7,
+                  2
+                ]
+              ],
+              "selection_score": 0.5418181818181818,
+              "r2": -0.055265174644546056,
+              "cls_loss": 0.6969952450858222,
+              "reg_loss": 0.72209499279658,
+              "loss": 1.4190902180141873
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "wav2vec",
+              "video_feature": "resnet",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold1_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold1_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42",
+          "run_tag": "fold2_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold2_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 1003.6,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42__gpu1.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "wav2vec",
+            "video_feature": "resnet",
+            "regression_label": "",
+            "best_epoch": 20,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.7777777777777778,
+              "f1": 0.7777777777777778,
+              "kappa": 0.5555555555555556,
+              "ccc": 0.1164638593280596,
+              "rmse": 0.6362735233687948,
+              "mae": 0.5490144756105211,
+              "confusion_matrix": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "selection_score": 0.7777777777777778,
+              "r2": 0.03028732597471362,
+              "cls_loss": 0.6797133949067857,
+              "reg_loss": 0.4048439926571316,
+              "loss": 1.084557400809394
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "wav2vec",
+              "video_feature": "resnet",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold2_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold2_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42",
+          "run_tag": "fold3_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold3_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 645.4,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42__gpu1.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42/train_result_2026-05-16-01.03.52.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42",
+            "timestamp": "2026-05-16-01.03.52",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "wav2vec",
+            "video_feature": "resnet",
+            "regression_label": "",
+            "best_epoch": 10,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.5882352941176471,
+              "f1": 0.5296442687747036,
+              "kappa": 0.14388489208633082,
+              "ccc": -0.01621177126242507,
+              "rmse": 0.6934536268081133,
+              "mae": 0.533543537644779,
+              "confusion_matrix": [
+                [
+                  8,
+                  1
+                ],
+                [
+                  6,
+                  2
+                ]
+              ],
+              "selection_score": 0.5296442687747036,
+              "r2": -0.019295359067865947,
+              "cls_loss": 0.69542435688131,
+              "reg_loss": 0.48087793413330526,
+              "loss": 1.176302292767693
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42/best_model_2026-05-16-01.03.52.pth",
+            "history_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42/history_2026-05-16-01.03.52.csv",
+            "predictions_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42/val_predictions_2026-05-16-01.03.52.csv",
+            "train_count": 71,
+            "val_count": 17,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "wav2vec",
+              "video_feature": "resnet",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold3_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold3_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42",
+          "run_tag": "fold4_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold4_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 1332.8,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42__gpu1.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42/train_result_2026-05-16-01.07.20.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42",
+            "timestamp": "2026-05-16-01.07.20",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "wav2vec",
+            "video_feature": "resnet",
+            "regression_label": "",
+            "best_epoch": 55,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.6470588235294118,
+              "f1": 0.6458333333333333,
+              "kappa": 0.29166666666666663,
+              "ccc": 0.04712821866937768,
+              "rmse": 0.7699623216610194,
+              "mae": 0.5883645239998313,
+              "confusion_matrix": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  3,
+                  5
+                ]
+              ],
+              "selection_score": 0.6458333333333333,
+              "r2": -0.27574459261825757,
+              "cls_loss": 1.357446776196251,
+              "reg_loss": 0.5928419534774387,
+              "loss": 1.950288754175691
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42/best_model_2026-05-16-01.07.20.pth",
+            "history_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42/history_2026-05-16-01.07.20.csv",
+            "predictions_path": "logs/Track2/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42/val_predictions_2026-05-16-01.07.20.csv",
+            "train_count": 71,
+            "val_count": 17,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "wav2vec",
+              "video_feature": "resnet",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold4_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_VpP__wav2vec__resnet__bilstm_mean__fold4_seed42"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

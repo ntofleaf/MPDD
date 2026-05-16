@@ -1,0 +1,755 @@
+{
+  "args": {
+    "track": "Track2",
+    "task": "binary",
+    "mode": "kfold",
+    "subtrack": "A-V-G+P",
+    "audio_feature": "opensmile",
+    "video_feature": "openface",
+    "encoder": "bilstm_mean",
+    "grid_subtracks": [
+      "A-V-G+P"
+    ],
+    "grid_audios": [
+      "opensmile"
+    ],
+    "grid_videos": [
+      "openface"
+    ],
+    "eval": "frozen_val",
+    "seed": 42,
+    "seeds": null,
+    "n_splits": 5,
+    "gpus": "7,7,7",
+    "output_dir": "experiments/grid_baseline",
+    "quiet": true
+  },
+  "fixed_hparams": {
+    "epochs": "140",
+    "batch_size": "4",
+    "lr": "8e-5",
+    "weight_decay": "1e-5",
+    "hidden_dim": "128",
+    "dropout": "0.45",
+    "patience": "35",
+    "min_delta": "1e-4",
+    "target_t": "128",
+    "val_ratio": "0.1"
+  },
+  "groups": {
+    "A_V_GpP__opensmile__openface__bilstm_mean": {
+      "combo": {
+        "track": "Track2",
+        "task": "binary",
+        "subtrack": "A-V-G+P",
+        "audio_feature": "opensmile",
+        "video_feature": "openface",
+        "encoder": "bilstm_mean"
+      },
+      "summary_all": {
+        "n_runs": 5,
+        "collapse_count": 0,
+        "metrics": {
+          "acc": {
+            "mean": 0.6915032679738562,
+            "std": 0.07411171029006712,
+            "min": 0.5882352941176471,
+            "max": 0.7777777777777778
+          },
+          "f1": {
+            "mean": 0.672756573678636,
+            "std": 0.09966293674066379,
+            "min": 0.5296442687747036,
+            "max": 0.7777777777777778
+          },
+          "kappa": {
+            "mean": 0.39527299484915385,
+            "std": 0.13210820599974282,
+            "min": 0.2119205298013246,
+            "max": 0.5555555555555556
+          },
+          "ccc": {
+            "mean": 0.05496610699973379,
+            "std": 0.056536896636705206,
+            "min": -0.004569213936278545,
+            "max": 0.11541729692809023
+          },
+          "rmse": {
+            "mean": 0.7597053225475959,
+            "std": 0.0566909191391473,
+            "min": 0.6907214850144187,
+            "max": 0.8352164499294791
+          },
+          "mae": {
+            "mean": 0.5976161568772559,
+            "std": 0.07421189446488419,
+            "min": 0.5209562147364897,
+            "max": 0.7203587227397494
+          }
+        },
+        "per_class_recall_mean": [
+          0.5555555555555556,
+          0.8444444444444444
+        ],
+        "per_class_recall_min": [
+          0.2222222222222222,
+          0.6666666666666666
+        ]
+      },
+      "summary_by_fold": {
+        "fold0": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.7222222222222222,
+              "std": 0.0,
+              "min": 0.7222222222222222,
+              "max": 0.7222222222222222
+            },
+            "f1": {
+              "mean": 0.7213622291021672,
+              "std": 0.0,
+              "min": 0.7213622291021672,
+              "max": 0.7213622291021672
+            },
+            "kappa": {
+              "mean": 0.4444444444444444,
+              "std": 0.0,
+              "min": 0.4444444444444444,
+              "max": 0.4444444444444444
+            },
+            "ccc": {
+              "mean": 0.11541729692809023,
+              "std": 0.0,
+              "min": 0.11541729692809023,
+              "max": 0.11541729692809023
+            },
+            "rmse": {
+              "mean": 0.7183775635651589,
+              "std": 0.0,
+              "min": 0.7183775635651589,
+              "max": 0.7183775635651589
+            },
+            "mae": {
+              "mean": 0.5773069924778409,
+              "std": 0.0,
+              "min": 0.5773069924778409,
+              "max": 0.5773069924778409
+            }
+          },
+          "per_class_recall_mean": [
+            0.6666666666666666,
+            0.7777777777777778
+          ],
+          "per_class_recall_min": [
+            0.6666666666666666,
+            0.7777777777777778
+          ]
+        },
+        "fold1": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.7222222222222222,
+              "std": 0.0,
+              "min": 0.7222222222222222,
+              "max": 0.7222222222222222
+            },
+            "f1": {
+              "mean": 0.7213622291021672,
+              "std": 0.0,
+              "min": 0.7213622291021672,
+              "max": 0.7213622291021672
+            },
+            "kappa": {
+              "mean": 0.4444444444444444,
+              "std": 0.0,
+              "min": 0.4444444444444444,
+              "max": 0.4444444444444444
+            },
+            "ccc": {
+              "mean": -0.004569213936278545,
+              "std": 0.0,
+              "min": -0.004569213936278545,
+              "max": -0.004569213936278545
+            },
+            "rmse": {
+              "mean": 0.8352164499294791,
+              "std": 0.0,
+              "min": 0.8352164499294791,
+              "max": 0.8352164499294791
+            },
+            "mae": {
+              "mean": 0.7203587227397494,
+              "std": 0.0,
+              "min": 0.7203587227397494,
+              "max": 0.7203587227397494
+            }
+          },
+          "per_class_recall_mean": [
+            0.7777777777777778,
+            0.6666666666666666
+          ],
+          "per_class_recall_min": [
+            0.7777777777777778,
+            0.6666666666666666
+          ]
+        },
+        "fold2": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.7777777777777778,
+              "std": 0.0,
+              "min": 0.7777777777777778,
+              "max": 0.7777777777777778
+            },
+            "f1": {
+              "mean": 0.7777777777777778,
+              "std": 0.0,
+              "min": 0.7777777777777778,
+              "max": 0.7777777777777778
+            },
+            "kappa": {
+              "mean": 0.5555555555555556,
+              "std": 0.0,
+              "min": 0.5555555555555556,
+              "max": 0.5555555555555556
+            },
+            "ccc": {
+              "mean": 0.10390099331608803,
+              "std": 0.0,
+              "min": 0.10390099331608803,
+              "max": 0.10390099331608803
+            },
+            "rmse": {
+              "mean": 0.7834781964265629,
+              "std": 0.0,
+              "min": 0.7834781964265629,
+              "max": 0.7834781964265629
+            },
+            "mae": {
+              "mean": 0.5978164275487264,
+              "std": 0.0,
+              "min": 0.5978164275487264,
+              "max": 0.5978164275487264
+            }
+          },
+          "per_class_recall_mean": [
+            0.7777777777777778,
+            0.7777777777777778
+          ],
+          "per_class_recall_min": [
+            0.7777777777777778,
+            0.7777777777777778
+          ]
+        },
+        "fold3": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.6470588235294118,
+              "std": 0.0,
+              "min": 0.6470588235294118,
+              "max": 0.6470588235294118
+            },
+            "f1": {
+              "mean": 0.6136363636363636,
+              "std": 0.0,
+              "min": 0.6136363636363636,
+              "max": 0.6136363636363636
+            },
+            "kappa": {
+              "mean": 0.32000000000000006,
+              "std": 0.0,
+              "min": 0.32000000000000006,
+              "max": 0.32000000000000006
+            },
+            "ccc": {
+              "mean": -0.0011819380719851795,
+              "std": 0.0,
+              "min": -0.0011819380719851795,
+              "max": -0.0011819380719851795
+            },
+            "rmse": {
+              "mean": 0.6907214850144187,
+              "std": 0.0,
+              "min": 0.6907214850144187,
+              "max": 0.6907214850144187
+            },
+            "mae": {
+              "mean": 0.5209562147364897,
+              "std": 0.0,
+              "min": 0.5209562147364897,
+              "max": 0.5209562147364897
+            }
+          },
+          "per_class_recall_mean": [
+            0.3333333333333333,
+            1.0
+          ],
+          "per_class_recall_min": [
+            0.3333333333333333,
+            1.0
+          ]
+        },
+        "fold4": {
+          "n_runs": 1,
+          "collapse_count": 0,
+          "metrics": {
+            "acc": {
+              "mean": 0.5882352941176471,
+              "std": 0.0,
+              "min": 0.5882352941176471,
+              "max": 0.5882352941176471
+            },
+            "f1": {
+              "mean": 0.5296442687747036,
+              "std": 0.0,
+              "min": 0.5296442687747036,
+              "max": 0.5296442687747036
+            },
+            "kappa": {
+              "mean": 0.2119205298013246,
+              "std": 0.0,
+              "min": 0.2119205298013246,
+              "max": 0.2119205298013246
+            },
+            "ccc": {
+              "mean": 0.06126339676275444,
+              "std": 0.0,
+              "min": 0.06126339676275444,
+              "max": 0.06126339676275444
+            },
+            "rmse": {
+              "mean": 0.77073291780236,
+              "std": 0.0,
+              "min": 0.77073291780236,
+              "max": 0.77073291780236
+            },
+            "mae": {
+              "mean": 0.5716424268834731,
+              "std": 0.0,
+              "min": 0.5716424268834731,
+              "max": 0.5716424268834731
+            }
+          },
+          "per_class_recall_mean": [
+            0.2222222222222222,
+            1.0
+          ],
+          "per_class_recall_min": [
+            0.2222222222222222,
+            1.0
+          ]
+        }
+      },
+      "run_records": [
+        {
+          "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42",
+          "run_tag": "fold0_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold0_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 504.3,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42__gpu7.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V-G+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "opensmile",
+            "video_feature": "openface",
+            "regression_label": "",
+            "best_epoch": 75,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.7222222222222222,
+              "f1": 0.7213622291021672,
+              "kappa": 0.4444444444444444,
+              "ccc": 0.11541729692809023,
+              "rmse": 0.7183775635651589,
+              "mae": 0.5773069924778409,
+              "confusion_matrix": [
+                [
+                  6,
+                  3
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "selection_score": 0.7213622291021672,
+              "r2": -0.4945072555929848,
+              "cls_loss": 1.4300522522793875,
+              "reg_loss": 0.5160663194126553,
+              "loss": 1.9461185534795125
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V-G+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "opensmile",
+              "video_feature": "openface",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold0_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold0_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42",
+          "run_tag": "fold1_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold1_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 234.0,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42__gpu7.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V-G+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "opensmile",
+            "video_feature": "openface",
+            "regression_label": "",
+            "best_epoch": 3,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.7222222222222222,
+              "f1": 0.7213622291021672,
+              "kappa": 0.4444444444444444,
+              "ccc": -0.004569213936278545,
+              "rmse": 0.8352164499294791,
+              "mae": 0.7203587227397494,
+              "confusion_matrix": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  3,
+                  6
+                ]
+              ],
+              "selection_score": 0.7213622291021672,
+              "r2": -0.019448641226457175,
+              "cls_loss": 0.6906592978371514,
+              "reg_loss": 0.6975865181949403,
+              "loss": 1.3882458011309307
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V-G+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "opensmile",
+              "video_feature": "openface",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold1_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold1_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42",
+          "run_tag": "fold2_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold2_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 505.6,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42__gpu7.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42/train_result_2026-05-16-00.50.37.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42",
+            "timestamp": "2026-05-16-00.50.37",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V-G+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "opensmile",
+            "video_feature": "openface",
+            "regression_label": "",
+            "best_epoch": 71,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.7777777777777778,
+              "f1": 0.7777777777777778,
+              "kappa": 0.5555555555555556,
+              "ccc": 0.10390099331608803,
+              "rmse": 0.7834781964265629,
+              "mae": 0.5978164275487264,
+              "confusion_matrix": [
+                [
+                  7,
+                  2
+                ],
+                [
+                  2,
+                  7
+                ]
+              ],
+              "selection_score": 0.7777777777777778,
+              "r2": -0.47031097214910966,
+              "cls_loss": 1.159560653898451,
+              "reg_loss": 0.6138380939761797,
+              "loss": 1.773398747874631
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42/best_model_2026-05-16-00.50.37.pth",
+            "history_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42/history_2026-05-16-00.50.37.csv",
+            "predictions_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42/val_predictions_2026-05-16-00.50.37.csv",
+            "train_count": 70,
+            "val_count": 18,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V-G+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "opensmile",
+              "video_feature": "openface",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold2_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold2_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42",
+          "run_tag": "fold3_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold3_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 255.6,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42__gpu7.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42/train_result_2026-05-16-00.54.31.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42",
+            "timestamp": "2026-05-16-00.54.31",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V-G+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "opensmile",
+            "video_feature": "openface",
+            "regression_label": "",
+            "best_epoch": 7,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.6470588235294118,
+              "f1": 0.6136363636363636,
+              "kappa": 0.32000000000000006,
+              "ccc": -0.0011819380719851795,
+              "rmse": 0.6907214850144187,
+              "mae": 0.5209562147364897,
+              "confusion_matrix": [
+                [
+                  3,
+                  6
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "selection_score": 0.6136363636363636,
+              "r2": -0.011279326555880598,
+              "cls_loss": 0.688420832157135,
+              "reg_loss": 0.47709618508815765,
+              "loss": 1.165517039158765
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42/best_model_2026-05-16-00.54.31.pth",
+            "history_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42/history_2026-05-16-00.54.31.csv",
+            "predictions_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42/val_predictions_2026-05-16-00.54.31.csv",
+            "train_count": 71,
+            "val_count": 17,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V-G+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "opensmile",
+              "video_feature": "openface",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold3_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold3_seed42"
+            }
+          }
+        },
+        {
+          "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42",
+          "run_tag": "fold4_seed42",
+          "seed": 42,
+          "split_csv": "/home/niutao/data/code/MPDD-AVG-2026-newmain/MPDD-AVG2026/MPDD-AVG2026-trainval/Young/split_labels_train_binary_fold4_frozen.csv",
+          "returncode": 0,
+          "elapsed_sec": 302.2,
+          "stdout_log": "/home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/stdout_logs/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42__gpu7.log",
+          "result_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42/train_result_2026-05-16-00.58.47.json",
+          "train_result": {
+            "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42",
+            "timestamp": "2026-05-16-00.58.47",
+            "task": "binary",
+            "track": "Track2",
+            "subtrack": "A-V-G+P",
+            "encoder_type": "bilstm_mean",
+            "audio_feature": "opensmile",
+            "video_feature": "openface",
+            "regression_label": "",
+            "best_epoch": 28,
+            "selection_metric": "f1",
+            "best_val_metrics": {
+              "acc": 0.5882352941176471,
+              "f1": 0.5296442687747036,
+              "kappa": 0.2119205298013246,
+              "ccc": 0.06126339676275444,
+              "rmse": 0.77073291780236,
+              "mae": 0.5716424268834731,
+              "confusion_matrix": [
+                [
+                  2,
+                  7
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "selection_score": 0.5296442687747036,
+              "r2": -0.2782994599911046,
+              "cls_loss": 0.7773852804127861,
+              "reg_loss": 0.5940292299149886,
+              "loss": 1.3714145316797144
+            },
+            "checkpoint_path": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42/best_model_2026-05-16-00.58.47.pth",
+            "history_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42/history_2026-05-16-00.58.47.csv",
+            "predictions_path": "logs/Track2/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42/val_predictions_2026-05-16-00.58.47.csv",
+            "train_count": 71,
+            "val_count": 17,
+            "config": {
+              "config": "config.json",
+              "track": "Track2",
+              "task": "binary",
+              "regression_label": "label2",
+              "subtrack": "A-V-G+P",
+              "encoder_type": "bilstm_mean",
+              "audio_feature": "opensmile",
+              "video_feature": "openface",
+              "data_root": "../../datasets_MPDD/Train-MPDD-Young",
+              "split_csv": "../../datasets_MPDD/Train-MPDD-Young/split_labels_train_binary_fold4_frozen.csv",
+              "personality_npy": "../../datasets_MPDD/Train-MPDD-Young/descriptions_embeddings_with_ids.npy",
+              "val_ratio": 0.1,
+              "seed": 42,
+              "epochs": 140,
+              "batch_size": 4,
+              "lr": 8e-05,
+              "weight_decay": 1e-05,
+              "target_t": 128,
+              "device": "cuda",
+              "hidden_dim": 128,
+              "dropout": 0.45,
+              "patience": 35,
+              "min_delta": 0.0001,
+              "num_workers": 0,
+              "checkpoints_dir": "checkpoints",
+              "logs_dir": "logs",
+              "experiment_name": "pipeline__A_V_GpP__opensmile__openface__bilstm_mean__fold4_seed42"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

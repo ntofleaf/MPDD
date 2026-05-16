@@ -48,6 +48,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from dataset import MPDDElderDataset, collate_batch, load_task_maps
+from metrics import decode_ordinal_to_phq
 from models import TorchcatBaseline
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -77,6 +78,11 @@ def parse_args() -> argparse.Namespace:
     # ── 输出 ──
     p.add_argument("--output_dir",   required=True,
                    help="输出目录，binary.csv / ternary.csv / submission.zip 均保存到此处")
+    # 方案 A v1：ordinal 推理模式
+    p.add_argument("--mode", choices=["separate", "ordinal_only"], default="separate",
+                   help=("separate: binary/ternary 用各自训练的模型，PHQ 用 regression 集成；"
+                         "ordinal_only: binary/ternary/PHQ 全部从 ordinal regression 模型派生"
+                         "（仅当 reg_ckpts 全部是 ordinal ckpt 时有效）"))
     return p.parse_args()
 
 
@@ -88,7 +94,8 @@ def infer_one_ckpt(
     ckpt_path: str | Path,
     test_root: str,
     personality_npy: str,
-) -> tuple[list[int], np.ndarray, list[float]]:
+    target_task: str | None = None,
+) -> tuple[list[int], np.ndarray, list[float], np.ndarray | None]:
     """
     对一个 checkpoint 做完整的测试集推理。
 
@@ -98,6 +105,8 @@ def infer_one_ckpt(
     probs_np   : softmax 概率矩阵，shape=[N, num_classes]，float32
     phq9_preds : PHQ-9 预测值列表（已从 log1p 空间还原到原始 0~27 尺度）
                  若该 checkpoint 没有回归头，则全填 0.0（占位）
+    ord_sigmoid: Ordinal 模式下的 per-threshold sigmoid 概率 [N, K]（已 cummin 单调修正）
+                 非 ordinal ckpt 返回 None
     """
     ckpt_path = PROJECT_ROOT / ckpt_path
     print(f"    → Loading: {ckpt_path.name}")
@@ -105,7 +114,10 @@ def infer_one_ckpt(
     ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
 
     # ── 从 checkpoint 中读取训练时的配置 ─────────────────────────────────────
-    task          = ckpt["task"]            # binary / ternary / regression
+    task          = ckpt["task"]            # 训练时的 task（dataset 创建用此值）
+    # target_task：multitask ckpt 参与 binary/ternary ensemble 时调用方覆盖；
+    # 仅影响 forward 后选哪个 head 的 logits 输出，dataset 仍按 ckpt 的 task 装载
+    head_task     = target_task or task
     subtrack      = ckpt["subtrack"]        # A-V+P / A-V-G+P / G+P
     audio_feature = ckpt["audio_feature"]
     video_feature = ckpt["video_feature"]
@@ -147,10 +159,19 @@ def infer_one_ckpt(
     all_ids: list[int] = []
     all_probs: list[np.ndarray] = []   # 每个 batch 的 softmax 概率
     all_phq: list[float] = []          # 每个样本的 PHQ-9 预测
+    all_ord_sigmoid: list[np.ndarray] = []  # ordinal 模式下每个 batch 的 sigmoid 概率
 
     # 纯回归模式标记：is_regression=True 时 classifier 直接输出 1 个标量
     #                 use_regression_head=False 时无辅助回归头（新模式）
     is_pure_reg_model = bool(model_kwargs.get("is_regression", False)) and not use_reg
+    # Multitask 标记（Route 3）：模型 forward 返回 dict
+    is_multitask_model = (model_kwargs.get("multitask_mode", "off") == "ord_bin_ter")
+    # Ordinal 模式标记（方案 A v1）：classifier 输出 K 个 logits（multitask 也走 ordinal decode）
+    is_ordinal_model = is_multitask_model or (
+        is_pure_reg_model and model_kwargs.get("regression_head_mode") == "ordinal"
+    )
+    ordinal_thresholds = ckpt.get("ordinal_thresholds") if is_ordinal_model else None
+    ordinal_midpoints = ckpt.get("ordinal_bin_midpoints") if is_ordinal_model else None
 
     with torch.no_grad():
         for batch in loader:
@@ -164,8 +185,43 @@ def infer_one_ckpt(
             )
 
             # ── 分离分类 logits 和回归输出 ────────────────────────────────
-            if is_pure_reg_model:
-                # 纯回归模式（新）：outputs 是 [batch_size, 1] 或 [batch_size] 的标量
+            if is_multitask_model:
+                # Route 3 multitask：outputs 是 dict，binary/ternary 来自模型自带 head（决策 a）
+                ord_logits = outputs["ord_logits"]                     # [B, K]
+                bin_logits = outputs["bin_logits"]                     # [B, 2]
+                ter_logits = outputs["ter_logits"]                     # [B, 3]
+                phq_pred_t, _ = decode_ordinal_to_phq(
+                    ord_logits, ordinal_thresholds,
+                    enforce_monotonic=True, midpoints=ordinal_midpoints,
+                )
+                phq_batch = [float(np.clip(v, 0, 27)) for v in phq_pred_t.cpu().numpy()]
+                ord_sig_mono = torch.cummin(torch.sigmoid(ord_logits), dim=-1).values
+                all_ord_sigmoid.append(ord_sig_mono.cpu().numpy())
+                # 这里返回的 logits 给上层 ensemble_cls 用：task=binary 集成时返回 bin_logits，
+                # task=ternary 集成时返回 ter_logits（由 task 字段决定）
+                if head_task == "binary":
+                    logits = bin_logits
+                elif head_task == "ternary":
+                    logits = ter_logits
+                else:
+                    num_cls = model_kwargs.get("num_classes", 2)
+                    logits = torch.zeros(ord_logits.shape[0], num_cls)
+            elif is_ordinal_model:
+                # Ordinal 模式：outputs shape [B, K]，先 sigmoid → cummin → 反解码
+                ord_logits = outputs                                   # [B, K]
+                phq_pred_t, _ = decode_ordinal_to_phq(
+                    ord_logits, ordinal_thresholds,
+                    enforce_monotonic=True, midpoints=ordinal_midpoints,
+                )
+                phq_batch = [float(np.clip(v, 0, 27)) for v in phq_pred_t.cpu().numpy()]
+                # 保存单调修正后的 sigmoid 概率（[B, K]），供集成派生 binary/ternary
+                ord_sig_mono = torch.cummin(torch.sigmoid(ord_logits), dim=-1).values
+                all_ord_sigmoid.append(ord_sig_mono.cpu().numpy())
+                # 占位：单头 ordinal 模型没有分类 logits（不会用于分类集成）
+                num_cls = model_kwargs.get("num_classes", 2)
+                logits = torch.zeros(ord_logits.shape[0], num_cls)
+            elif is_pure_reg_model:
+                # 纯回归模式（旧 direct）：outputs 是 [batch_size, 1] 或 [batch_size] 的标量
                 # classifier(is_regression=True) 输出 Linear(hidden, 1)
                 reg_np = outputs.squeeze(-1).cpu().float().numpy().flatten()  # [batch_size]
                 if phq_log1p:
@@ -203,7 +259,8 @@ def infer_one_ckpt(
     # ── 拼接所有 batch 的结果 ─────────────────────────────────────────────────
     probs_np = np.concatenate(all_probs, axis=0)   # [N, num_classes]
     ids = [int(x) for x in all_ids]
-    return ids, probs_np, all_phq
+    ord_sig_np = np.concatenate(all_ord_sigmoid, axis=0) if all_ord_sigmoid else None
+    return ids, probs_np, all_phq, ord_sig_np
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -236,7 +293,9 @@ def ensemble_cls(
     acc_probs: np.ndarray | None = None
 
     for ckpt_path in ckpt_paths:
-        ids, probs, _ = infer_one_ckpt(ckpt_path, test_root, personality_npy)
+        ids, probs, _, _ = infer_one_ckpt(
+            ckpt_path, test_root, personality_npy, target_task=task_label,
+        )
 
         if ids_ref is None:
             # 第一个 checkpoint：初始化累积变量
@@ -266,7 +325,7 @@ def ensemble_reg(
     test_root: str,
     personality_npy: str,
     min_ccc_threshold: float = 0.05,
-) -> tuple[list[int], list[float]]:
+) -> tuple[list[int], list[float], dict | None, dict | None]:
     """
     对 regression 的多个 checkpoint 做集成回归推理。
 
@@ -310,9 +369,12 @@ def ensemble_reg(
     # ── Step 2: 对过滤后的 checkpoint 做推理 + 平均 ─────────────────────────
     ids_ref: list[int] | None = None
     acc_phq: np.ndarray | None = None
+    # Ordinal 模式：累加每个 ckpt 的 sigmoid 概率（[N, K]），最后取均值再反解码
+    acc_ord_sig: np.ndarray | None = None
+    n_ordinal_ckpts = 0
 
     for ckpt_path in good_ckpts:
-        ids, _, phq = infer_one_ckpt(ckpt_path, test_root, personality_npy)
+        ids, _, phq, ord_sig = infer_one_ckpt(ckpt_path, test_root, personality_npy)
 
         if ids_ref is None:
             ids_ref = ids
@@ -323,13 +385,73 @@ def ensemble_reg(
             )
             acc_phq = acc_phq + np.array(phq, dtype=np.float32)
 
+        if ord_sig is not None:
+            n_ordinal_ckpts += 1
+            if acc_ord_sig is None:
+                acc_ord_sig = ord_sig.copy()
+            else:
+                acc_ord_sig = acc_ord_sig + ord_sig
+
     avg_phq = acc_phq / len(good_ckpts)
+
+    # ── 如果 reg_ckpts 全部是 ordinal，用平均后的 sigmoid 重新反解码 PHQ ─────
+    # 这比"先各自反解码再平均"更稳定（在概率层面集成）
+    derived = None
+    sig_summary = None
+    if n_ordinal_ckpts == len(good_ckpts) and acc_ord_sig is not None:
+        avg_sig = acc_ord_sig / n_ordinal_ckpts                       # [N, K]
+        # 平均后再次 cummin 防止微小数值违反单调
+        avg_sig_t = torch.from_numpy(avg_sig).float()
+        avg_sig_t = torch.cummin(avg_sig_t, dim=-1).values
+        # 反解码：用第一个 ckpt 的 thresholds
+        first_ckpt = torch.load(PROJECT_ROOT / good_ckpts[0], map_location="cpu", weights_only=False)
+        thr = first_ckpt.get("ordinal_thresholds", [5.0, 10.0, 15.0, 20.0])
+        # 把 sigmoid 概率"逆 sigmoid"成等价 logits 喂给 decode 函数
+        # 等价做法：直接用 avg_sig_t 走差分 + 中点。这里复用 decode 函数的逻辑：
+        ones = torch.ones(avg_sig_t.shape[0], 1)
+        zeros = torch.zeros(avg_sig_t.shape[0], 1)
+        P_left = torch.cat([ones, avg_sig_t], dim=-1)
+        P_right = torch.cat([avg_sig_t, zeros], dim=-1)
+        bin_probs = (P_left - P_right).clamp(min=0.0)
+        bin_probs = bin_probs / bin_probs.sum(dim=-1, keepdim=True).clamp(min=1e-6)
+        K = len(thr)
+        midpoints = []
+        for k in range(K + 1):
+            if k == 0:
+                midpoints.append(thr[0] / 2.0)
+            elif k == K:
+                midpoints.append((thr[-1] + 27.0) / 2.0)
+            else:
+                midpoints.append((thr[k-1] + thr[k]) / 2.0)
+        mid_t = torch.tensor(midpoints, dtype=torch.float32)
+        phq_from_avg_sig = (bin_probs * mid_t).sum(dim=-1).numpy()
+        # 用这个覆盖 avg_phq（更稳）
+        avg_phq = np.clip(phq_from_avg_sig, 0, 27)
+        # 派生 binary / ternary
+        P_ge_5  = avg_sig_t[:, 0].numpy()
+        P_ge_10 = avg_sig_t[:, 1].numpy()
+        bin_pred = (P_ge_5 >= 0.5).astype(np.int64)
+        # ternary: 0 if P(>=5)<0.5, 2 if P(>=10)>=0.5, else 1
+        ter_pred = np.where(
+            P_ge_5 < 0.5, 0,
+            np.where(P_ge_10 >= 0.5, 2, 1),
+        ).astype(np.int64)
+        derived = {"binary": bin_pred.tolist(), "ternary": ter_pred.tolist()}
+        sig_summary = {
+            f"P(>={int(t)})": float(avg_sig_t[:, i].mean())
+            for i, t in enumerate(thr)
+        }
+
     # 再次 clip，确保集成后的平均值也在合法范围内
     phq_preds = [float(np.clip(v, 0, 27)) for v in avg_phq]
 
     print(f"    PHQ-9 范围: [{min(phq_preds):.2f}, {max(phq_preds):.2f}]  "
           f"均值: {np.mean(phq_preds):.2f}  std: {np.std(phq_preds):.2f}")
-    return ids_ref, phq_preds
+    if sig_summary is not None:
+        print("    Ordinal sigmoid 平均（cummin 后）:")
+        for k, v in sig_summary.items():
+            print(f"      {k} = {v:.3f}")
+    return ids_ref, phq_preds, derived, sig_summary
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -396,7 +518,7 @@ def main() -> None:
 
     # ── Step 3: 集成 regression（PHQ-9）─────────────────────────────────────
     print("\n>>> Step 3/3: Regression 集成回归推理（PHQ-9）")
-    r_ids, r_phq = ensemble_reg(
+    r_ids, r_phq, r_derived, r_sig_summary = ensemble_reg(
         args.reg_ckpts, args.test_root, args.personality
     )
 
@@ -410,8 +532,27 @@ def main() -> None:
     )
     print(f"\n✅ ID 校验通过，共 {len(b_ids)} 个测试样本")
 
+    # ── 决定 binary/ternary 来源 ─────────────────────────────────────────────
+    # mode="separate": 用 binary_ckpts/ternary_ckpts 训练的独立模型
+    # mode="ordinal_only": 从 regression(ordinal) 模型派生
+    if args.mode == "ordinal_only":
+        if r_derived is None:
+            raise RuntimeError(
+                "--mode ordinal_only 要求所有 reg_ckpts 都是 ordinal 模型，"
+                "但当前 reg_ckpts 中存在非 ordinal 的 ckpt。"
+                "请改回 --mode separate 或全部用 ordinal ckpt。"
+            )
+        derived_bin_map = {sid: c for sid, c in zip(r_ids, r_derived["binary"])}
+        derived_ter_map = {sid: c for sid, c in zip(r_ids, r_derived["ternary"])}
+        b_cls_final = [derived_bin_map[sid] for sid in b_ids]
+        t_cls_final = [derived_ter_map[sid] for sid in t_ids]
+        print(f"\n[mode=ordinal_only] binary/ternary 从 ordinal regression 模型派生")
+    else:
+        b_cls_final = b_cls
+        t_cls_final = t_cls
+        print(f"\n[mode=separate] binary/ternary 来自各自训练的独立模型")
+
     # ── 构建 PHQ-9 查找表（以 ID 为 key，方便按顺序填入两个 CSV）────────────
-    # regression 预测的顺序可能与 binary 顺序不同（视 Dataset 迭代顺序而定）
     phq_map = {sid: phq for sid, phq in zip(r_ids, r_phq)}
 
     # ── 写 binary.csv ─────────────────────────────────────────────────────────
@@ -421,7 +562,7 @@ def main() -> None:
             "binary_pred": int(cls),
             "phq9_pred":   f"{phq_map[sid]:.4f}",   # PHQ-9 来自 regression 集成
         }
-        for sid, cls in zip(b_ids, b_cls)
+        for sid, cls in zip(b_ids, b_cls_final)
     ]
     binary_csv = output_dir / "binary.csv"
     write_csv(binary_csv, ["id", "binary_pred", "phq9_pred"], binary_rows)
@@ -433,10 +574,41 @@ def main() -> None:
             "ternary_pred": int(cls),
             "phq9_pred":    f"{phq_map[sid]:.4f}",  # PHQ-9 来自 regression 集成
         }
-        for sid, cls in zip(t_ids, t_cls)
+        for sid, cls in zip(t_ids, t_cls_final)
     ]
     ternary_csv = output_dir / "ternary.csv"
     write_csv(ternary_csv, ["id", "ternary_pred", "phq9_pred"], ternary_rows)
+
+    # ── Sanity check (方案 A v1 强制) ────────────────────────────────────────
+    print("\n" + "=" * 60)
+    print("INFERENCE SANITY CHECK — 任一 ❌ 触发就不要提交，先排查")
+    print("=" * 60)
+    phq_arr = np.array(r_phq)
+    bin_pred_arr = np.array(b_cls_final)
+    ter_pred_arr = np.array(t_cls_final)
+    print(f"PHQ pred:   min={phq_arr.min():.2f}  max={phq_arr.max():.2f}  "
+          f"mean={phq_arr.mean():.2f}  std={phq_arr.std():.2f}")
+    print(f"Binary:     0={(bin_pred_arr==0).sum()}  1={(bin_pred_arr==1).sum()}")
+    print(f"Ternary:    0={(ter_pred_arr==0).sum()}  1={(ter_pred_arr==1).sum()}  "
+          f"2={(ter_pred_arr==2).sum()}")
+    problems = []
+    if phq_arr.std() < 0.5:                  problems.append("❌ PHQ std<0.5 → 预测塌缩到常数")
+    if abs(phq_arr.mean() - 2.5) < 0.3 and phq_arr.max() < 5:
+                                              problems.append("❌ PHQ 全部≈2.5 → 模型只输出最低 bin")
+    if phq_arr.min() > 15:                   problems.append("❌ PHQ all > 15 → 全预测重度抑郁(几乎不可能)")
+    if (bin_pred_arr == 0).sum() == len(bin_pred_arr) or (bin_pred_arr == 1).sum() == len(bin_pred_arr):
+                                              problems.append("❌ binary 全预测同一类 → 退化")
+    if r_sig_summary is not None:
+        if abs(r_sig_summary.get("P(>=5)", 0) - 0.5) < 0.05:
+            problems.append("❌ P(>=5) 均值≈0.5 → 模型对 binary 完全不确定")
+        if r_sig_summary.get("P(>=20)", 0) > 0.3:
+            problems.append("❌ P(>=20) 均值过高 → PHQ>=20 head 失控")
+    if not problems:
+        print("✅ ALL CHECKS PASS — safe to package submission")
+    else:
+        print("⚠️  STOP — DO NOT SUBMIT, investigate first:")
+        for p in problems: print(f"  {p}")
+    print("=" * 60)
 
     # ── 打包 submission.zip ───────────────────────────────────────────────────
     zip_path = output_dir / "submission.zip"

@@ -1,0 +1,27 @@
+[pipeline] mode=kfold task=ternary track=Track2
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=5 gpus=[4, 4, 4]
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__fold0_seed42  (split=split_labels_train_ternary_fold0_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__fold1_seed42  (split=split_labels_train_ternary_fold1_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__fold2_seed42  (split=split_labels_train_ternary_fold2_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__fold3_seed42  (split=split_labels_train_ternary_fold3_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__fold4_seed42  (split=split_labels_train_ternary_fold4_frozen.csv, seed=42)
+
+  === A_VpP__opensmile__openface__bilstm_mean ===
+    runs=5  collapse=0
+       acc: mean=+0.646  std=0.071  range=[+0.529, +0.722]
+        f1: mean=+0.520  std=0.074  range=[+0.468, +0.648]
+     kappa: mean=+0.365  std=0.121  range=[+0.160, +0.483]
+       ccc: mean=+0.113  std=0.124  range=[-0.001, +0.309]
+      rmse: mean=+0.715  std=0.075  range=[+0.642, +0.841]
+       mae: mean=+0.548  std=0.034  range=[+0.516, +0.604]
+    recall_per_class_mean: [0.73 0.66 0.20]
+    recall_per_class_min:  [0.67 0.33 0.00]  <-- worst-case across runs
+    per-fold breakdown:
+           fold0: n=1 collapse=0 f1=+0.468±0.000 kappa=+0.393 ccc=+0.017
+           fold1: n=1 collapse=0 f1=+0.510±0.000 kappa=+0.483 ccc=+0.144
+           fold2: n=1 collapse=0 f1=+0.472±0.000 kappa=+0.400 ccc=-0.001
+           fold3: n=1 collapse=0 f1=+0.648±0.000 kappa=+0.389 ccc=+0.309
+           fold4: n=1 collapse=0 f1=+0.500±0.000 kappa=+0.160 ccc=+0.098
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track2_ternary_kfold_2026-05-16-01.42.31.json

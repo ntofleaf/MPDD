@@ -1,0 +1,7 @@
+2026-05-15 21:11:32,685 - INFO - Experiment: pipeline__A_VpP__mfcc__densenet__bilstm_mean__frozen_val_seed3407
+2026-05-15 21:11:32,686 - INFO - Device: cuda
+2026-05-15 21:11:32,686 - INFO - Train/Val: 78 / 9
+2026-05-15 21:13:16,734 - INFO - Epoch 1/140 | train_loss=2.151145 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.017682 val_rmse=0.760116 val_mae=0.523538
+2026-05-15 21:15:15,576 - INFO - Epoch 2/140 | train_loss=1.480387 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.020814 val_rmse=0.678623 val_mae=0.638027
+2026-05-15 21:16:52,297 - INFO - Epoch 3/140 | train_loss=1.385805 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.017076 val_rmse=0.688150 val_mae=0.560966
+2026-05-15 21:18:25,533 - INFO - Epoch 4/140 | train_loss=1.486228 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.012723 val_rmse=0.729333 val_mae=0.514312

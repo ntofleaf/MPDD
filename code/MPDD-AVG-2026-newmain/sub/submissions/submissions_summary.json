@@ -1,0 +1,492 @@
+{
+  "submissions": [
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track1_G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track1/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-22.33.53.pth",
+          "source_task": "ternary",
+          "val_ccc": 0.025742349178088587,
+          "val_f1_of_source": 0.26666666666666666,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 42,
+          "test_n_predictions": 23,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track1/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-21.11.30.pth",
+          "val_f1": 0.4,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 3407,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_G+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track1/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.33.53.pth",
+          "val_f1": 0.3151515151515151,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.5
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track1_A-V+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track1/A-V-P/ternary/pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-22.38.12.pth",
+          "source_task": "ternary",
+          "val_ccc": 0.630759095051214,
+          "val_f1_of_source": 0.43636363636363634,
+          "audio_feature": "wav2vec",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 42,
+          "test_n_predictions": 23,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track1/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-21.23.13.pth",
+          "val_f1": 0.8615384615384616,
+          "audio_feature": "wav2vec",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 42,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track1/A-V-P/ternary/pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-22.38.17.pth",
+          "val_f1": 0.45714285714285713,
+          "audio_feature": "wav2vec",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 3407,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track1_A-V-G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track1/A-V-G+P/ternary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.44.06.pth",
+          "source_task": "ternary",
+          "val_ccc": 0.6336555064615768,
+          "val_f1_of_source": 0.43636363636363634,
+          "audio_feature": "opensmile",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 23,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track1/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-21.30.04.pth",
+          "val_f1": 0.75,
+          "audio_feature": "opensmile",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 3407,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V-G+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track1/A-V-G+P/ternary/pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.42.13.pth",
+          "val_f1": 0.6190476190476191,
+          "audio_feature": "opensmile",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 23,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V-G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track2_G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track2/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-21.38.58.pth",
+          "source_task": "binary",
+          "val_ccc": 0.01562573049248017,
+          "val_f1_of_source": 0.6666666666666666,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 22,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track2/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-21.38.58.pth",
+          "val_f1": 0.775,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 42,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_G+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track2/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.54.10.pth",
+          "val_f1": 0.35555555555555557,
+          "audio_feature": "mfcc",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.5
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track2_A-V+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track2/A-V-P/ternary/pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-23.00.01.pth",
+          "source_task": "ternary",
+          "val_ccc": 0.6786040711325162,
+          "val_f1_of_source": 0.5222222222222223,
+          "audio_feature": "opensmile",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 22,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-21.39.17.pth",
+          "val_f1": 0.8888888888888888,
+          "audio_feature": "opensmile",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track2/A-V-P/ternary/pipeline__A_VpP__mfcc__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-22.54.10.pth",
+          "val_f1": 0.5793650793650794,
+          "audio_feature": "mfcc",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 3407,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submission_Track2_A-V-G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "checkpoint": "checkpoints/Track2/A-V-G+P/ternary/pipeline__A_V_GpP__mfcc__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-23.16.07.pth",
+          "source_task": "ternary",
+          "val_ccc": 0.46299975885237243,
+          "val_f1_of_source": 0.6666666666666666,
+          "audio_feature": "mfcc",
+          "video_feature": "openface",
+          "encoder": "bilstm_mean",
+          "seed": 3407,
+          "test_n_predictions": 22,
+          "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "checkpoint": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.07.21.pth",
+          "val_f1": 0.775,
+          "audio_feature": "wav2vec",
+          "video_feature": "resnet",
+          "encoder": "bilstm_mean",
+          "seed": 2026,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V-G+P/binary.csv"
+        },
+        "ternary": {
+          "checkpoint": "checkpoints/Track2/A-V-G+P/ternary/pipeline__A_V_GpP__mfcc__densenet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-23.12.48.pth",
+          "val_f1": 0.746031746031746,
+          "audio_feature": "mfcc",
+          "video_feature": "densenet",
+          "encoder": "bilstm_mean",
+          "seed": 42,
+          "test_n_predictions": 22,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V-G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    }
+  ],
+  "selected_checkpoints": [
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track1/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-22.33.53.pth",
+      "source_task": "ternary",
+      "val_ccc": 0.025742349178088587,
+      "val_f1_of_source": 0.26666666666666666,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 42,
+      "test_n_predictions": 23,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track1/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-21.11.30.pth",
+      "val_f1": 0.4,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 3407,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_G+P/binary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track1/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.33.53.pth",
+      "val_f1": 0.3151515151515151,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_G+P/ternary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track1/A-V-P/ternary/pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-22.38.12.pth",
+      "source_task": "ternary",
+      "val_ccc": 0.630759095051214,
+      "val_f1_of_source": 0.43636363636363634,
+      "audio_feature": "wav2vec",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 42,
+      "test_n_predictions": 23,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track1/A-V-P/binary/pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-21.23.13.pth",
+      "val_f1": 0.8615384615384616,
+      "audio_feature": "wav2vec",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 42,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V+P/binary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track1/A-V-P/ternary/pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-22.38.17.pth",
+      "val_f1": 0.45714285714285713,
+      "audio_feature": "wav2vec",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 3407,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V+P/ternary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track1/A-V-G+P/ternary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.44.06.pth",
+      "source_task": "ternary",
+      "val_ccc": 0.6336555064615768,
+      "val_f1_of_source": 0.43636363636363634,
+      "audio_feature": "opensmile",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 23,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track1/A-V-G+P/binary/pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-21.30.04.pth",
+      "val_f1": 0.75,
+      "audio_feature": "opensmile",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 3407,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V-G+P/binary.csv"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track1/A-V-G+P/ternary/pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.42.13.pth",
+      "val_f1": 0.6190476190476191,
+      "audio_feature": "opensmile",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 23,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track1_A-V-G+P/ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track2/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-21.38.58.pth",
+      "source_task": "binary",
+      "val_ccc": 0.01562573049248017,
+      "val_f1_of_source": 0.6666666666666666,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 22,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track2/G-P/binary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-21.38.58.pth",
+      "val_f1": 0.775,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 42,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_G+P/binary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track2/G-P/ternary/pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.54.10.pth",
+      "val_f1": 0.35555555555555557,
+      "audio_feature": "mfcc",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_G+P/ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track2/A-V-P/ternary/pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-23.00.01.pth",
+      "source_task": "ternary",
+      "val_ccc": 0.6786040711325162,
+      "val_f1_of_source": 0.5222222222222223,
+      "audio_feature": "opensmile",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 22,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track2/A-V-P/binary/pipeline__A_VpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-21.39.17.pth",
+      "val_f1": 0.8888888888888888,
+      "audio_feature": "opensmile",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V+P/binary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track2/A-V-P/ternary/pipeline__A_VpP__mfcc__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-22.54.10.pth",
+      "val_f1": 0.5793650793650794,
+      "audio_feature": "mfcc",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 3407,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V+P/ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "phq_source",
+      "checkpoint": "checkpoints/Track2/A-V-G+P/ternary/pipeline__A_V_GpP__mfcc__openface__bilstm_mean__frozen_val_seed3407/best_model_2026-05-15-23.16.07.pth",
+      "source_task": "ternary",
+      "val_ccc": 0.46299975885237243,
+      "val_f1_of_source": 0.6666666666666666,
+      "audio_feature": "mfcc",
+      "video_feature": "openface",
+      "encoder": "bilstm_mean",
+      "seed": 3407,
+      "test_n_predictions": 22,
+      "used_for": "phq9_pred column in both binary.csv and ternary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "binary",
+      "checkpoint": "checkpoints/Track2/A-V-G+P/binary/pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed2026/best_model_2026-05-15-22.07.21.pth",
+      "val_f1": 0.775,
+      "audio_feature": "wav2vec",
+      "video_feature": "resnet",
+      "encoder": "bilstm_mean",
+      "seed": 2026,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V-G+P/binary.csv"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "ternary",
+      "checkpoint": "checkpoints/Track2/A-V-G+P/ternary/pipeline__A_V_GpP__mfcc__densenet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-23.12.48.pth",
+      "val_f1": 0.746031746031746,
+      "audio_feature": "mfcc",
+      "video_feature": "densenet",
+      "encoder": "bilstm_mean",
+      "seed": 42,
+      "test_n_predictions": 22,
+      "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/_workdir_Track2_A-V-G+P/ternary.csv"
+    }
+  ]
+}

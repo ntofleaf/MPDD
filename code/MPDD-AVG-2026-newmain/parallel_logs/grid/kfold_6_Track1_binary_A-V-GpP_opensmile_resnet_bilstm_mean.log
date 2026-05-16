@@ -1,0 +1,27 @@
+[pipeline] mode=kfold task=binary track=Track1
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=5 gpus=[4, 4, 4]
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__fold0_seed42  (split=split_labels_train_binary_fold0_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__fold1_seed42  (split=split_labels_train_binary_fold1_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__fold2_seed42  (split=split_labels_train_binary_fold2_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__fold3_seed42  (split=split_labels_train_binary_fold3_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__fold4_seed42  (split=split_labels_train_binary_fold4_frozen.csv, seed=42)
+
+  === A_V_GpP__opensmile__resnet__bilstm_mean ===
+    runs=5  collapse=0
+       acc: mean=+0.654  std=0.148  range=[+0.471, +0.824]
+        f1: mean=+0.548  std=0.116  range=[+0.433, +0.730]
+     kappa: mean=+0.145  std=0.232  range=[-0.133, +0.485]
+       ccc: mean=+0.002  std=0.071  range=[-0.114, +0.077]
+      rmse: mean=+0.835  std=0.109  range=[+0.682, +0.950]
+       mae: mean=+0.674  std=0.126  range=[+0.529, +0.799]
+    recall_per_class_mean: [0.80 0.31]
+    recall_per_class_min:  [0.42 0.17]  <-- worst-case across runs
+    per-fold breakdown:
+           fold0: n=1 collapse=0 f1=+0.557±0.000 kappa=+0.211 ccc=+0.018
+           fold1: n=1 collapse=0 f1=+0.557±0.000 kappa=+0.151 ccc=+0.029
+           fold2: n=1 collapse=0 f1=+0.730±0.000 kappa=+0.485 ccc=+0.077
+           fold3: n=1 collapse=0 f1=+0.463±0.000 kappa=+0.013 ccc=-0.000
+           fold4: n=1 collapse=0 f1=+0.433±0.000 kappa=-0.133 ccc=-0.114
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track1_binary_kfold_2026-05-16-00.26.48.json

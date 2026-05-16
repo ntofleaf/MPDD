@@ -1,0 +1,768 @@
+{
+  "submissions": [
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track1_G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "source_task": "ternary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.27476455320726734,
+            "f1_std": 0.0048031415345373505,
+            "kappa_mean": 0.0,
+            "ccc_mean": 0.00301600894180459,
+            "ccc_std": 0.007930736278683091,
+            "recall_min_mean": 0.0,
+            "collapse_count": 5,
+            "score": -0.0009493591975369554
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.41214682981090106,
+            "f1_std": 0.0072047123018060075,
+            "kappa_mean": 0.0,
+            "ccc_mean": 0.0010911487908576347,
+            "ccc_std": 0.004312837504918112,
+            "recall_min_mean": 0.0,
+            "collapse_count": 5,
+            "score": -2.095057882490905
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_G+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.27476455320726734,
+            "f1_std": 0.0048031415345373505,
+            "kappa_mean": 0.0,
+            "ccc_mean": 0.00301600894180459,
+            "ccc_std": 0.007930736278683091,
+            "recall_min_mean": 0.0,
+            "collapse_count": 5,
+            "score": -2.23003858832727
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.5
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track1_A-V+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "source_task": "binary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.5712217412217412,
+            "f1_std": 0.1396877587052722,
+            "kappa_mean": 0.19748942686884557,
+            "ccc_mean": 0.05829445762994907,
+            "ccc_std": 0.07533302229240323,
+            "recall_min_mean": 0.35,
+            "collapse_count": 1,
+            "score": 0.02062794648374746
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "mfcc",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6272863247863247,
+            "f1_std": 0.06340357867221122,
+            "kappa_mean": 0.3133405677880071,
+            "ccc_mean": 0.0400360115851591,
+            "ccc_std": 0.059392716241629256,
+            "recall_min_mean": 0.3833333333333333,
+            "collapse_count": 0,
+            "score": 0.5638827461141135
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_A-V+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "mfcc",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.4408894600318888,
+            "f1_std": 0.0713167826706928,
+            "kappa_mean": 0.21928952885865444,
+            "ccc_mean": 0.015332972646634269,
+            "ccc_std": 0.19240892049743435,
+            "recall_min_mean": 0.0,
+            "collapse_count": 0,
+            "score": 0.369572677361196
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_A-V+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track1_A-V-G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "opensmile",
+            "openface",
+            "bilstm_mean"
+          ],
+          "source_task": "binary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6188457576579018,
+            "f1_std": 0.1614938437516636,
+            "kappa_mean": 0.3042249800724954,
+            "ccc_mean": 0.05332244762635395,
+            "ccc_std": 0.0913764924675613,
+            "recall_min_mean": 0.44000000000000006,
+            "collapse_count": 1,
+            "score": 0.0076342013925733004
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "opensmile",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.5479900901679486,
+            "f1_std": 0.11584265543640998,
+            "kappa_mean": 0.14517761786749842,
+            "ccc_mean": 0.0019692969658936534,
+            "ccc_std": 0.07094947654468867,
+            "recall_min_mean": 0.27666666666666667,
+            "collapse_count": 0,
+            "score": 0.43214743473153866
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_A-V-G+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "wav2vec",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.478685641306331,
+            "f1_std": 0.07271115551896778,
+            "kappa_mean": 0.23851851829169024,
+            "ccc_mean": -0.01830196648089082,
+            "ccc_std": 0.1667825272832529,
+            "recall_min_mean": 0.0,
+            "collapse_count": 0,
+            "score": 0.4059744857873632
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track1_A-V-G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track2_G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "source_task": "binary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6661242567202319,
+            "f1_std": 0.08362634601044477,
+            "kappa_mean": 0.3380517503805175,
+            "ccc_mean": 0.003515165368513367,
+            "ccc_std": 0.011847658588657443,
+            "recall_min_mean": 0.5888888888888888,
+            "collapse_count": 0,
+            "score": -0.002408663925815354
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6661242567202319,
+            "f1_std": 0.08362634601044477,
+            "kappa_mean": 0.3380517503805175,
+            "ccc_mean": 0.003515165368513367,
+            "ccc_std": 0.011847658588657443,
+            "recall_min_mean": 0.5888888888888888,
+            "collapse_count": 0,
+            "score": 0.5824979107097872
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_G+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "mfcc",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.4501792943898207,
+            "f1_std": 0.05832874902476597,
+            "kappa_mean": 0.3474970262620253,
+            "ccc_mean": -0.01440134715676899,
+            "ccc_std": 0.014837948619144649,
+            "recall_min_mean": 0.0,
+            "collapse_count": 0,
+            "score": 0.3918505453650547
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.5
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track2_A-V+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "opensmile",
+            "openface",
+            "bilstm_mean"
+          ],
+          "source_task": "ternary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.519685904051229,
+            "f1_std": 0.07395596613232945,
+            "kappa_mean": 0.36514648634053376,
+            "ccc_mean": 0.1133651920015124,
+            "ccc_std": 0.12428411310901948,
+            "recall_min_mean": 0.16666666666666666,
+            "collapse_count": 0,
+            "score": 0.05122313544700267
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "opensmile",
+            "resnet",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6541473535214282,
+            "f1_std": 0.0796980231456204,
+            "kappa_mean": 0.3362888441761681,
+            "ccc_mean": -0.01502139549831949,
+            "ccc_std": 0.028419088199995217,
+            "recall_min_mean": 0.48888888888888893,
+            "collapse_count": 0,
+            "score": 0.5744493303758078
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_A-V+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "opensmile",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.519685904051229,
+            "f1_std": 0.07395596613232945,
+            "kappa_mean": 0.36514648634053376,
+            "ccc_mean": 0.1133651920015124,
+            "ccc_std": 0.12428411310901948,
+            "recall_min_mean": 0.16666666666666666,
+            "collapse_count": 0,
+            "score": 0.4457299379188996
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_A-V+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "zip": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track2_A-V-G+P.zip",
+      "tasks": {
+        "phq_source": {
+          "combo": [
+            "opensmile",
+            "openface",
+            "bilstm_mean"
+          ],
+          "source_task": "ternary",
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.481270167740756,
+            "f1_std": 0.10777668388076937,
+            "kappa_mean": 0.3379095490286901,
+            "ccc_mean": 0.1727730716045298,
+            "ccc_std": 0.2524374565533761,
+            "recall_min_mean": 0.1,
+            "collapse_count": 0,
+            "score": 0.046554343327841724
+          },
+          "n_folds_ensembled": 5,
+          "used_for": "phq9_pred in both binary.csv and ternary.csv"
+        },
+        "binary": {
+          "combo": [
+            "opensmile",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.6727565736786358,
+            "f1_std": 0.09966293674066379,
+            "kappa_mean": 0.39527299484915385,
+            "ccc_mean": 0.054966106999733796,
+            "ccc_std": 0.056536896636705206,
+            "recall_min_mean": 0.5333333333333333,
+            "collapse_count": 0,
+            "score": 0.573093636937972
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_A-V-G+P/binary.csv"
+        },
+        "ternary": {
+          "combo": [
+            "mfcc",
+            "openface",
+            "bilstm_mean"
+          ],
+          "summary": {
+            "n_folds": 5,
+            "f1_mean": 0.47433245167260507,
+            "f1_std": 0.07819242910347982,
+            "kappa_mean": 0.3253244672017996,
+            "ccc_mean": 0.11344763508128412,
+            "ccc_std": 0.20253867108694662,
+            "recall_min_mean": 0.1,
+            "collapse_count": 0,
+            "score": 0.3961400225691253
+          },
+          "n_folds_ensembled": 5,
+          "csv_path": "/home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/_workdir_Track2_A-V-G+P/ternary.csv"
+        }
+      },
+      "size_kb": 0.6
+    }
+  ],
+  "selected_combos": [
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "phq_source",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "source_task": "ternary",
+      "n_folds": 5,
+      "f1_mean": 0.27476455320726734,
+      "f1_std": 0.0048031415345373505,
+      "kappa_mean": 0.0,
+      "ccc_mean": 0.00301600894180459,
+      "ccc_std": 0.007930736278683091,
+      "recall_min_mean": 0.0,
+      "collapse_count": 5,
+      "score": -0.0009493591975369554
+    },
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "binary",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.41214682981090106,
+      "f1_std": 0.0072047123018060075,
+      "kappa_mean": 0.0,
+      "ccc_mean": 0.0010911487908576347,
+      "ccc_std": 0.004312837504918112,
+      "recall_min_mean": 0.0,
+      "collapse_count": 5,
+      "score": -2.095057882490905
+    },
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "task": "ternary",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.27476455320726734,
+      "f1_std": 0.0048031415345373505,
+      "kappa_mean": 0.0,
+      "ccc_mean": 0.00301600894180459,
+      "ccc_std": 0.007930736278683091,
+      "recall_min_mean": 0.0,
+      "collapse_count": 5,
+      "score": -2.23003858832727
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "phq_source",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "source_task": "binary",
+      "n_folds": 5,
+      "f1_mean": 0.5712217412217412,
+      "f1_std": 0.1396877587052722,
+      "kappa_mean": 0.19748942686884557,
+      "ccc_mean": 0.05829445762994907,
+      "ccc_std": 0.07533302229240323,
+      "recall_min_mean": 0.35,
+      "collapse_count": 1,
+      "score": 0.02062794648374746
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "binary",
+      "combo": [
+        "mfcc",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.6272863247863247,
+      "f1_std": 0.06340357867221122,
+      "kappa_mean": 0.3133405677880071,
+      "ccc_mean": 0.0400360115851591,
+      "ccc_std": 0.059392716241629256,
+      "recall_min_mean": 0.3833333333333333,
+      "collapse_count": 0,
+      "score": 0.5638827461141135
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "task": "ternary",
+      "combo": [
+        "mfcc",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.4408894600318888,
+      "f1_std": 0.0713167826706928,
+      "kappa_mean": 0.21928952885865444,
+      "ccc_mean": 0.015332972646634269,
+      "ccc_std": 0.19240892049743435,
+      "recall_min_mean": 0.0,
+      "collapse_count": 0,
+      "score": 0.369572677361196
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "phq_source",
+      "combo": [
+        "opensmile",
+        "openface",
+        "bilstm_mean"
+      ],
+      "source_task": "binary",
+      "n_folds": 5,
+      "f1_mean": 0.6188457576579018,
+      "f1_std": 0.1614938437516636,
+      "kappa_mean": 0.3042249800724954,
+      "ccc_mean": 0.05332244762635395,
+      "ccc_std": 0.0913764924675613,
+      "recall_min_mean": 0.44000000000000006,
+      "collapse_count": 1,
+      "score": 0.0076342013925733004
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "binary",
+      "combo": [
+        "opensmile",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.5479900901679486,
+      "f1_std": 0.11584265543640998,
+      "kappa_mean": 0.14517761786749842,
+      "ccc_mean": 0.0019692969658936534,
+      "ccc_std": 0.07094947654468867,
+      "recall_min_mean": 0.27666666666666667,
+      "collapse_count": 0,
+      "score": 0.43214743473153866
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "task": "ternary",
+      "combo": [
+        "wav2vec",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.478685641306331,
+      "f1_std": 0.07271115551896778,
+      "kappa_mean": 0.23851851829169024,
+      "ccc_mean": -0.01830196648089082,
+      "ccc_std": 0.1667825272832529,
+      "recall_min_mean": 0.0,
+      "collapse_count": 0,
+      "score": 0.4059744857873632
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "phq_source",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "source_task": "binary",
+      "n_folds": 5,
+      "f1_mean": 0.6661242567202319,
+      "f1_std": 0.08362634601044477,
+      "kappa_mean": 0.3380517503805175,
+      "ccc_mean": 0.003515165368513367,
+      "ccc_std": 0.011847658588657443,
+      "recall_min_mean": 0.5888888888888888,
+      "collapse_count": 0,
+      "score": -0.002408663925815354
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "binary",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.6661242567202319,
+      "f1_std": 0.08362634601044477,
+      "kappa_mean": 0.3380517503805175,
+      "ccc_mean": 0.003515165368513367,
+      "ccc_std": 0.011847658588657443,
+      "recall_min_mean": 0.5888888888888888,
+      "collapse_count": 0,
+      "score": 0.5824979107097872
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "task": "ternary",
+      "combo": [
+        "mfcc",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.4501792943898207,
+      "f1_std": 0.05832874902476597,
+      "kappa_mean": 0.3474970262620253,
+      "ccc_mean": -0.01440134715676899,
+      "ccc_std": 0.014837948619144649,
+      "recall_min_mean": 0.0,
+      "collapse_count": 0,
+      "score": 0.3918505453650547
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "phq_source",
+      "combo": [
+        "opensmile",
+        "openface",
+        "bilstm_mean"
+      ],
+      "source_task": "ternary",
+      "n_folds": 5,
+      "f1_mean": 0.519685904051229,
+      "f1_std": 0.07395596613232945,
+      "kappa_mean": 0.36514648634053376,
+      "ccc_mean": 0.1133651920015124,
+      "ccc_std": 0.12428411310901948,
+      "recall_min_mean": 0.16666666666666666,
+      "collapse_count": 0,
+      "score": 0.05122313544700267
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "binary",
+      "combo": [
+        "opensmile",
+        "resnet",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.6541473535214282,
+      "f1_std": 0.0796980231456204,
+      "kappa_mean": 0.3362888441761681,
+      "ccc_mean": -0.01502139549831949,
+      "ccc_std": 0.028419088199995217,
+      "recall_min_mean": 0.48888888888888893,
+      "collapse_count": 0,
+      "score": 0.5744493303758078
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "task": "ternary",
+      "combo": [
+        "opensmile",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.519685904051229,
+      "f1_std": 0.07395596613232945,
+      "kappa_mean": 0.36514648634053376,
+      "ccc_mean": 0.1133651920015124,
+      "ccc_std": 0.12428411310901948,
+      "recall_min_mean": 0.16666666666666666,
+      "collapse_count": 0,
+      "score": 0.4457299379188996
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "phq_source",
+      "combo": [
+        "opensmile",
+        "openface",
+        "bilstm_mean"
+      ],
+      "source_task": "ternary",
+      "n_folds": 5,
+      "f1_mean": 0.481270167740756,
+      "f1_std": 0.10777668388076937,
+      "kappa_mean": 0.3379095490286901,
+      "ccc_mean": 0.1727730716045298,
+      "ccc_std": 0.2524374565533761,
+      "recall_min_mean": 0.1,
+      "collapse_count": 0,
+      "score": 0.046554343327841724
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "binary",
+      "combo": [
+        "opensmile",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.6727565736786358,
+      "f1_std": 0.09966293674066379,
+      "kappa_mean": 0.39527299484915385,
+      "ccc_mean": 0.054966106999733796,
+      "ccc_std": 0.056536896636705206,
+      "recall_min_mean": 0.5333333333333333,
+      "collapse_count": 0,
+      "score": 0.573093636937972
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "task": "ternary",
+      "combo": [
+        "mfcc",
+        "openface",
+        "bilstm_mean"
+      ],
+      "n_folds": 5,
+      "f1_mean": 0.47433245167260507,
+      "f1_std": 0.07819242910347982,
+      "kappa_mean": 0.3253244672017996,
+      "ccc_mean": 0.11344763508128412,
+      "ccc_std": 0.20253867108694662,
+      "recall_min_mean": 0.1,
+      "collapse_count": 0,
+      "score": 0.3961400225691253
+    }
+  ]
+}

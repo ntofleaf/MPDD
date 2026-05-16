@@ -1,0 +1,27 @@
+[pipeline] mode=kfold task=ternary track=Track1
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=5 gpus=[7, 7, 7]
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__fold0_seed42  (split=split_labels_train_ternary_fold0_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__fold1_seed42  (split=split_labels_train_ternary_fold1_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__fold2_seed42  (split=split_labels_train_ternary_fold2_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__fold3_seed42  (split=split_labels_train_ternary_fold3_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__fold4_seed42  (split=split_labels_train_ternary_fold4_frozen.csv, seed=42)
+
+  === A_VpP__mfcc__openface__bilstm_mean ===
+    runs=5  collapse=0
+       acc: mean=+0.678  std=0.075  range=[+0.588, +0.765]
+        f1: mean=+0.441  std=0.071  range=[+0.335, +0.508]
+     kappa: mean=+0.219  std=0.140  range=[+0.017, +0.393]
+       ccc: mean=+0.015  std=0.192  range=[-0.288, +0.219]
+      rmse: mean=+0.948  std=0.155  range=[+0.695, +1.113]
+       mae: mean=+0.734  std=0.099  range=[+0.573, +0.814]
+    recall_per_class_mean: [0.86 0.33 0.20]
+    recall_per_class_min:  [0.69 0.00 0.00]  <-- worst-case across runs
+    per-fold breakdown:
+           fold0: n=1 collapse=0 f1=+0.498±0.000 kappa=+0.237 ccc=+0.219
+           fold1: n=1 collapse=0 f1=+0.407±0.000 kappa=+0.166 ccc=-0.021
+           fold2: n=1 collapse=0 f1=+0.457±0.000 kappa=+0.393 ccc=+0.039
+           fold3: n=1 collapse=0 f1=+0.335±0.000 kappa=+0.017 ccc=-0.288
+           fold4: n=1 collapse=0 f1=+0.508±0.000 kappa=+0.284 ccc=+0.128
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track1_ternary_kfold_2026-05-16-00.26.39.json

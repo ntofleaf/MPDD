@@ -1,0 +1,13 @@
+2026-05-15 21:10:24,400 - INFO - Experiment: pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42
+2026-05-15 21:10:24,401 - INFO - Device: cuda
+2026-05-15 21:10:24,401 - INFO - Train/Val: 78 / 9
+2026-05-15 21:10:29,809 - INFO - Epoch 1/8 | train_loss=1.710811 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.002701 val_rmse=0.676307 val_mae=0.642710
+2026-05-15 21:10:34,796 - INFO - Epoch 2/8 | train_loss=1.380504 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.005109 val_rmse=0.666374 val_mae=0.586196
+2026-05-15 21:10:40,033 - INFO - Epoch 3/8 | train_loss=1.356760 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.000689 val_rmse=0.701646 val_mae=0.530182
+2026-05-15 21:10:45,139 - INFO - Epoch 4/8 | train_loss=1.440403 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.002900 val_rmse=0.671765 val_mae=0.572005
+2026-05-15 21:10:50,393 - INFO - Epoch 5/8 | train_loss=1.425791 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.008385 val_rmse=0.675764 val_mae=0.558244
+2026-05-15 21:10:55,592 - INFO - Epoch 6/8 | train_loss=1.337126 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.009617 val_rmse=0.679300 val_mae=0.551541
+2026-05-15 21:11:00,490 - INFO - Epoch 7/8 | train_loss=1.389893 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.009005 val_rmse=0.681820 val_mae=0.548390
+2026-05-15 21:11:05,520 - INFO - Epoch 8/8 | train_loss=1.333546 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.008828 val_rmse=0.680023 val_mae=0.551230
+2026-05-15 21:11:05,522 - INFO - Best checkpoint: checkpoints/Track1/A-V-G+P/binary/pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42/best_model_2026-05-15-21.10.23.pth
+2026-05-15 21:11:05,522 - INFO - Validation metrics saved to: logs/Track1/A-V-G+P/binary/pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42/train_result_2026-05-15-21.10.23.json

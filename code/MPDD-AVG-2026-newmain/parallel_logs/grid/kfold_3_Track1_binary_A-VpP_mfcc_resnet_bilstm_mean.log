@@ -1,0 +1,27 @@
+[pipeline] mode=kfold task=binary track=Track1
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=5 gpus=[5, 5, 5]
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__fold0_seed42  (split=split_labels_train_binary_fold0_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__fold1_seed42  (split=split_labels_train_binary_fold1_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__fold2_seed42  (split=split_labels_train_binary_fold2_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__fold3_seed42  (split=split_labels_train_binary_fold3_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__fold4_seed42  (split=split_labels_train_binary_fold4_frozen.csv, seed=42)
+
+  === A_VpP__mfcc__resnet__bilstm_mean ===
+    runs=5  collapse=1
+       acc: mean=+0.689  std=0.100  range=[+0.529, +0.778]
+        f1: mean=+0.571  std=0.140  range=[+0.400, +0.742]
+     kappa: mean=+0.197  std=0.226  range=[-0.015, +0.493]
+       ccc: mean=+0.058  std=0.075  range=[-0.012, +0.178]
+      rmse: mean=+0.804  std=0.156  range=[+0.647, +1.012]
+       mae: mean=+0.648  std=0.157  range=[+0.479, +0.829]
+    recall_per_class_mean: [0.83 0.36]
+    recall_per_class_min:  [0.58 0.00]  <-- worst-case across runs
+    per-fold breakdown:
+           fold0: n=1 collapse=1 f1=+0.400±0.000 kappa=+0.000 ccc=-0.012
+           fold1: n=1 collapse=0 f1=+0.679±0.000 kappa=+0.368 ccc=+0.019
+           fold2: n=1 collapse=0 f1=+0.550±0.000 kappa=+0.141 ccc=+0.083
+           fold3: n=1 collapse=0 f1=+0.485±0.000 kappa=-0.015 ccc=+0.023
+           fold4: n=1 collapse=0 f1=+0.742±0.000 kappa=+0.493 ccc=+0.178
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track1_binary_kfold_2026-05-16-00.18.45.json

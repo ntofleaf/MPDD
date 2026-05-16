@@ -1,0 +1,7 @@
+
+=== 0/1 ckpts passed sanity ===
+
+✗ FAIL  best_model_2026-05-16-12.00.37.pth
+  val: n=9 f1=0.585 acc=0.667 kappa=+0.182 ccc=-0.004 pred_dist={0: 7, 1: 2} true_dist={0: 6, 1: 3} phq_std=0.01
+  train: n=78 f1=0.635 kappa=+0.299
+  ! PHQ_DEAD: phq_pred std=0.013 < 0.05 (regression head fully dead)

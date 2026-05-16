@@ -66,10 +66,30 @@ def _infer_split_counterpart(path: Path) -> Path | None:
     return None
 
 
+def _read_normalized_rows(path: Path) -> list[dict[str, str]]:
+    """Read CSV and strip whitespace from all keys and values.
+
+    Track2 test CSV (Test-MPDD-Young/.../split_labels_test.csv) ships with
+    leading spaces in both column headers ('ID ', ' split', ...) and cell
+    values ('  1', ' test '), which break dict lookups by canonical name.
+    Normalize once at the read layer.
+    """
+    with open(path, "r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        rows: list[dict[str, str]] = []
+        for raw in reader:
+            normalized = {
+                (k.strip() if isinstance(k, str) else k):
+                (v.strip() if isinstance(v, str) else v)
+                for k, v in raw.items()
+            }
+            rows.append(normalized)
+    return rows
+
+
 def load_split_rows(split_csv: str | Path) -> list[dict[str, str]]:
     csv_path = resolve_project_path(split_csv)
-    with open(csv_path, "r", encoding="utf-8-sig", newline="") as handle:
-        rows = list(csv.DictReader(handle))
+    rows = _read_normalized_rows(csv_path)
 
     split_values = {row.get("split", "").strip().lower() for row in rows}
     if {"train", "test"}.issubset(split_values):
@@ -79,9 +99,7 @@ def load_split_rows(split_csv: str | Path) -> list[dict[str, str]]:
     if counterpart is None or not counterpart.exists():
         return rows
 
-    with open(counterpart, "r", encoding="utf-8-sig", newline="") as handle:
-        counterpart_rows = list(csv.DictReader(handle))
-    return rows + counterpart_rows
+    return rows + _read_normalized_rows(counterpart)
 
 
 def get_label_column(task: str, regression_label: str = "label2") -> str:

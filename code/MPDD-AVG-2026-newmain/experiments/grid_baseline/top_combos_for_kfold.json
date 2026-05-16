@@ -1,0 +1,318 @@
+{
+  "Track1": {
+    "binary": {
+      "A-V+P": [
+        {
+          "audio": "mfcc",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.75,
+          "kappa_mean": 0.5,
+          "ccc_mean": 0.3255,
+          "recall_min_class_mean": 0.6667,
+          "collapse_count": 0
+        },
+        {
+          "audio": "wav2vec",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7396,
+          "kappa_mean": 0.5091,
+          "ccc_mean": 0.1303,
+          "recall_min_class_mean": 0.4444,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6786,
+          "kappa_mean": 0.4,
+          "ccc_mean": 0.0665,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        }
+      ],
+      "A-V-G+P": [
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7262,
+          "kappa_mean": 0.4667,
+          "ccc_mean": 0.3636,
+          "recall_min_class_mean": 0.5556,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6786,
+          "kappa_mean": 0.4,
+          "ccc_mean": 0.081,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        },
+        {
+          "audio": "opensmile",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6786,
+          "kappa_mean": 0.4,
+          "ccc_mean": 0.0517,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        }
+      ],
+      "G+P": [
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4,
+          "kappa_mean": 0.0,
+          "ccc_mean": 0.0004,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 3
+        }
+      ]
+    },
+    "ternary": {
+      "A-V+P": [
+        {
+          "audio": "mfcc",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4529,
+          "kappa_mean": 0.392,
+          "ccc_mean": 0.4402,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        },
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4487,
+          "kappa_mean": 0.3585,
+          "ccc_mean": 0.3324,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        },
+        {
+          "audio": "wav2vec",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4389,
+          "kappa_mean": 0.3468,
+          "ccc_mean": 0.4541,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        }
+      ],
+      "A-V-G+P": [
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4319,
+          "kappa_mean": 0.3338,
+          "ccc_mean": 0.4767,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        },
+        {
+          "audio": "wav2vec",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4306,
+          "kappa_mean": 0.3397,
+          "ccc_mean": 0.397,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4269,
+          "kappa_mean": 0.3256,
+          "ccc_mean": 0.5142,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        }
+      ],
+      "G+P": [
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.2828,
+          "kappa_mean": 0.0142,
+          "ccc_mean": 0.0072,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 2
+        }
+      ]
+    }
+  },
+  "Track2": {
+    "binary": {
+      "A-V+P": [
+        {
+          "audio": "opensmile",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7407,
+          "kappa_mean": 0.4878,
+          "ccc_mean": -0.0771,
+          "recall_min_class_mean": 0.6667,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6639,
+          "kappa_mean": 0.3448,
+          "ccc_mean": -0.106,
+          "recall_min_class_mean": 0.6,
+          "collapse_count": 0
+        },
+        {
+          "audio": "wav2vec",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6639,
+          "kappa_mean": 0.3376,
+          "ccc_mean": -0.1654,
+          "recall_min_class_mean": 0.6,
+          "collapse_count": 0
+        }
+      ],
+      "A-V-G+P": [
+        {
+          "audio": "opensmile",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7331,
+          "kappa_mean": 0.4907,
+          "ccc_mean": -0.0842,
+          "recall_min_class_mean": 0.6667,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7028,
+          "kappa_mean": 0.4181,
+          "ccc_mean": -0.0813,
+          "recall_min_class_mean": 0.6,
+          "collapse_count": 0
+        },
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.6609,
+          "kappa_mean": 0.3517,
+          "ccc_mean": -0.0944,
+          "recall_min_class_mean": 0.5333,
+          "collapse_count": 0
+        }
+      ],
+      "G+P": [
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.7306,
+          "kappa_mean": 0.4726,
+          "ccc_mean": 0.0066,
+          "recall_min_class_mean": 0.6667,
+          "collapse_count": 0
+        }
+      ]
+    },
+    "ternary": {
+      "A-V+P": [
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.518,
+          "kappa_mean": 0.2772,
+          "ccc_mean": 0.5645,
+          "recall_min_class_mean": 0.4,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.5054,
+          "kappa_mean": 0.3593,
+          "ccc_mean": 0.4607,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        },
+        {
+          "audio": "wav2vec",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4395,
+          "kappa_mean": 0.3388,
+          "ccc_mean": -0.0003,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        }
+      ],
+      "A-V-G+P": [
+        {
+          "audio": "mfcc",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.532,
+          "kappa_mean": 0.3314,
+          "ccc_mean": 0.2242,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        },
+        {
+          "audio": "opensmile",
+          "video": "openface",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.532,
+          "kappa_mean": 0.3914,
+          "ccc_mean": 0.2783,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        },
+        {
+          "audio": "mfcc",
+          "video": "densenet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.4772,
+          "kappa_mean": 0.2316,
+          "ccc_mean": 0.0234,
+          "recall_min_class_mean": 0.3333,
+          "collapse_count": 0
+        }
+      ],
+      "G+P": [
+        {
+          "audio": "mfcc",
+          "video": "resnet",
+          "encoder": "bilstm_mean",
+          "f1_mean": 0.3348,
+          "kappa_mean": 0.0734,
+          "ccc_mean": -0.0091,
+          "recall_min_class_mean": 0.0,
+          "collapse_count": 0
+        }
+      ]
+    }
+  }
+}

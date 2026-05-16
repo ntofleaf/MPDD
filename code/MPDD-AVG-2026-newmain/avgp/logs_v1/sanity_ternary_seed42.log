@@ -1,0 +1,6 @@
+
+=== 1/1 ckpts passed sanity ===
+
+✓ PASS  best_model_2026-05-16-12.00.37.pth
+  val: n=9 f1=0.333 acc=0.444 kappa=+0.082 ccc=-0.068 pred_dist={1: 3, 2: 2, 0: 4} true_dist={2: 1, 0: 6, 1: 2} phq_std=0.27
+  train: n=78 f1=0.733 kappa=+0.733

@@ -1,0 +1,8 @@
+2026-05-15 21:11:32,065 - INFO - Experiment: pipeline__A_VpP__mfcc__resnet__bilstm_mean__frozen_val_seed42
+2026-05-15 21:11:32,065 - INFO - Device: cuda
+2026-05-15 21:11:32,065 - INFO - Train/Val: 78 / 9
+2026-05-15 21:12:45,363 - INFO - Epoch 1/140 | train_loss=1.513145 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.014572 val_rmse=0.662959 val_mae=0.583521
+2026-05-15 21:13:52,191 - INFO - Epoch 2/140 | train_loss=1.333348 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.011334 val_rmse=0.663009 val_mae=0.591038
+2026-05-15 21:15:12,412 - INFO - Epoch 3/140 | train_loss=1.332864 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.010565 val_rmse=0.665187 val_mae=0.580786
+2026-05-15 21:16:42,979 - INFO - Epoch 4/140 | train_loss=1.321374 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.007214 val_rmse=0.670879 val_mae=0.568463
+2026-05-15 21:18:07,410 - INFO - Epoch 5/140 | train_loss=1.417184 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.005204 val_rmse=0.683119 val_mae=0.548720

@@ -1,0 +1,27 @@
+[pipeline] mode=kfold task=ternary track=Track2
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=5 gpus=[1, 1, 1]
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__fold0_seed42  (split=split_labels_train_ternary_fold0_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__fold1_seed42  (split=split_labels_train_ternary_fold1_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__fold2_seed42  (split=split_labels_train_ternary_fold2_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__fold3_seed42  (split=split_labels_train_ternary_fold3_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__fold4_seed42  (split=split_labels_train_ternary_fold4_frozen.csv, seed=42)
+
+  === A_V_GpP__mfcc__openface__bilstm_mean ===
+    runs=5  collapse=0
+       acc: mean=+0.625  std=0.031  range=[+0.588, +0.667]
+        f1: mean=+0.474  std=0.078  range=[+0.409, +0.608]
+     kappa: mean=+0.325  std=0.043  range=[+0.297, +0.400]
+       ccc: mean=+0.113  std=0.203  range=[-0.059, +0.424]
+      rmse: mean=+0.704  std=0.100  range=[+0.621, +0.822]
+       mae: mean=+0.562  std=0.073  range=[+0.480, +0.662]
+    recall_per_class_mean: [0.73 0.63 0.10]
+    recall_per_class_min:  [0.56 0.33 0.00]  <-- worst-case across runs
+    per-fold breakdown:
+           fold0: n=1 collapse=0 f1=+0.444±0.000 kappa=+0.326 ccc=+0.210
+           fold1: n=1 collapse=0 f1=+0.438±0.000 kappa=+0.304 ccc=+0.022
+           fold2: n=1 collapse=0 f1=+0.472±0.000 kappa=+0.400 ccc=-0.059
+           fold3: n=1 collapse=0 f1=+0.608±0.000 kappa=+0.300 ccc=+0.424
+           fold4: n=1 collapse=0 f1=+0.409±0.000 kappa=+0.297 ccc=-0.030
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track2_ternary_kfold_2026-05-16-02.16.35.json

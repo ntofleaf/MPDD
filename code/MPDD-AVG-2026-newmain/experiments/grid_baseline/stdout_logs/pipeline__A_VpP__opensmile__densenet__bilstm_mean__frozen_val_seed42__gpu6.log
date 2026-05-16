@@ -1,0 +1,5 @@
+2026-05-15 21:11:34,134 - INFO - Experiment: pipeline__A_VpP__opensmile__densenet__bilstm_mean__frozen_val_seed42
+2026-05-15 21:11:34,158 - INFO - Device: cuda
+2026-05-15 21:11:34,158 - INFO - Train/Val: 78 / 9
+2026-05-15 21:14:12,022 - INFO - Epoch 1/140 | train_loss=1.851451 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.028570 val_rmse=0.688173 val_mae=0.568121
+2026-05-15 21:16:36,616 - INFO - Epoch 2/140 | train_loss=1.376020 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.025682 val_rmse=0.675782 val_mae=0.598204

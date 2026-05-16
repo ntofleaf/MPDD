@@ -1,0 +1,6 @@
+2026-05-15 21:12:02,406 - INFO - Experiment: pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42
+2026-05-15 21:12:02,406 - INFO - Device: cuda
+2026-05-15 21:12:02,406 - INFO - Train/Val: 78 / 9
+2026-05-15 21:13:51,933 - INFO - Epoch 1/140 | train_loss=1.844065 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.018924 val_rmse=0.697887 val_mae=0.545405
+2026-05-15 21:16:05,647 - INFO - Epoch 2/140 | train_loss=1.390265 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.018910 val_rmse=0.672838 val_mae=0.606367
+2026-05-15 21:18:33,828 - INFO - Epoch 3/140 | train_loss=1.456606 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.021964 val_rmse=0.682199 val_mae=0.571626

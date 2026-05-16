@@ -1,0 +1,18 @@
+[21:41:13] auto-pack waiting for 'done grid Track2/ternary' in parallel_logs/grid/run.log
+[23:26:51] regression_then_pack waiting for binary+ternary grid to finish
+[23:36:18] wait_and_pack waiting for 'done grid Track2/ternary' + no train.py workers
+[23:44:19] grid finished -- running pack_submissions.py
+[pack] filter: keep results newer than experiments/grid_baseline (mtime=1778859846)
+[pack] scanning train_result_*.json with prefix 'pipeline__'
+[pack] found 0 run records (after filters)
+[pack] WARN no binary/ternary run for Track1/G+P — skipping pack
+[pack] WARN no binary/ternary run for Track1/A-V+P — skipping pack
+[pack] WARN no binary/ternary run for Track1/A-V-G+P — skipping pack
+[pack] WARN no binary/ternary run for Track2/G+P — skipping pack
+[pack] WARN no binary/ternary run for Track2/A-V+P — skipping pack
+[pack] WARN no binary/ternary run for Track2/A-V-G+P — skipping pack
+
+[pack] summary -> /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions/submissions_summary.json
+[pack] 0 submission zips written to /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions
+[23:44:21] pack_submissions.py exit=0
+[23:44:21] zips:

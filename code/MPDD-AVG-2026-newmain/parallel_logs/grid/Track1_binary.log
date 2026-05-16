@@ -1,0 +1,272 @@
+[pipeline] mode=grid task=binary track=Track1
+[pipeline] fixed hyperparams: {'epochs': '140', 'batch_size': '4', 'lr': '8e-5', 'weight_decay': '1e-5', 'hidden_dim': '128', 'dropout': '0.45', 'patience': '35', 'min_delta': '1e-4', 'target_t': '128', 'val_ratio': '0.1'}
+[pipeline] runs=57 gpus=[1, 1, 1, 4, 4, 4, 5, 5, 5, 7, 7, 7]
+  - pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__mfcc__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__mfcc__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__mfcc__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__opensmile__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__opensmile__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__opensmile__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__wav2vec__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__wav2vec__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__wav2vec__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__wav2vec__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_VpP__wav2vec__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__mfcc__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__mfcc__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__mfcc__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__mfcc__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__mfcc__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__opensmile__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__opensmile__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__opensmile__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__opensmile__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__wav2vec__resnet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__wav2vec__densenet__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__wav2vec__densenet__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__wav2vec__densenet__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+  - pipeline__A_V_GpP__wav2vec__openface__bilstm_mean__frozen_val_seed42  (split=split_labels_train_binary_frozen.csv, seed=42)
+  - pipeline__A_V_GpP__wav2vec__openface__bilstm_mean__frozen_val_seed3407  (split=split_labels_train_binary_frozen.csv, seed=3407)
+  - pipeline__A_V_GpP__wav2vec__openface__bilstm_mean__frozen_val_seed2026  (split=split_labels_train_binary_frozen.csv, seed=2026)
+
+  === GpP__mfcc__resnet__bilstm_mean ===
+    runs=3  collapse=3
+       acc: mean=+0.667  std=0.000  range=[+0.667, +0.667]
+        f1: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+     kappa: mean=+0.000  std=0.000  range=[+0.000, +0.000]
+       ccc: mean=+0.000  std=0.000  range=[+0.000, +0.001]
+      rmse: mean=+0.905  std=0.186  range=[+0.699, +1.061]
+       mae: mean=+0.687  std=0.149  range=[+0.529, +0.826]
+    recall_per_class_mean: [1.00 0.00]
+    recall_per_class_min:  [1.00 0.00]  <-- worst-case across runs
+
+  === A_VpP__mfcc__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.067  std=0.035  range=[+0.026, +0.089]
+      rmse: mean=+0.688  std=0.033  range=[+0.656, +0.721]
+       mae: mean=+0.607  std=0.074  range=[+0.521, +0.651]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_VpP__mfcc__densenet__bilstm_mean ===
+    runs=3  collapse=2
+       acc: mean=+0.667  std=0.000  range=[+0.667, +0.667]
+        f1: mean=+0.462  std=0.107  range=[+0.400, +0.585]
+     kappa: mean=+0.061  std=0.105  range=[+0.000, +0.182]
+       ccc: mean=+0.014  std=0.015  range=[-0.002, +0.028]
+      rmse: mean=+0.730  std=0.060  range=[+0.663, +0.780]
+       mae: mean=+0.592  std=0.091  range=[+0.505, +0.687]
+    recall_per_class_mean: [0.94 0.11]
+    recall_per_class_min:  [0.83 0.00]  <-- worst-case across runs
+
+  === A_VpP__mfcc__openface__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.750  std=0.000  range=[+0.750, +0.750]
+     kappa: mean=+0.500  std=0.000  range=[+0.500, +0.500]
+       ccc: mean=+0.326  std=0.058  range=[+0.283, +0.392]
+      rmse: mean=+0.610  std=0.035  range=[+0.571, +0.640]
+       mae: mean=+0.577  std=0.059  range=[+0.512, +0.624]
+    recall_per_class_mean: [0.83 0.67]
+    recall_per_class_min:  [0.83 0.67]  <-- worst-case across runs
+
+  === A_VpP__opensmile__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.129  std=0.043  range=[+0.082, +0.165]
+      rmse: mean=+0.673  std=0.054  range=[+0.639, +0.735]
+       mae: mean=+0.595  std=0.068  range=[+0.534, +0.669]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_VpP__opensmile__densenet__bilstm_mean ===
+    runs=3  collapse=2
+       acc: mean=+0.630  std=0.064  range=[+0.556, +0.667]
+        f1: mean=+0.433  std=0.058  range=[+0.400, +0.500]
+     kappa: mean=+0.000  std=0.000  range=[+0.000, +0.000]
+       ccc: mean=-0.021  std=0.009  range=[-0.029, -0.011]
+      rmse: mean=+0.699  std=0.023  range=[+0.684, +0.725]
+       mae: mean=+0.550  std=0.024  range=[+0.523, +0.568]
+    recall_per_class_mean: [0.89 0.11]
+    recall_per_class_min:  [0.67 0.00]  <-- worst-case across runs
+
+  === A_VpP__opensmile__openface__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.327  std=0.021  range=[+0.305, +0.347]
+      rmse: mean=+0.600  std=0.019  range=[+0.582, +0.619]
+       mae: mean=+0.497  std=0.016  range=[+0.484, +0.514]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_VpP__wav2vec__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.815  std=0.064  range=[+0.778, +0.889]
+        f1: mean=+0.740  std=0.106  range=[+0.679, +0.862]
+     kappa: mean=+0.509  std=0.189  range=[+0.400, +0.727]
+       ccc: mean=+0.130  std=0.127  range=[-0.016, +0.208]
+      rmse: mean=+0.683  std=0.043  range=[+0.655, +0.732]
+       mae: mean=+0.573  std=0.110  range=[+0.469, +0.689]
+    recall_per_class_mean: [1.00 0.44]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_VpP__wav2vec__densenet__bilstm_mean ===
+    runs=3  collapse=3
+       acc: mean=+0.667  std=0.000  range=[+0.667, +0.667]
+        f1: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+     kappa: mean=+0.000  std=0.000  range=[+0.000, +0.000]
+       ccc: mean=-0.016  std=0.005  range=[-0.021, -0.012]
+      rmse: mean=+0.682  std=0.011  range=[+0.671, +0.693]
+       mae: mean=+0.579  std=0.032  range=[+0.549, +0.613]
+    recall_per_class_mean: [1.00 0.00]
+    recall_per_class_min:  [1.00 0.00]  <-- worst-case across runs
+
+  === A_VpP__wav2vec__openface__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.281  std=0.033  range=[+0.251, +0.317]
+      rmse: mean=+0.621  std=0.026  range=[+0.597, +0.649]
+       mae: mean=+0.536  std=0.048  range=[+0.493, +0.587]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__mfcc__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.081  std=0.149  range=[-0.018, +0.252]
+      rmse: mean=+0.646  std=0.040  range=[+0.600, +0.674]
+       mae: mean=+0.571  std=0.033  range=[+0.532, +0.591]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__mfcc__densenet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.593  std=0.064  range=[+0.556, +0.667]
+        f1: mean=+0.545  std=0.043  range=[+0.500, +0.585]
+     kappa: mean=+0.144  std=0.129  range=[+0.000, +0.250]
+       ccc: mean=-0.060  std=0.096  range=[-0.171, -0.004]
+      rmse: mean=+0.745  std=0.100  range=[+0.674, +0.859]
+       mae: mean=+0.654  std=0.084  range=[+0.576, +0.744]
+    recall_per_class_mean: [0.61 0.56]
+    recall_per_class_min:  [0.33 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__mfcc__openface__bilstm_mean ===
+    runs=3  collapse=1
+       acc: mean=+0.741  std=0.064  range=[+0.667, +0.778]
+        f1: mean=+0.586  std=0.161  range=[+0.400, +0.679]
+     kappa: mean=+0.267  std=0.231  range=[+0.000, +0.400]
+       ccc: mean=+0.218  std=0.195  range=[+0.007, +0.391]
+      rmse: mean=+0.654  std=0.048  range=[+0.601, +0.696]
+       mae: mean=+0.523  std=0.075  range=[+0.449, +0.599]
+    recall_per_class_mean: [1.00 0.22]
+    recall_per_class_min:  [1.00 0.00]  <-- worst-case across runs
+
+  === A_V_GpP__opensmile__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.052  std=0.056  range=[+0.002, +0.112]
+      rmse: mean=+0.694  std=0.051  range=[+0.648, +0.749]
+       mae: mean=+0.587  std=0.030  range=[+0.556, +0.615]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__opensmile__densenet__bilstm_mean ===
+    runs=3  collapse=2
+       acc: mean=+0.667  std=0.000  range=[+0.667, +0.667]
+        f1: mean=+0.462  std=0.107  range=[+0.400, +0.585]
+     kappa: mean=+0.061  std=0.105  range=[+0.000, +0.182]
+       ccc: mean=+0.067  std=0.141  range=[-0.026, +0.229]
+      rmse: mean=+0.676  std=0.007  range=[+0.669, +0.684]
+       mae: mean=+0.584  std=0.058  range=[+0.517, +0.621]
+    recall_per_class_mean: [0.94 0.11]
+    recall_per_class_min:  [0.83 0.00]  <-- worst-case across runs
+
+  === A_V_GpP__opensmile__openface__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.726  std=0.041  range=[+0.679, +0.750]
+     kappa: mean=+0.467  std=0.058  range=[+0.400, +0.500]
+       ccc: mean=+0.364  std=0.020  range=[+0.343, +0.382]
+      rmse: mean=+0.632  std=0.053  range=[+0.574, +0.680]
+       mae: mean=+0.559  std=0.051  range=[+0.500, +0.590]
+    recall_per_class_mean: [0.89 0.56]
+    recall_per_class_min:  [0.83 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__wav2vec__resnet__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.155  std=0.170  range=[+0.048, +0.351]
+      rmse: mean=+0.639  std=0.052  range=[+0.582, +0.683]
+       mae: mean=+0.515  std=0.064  range=[+0.455, +0.583]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+  === A_V_GpP__wav2vec__densenet__bilstm_mean ===
+    runs=3  collapse=1
+       acc: mean=+0.593  std=0.128  range=[+0.444, +0.667]
+        f1: mean=+0.467  std=0.102  range=[+0.400, +0.585]
+     kappa: mean=+0.100  std=0.092  range=[+0.000, +0.182]
+       ccc: mean=+0.054  std=0.111  range=[-0.017, +0.181]
+      rmse: mean=+0.680  std=0.002  range=[+0.678, +0.682]
+       mae: mean=+0.613  std=0.054  range=[+0.550, +0.646]
+    recall_per_class_mean: [0.67 0.44]
+    recall_per_class_min:  [0.17 0.00]  <-- worst-case across runs
+
+  === A_V_GpP__wav2vec__openface__bilstm_mean ===
+    runs=3  collapse=0
+       acc: mean=+0.778  std=0.000  range=[+0.778, +0.778]
+        f1: mean=+0.679  std=0.000  range=[+0.679, +0.679]
+     kappa: mean=+0.400  std=0.000  range=[+0.400, +0.400]
+       ccc: mean=+0.297  std=0.118  range=[+0.181, +0.417]
+      rmse: mean=+0.622  std=0.052  range=[+0.582, +0.681]
+       mae: mean=+0.508  std=0.031  range=[+0.488, +0.544]
+    recall_per_class_mean: [1.00 0.33]
+    recall_per_class_min:  [1.00 0.33]  <-- worst-case across runs
+
+[pipeline] aggregate -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/aggregate_Track1_binary_grid_2026-05-15-21.38.56.json
+[pipeline] grid CSV -> /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/grid_summary_Track1_binary_2026-05-15-21.38.56.csv

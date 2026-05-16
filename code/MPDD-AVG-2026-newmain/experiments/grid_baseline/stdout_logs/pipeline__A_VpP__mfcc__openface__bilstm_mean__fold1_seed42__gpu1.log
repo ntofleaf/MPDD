@@ -1,0 +1,74 @@
+2026-05-16 00:12:51,687 - INFO - Experiment: pipeline__A_VpP__mfcc__openface__bilstm_mean__fold1_seed42
+2026-05-16 00:12:51,687 - INFO - Device: cuda
+2026-05-16 00:12:51,688 - INFO - Train/Val: 69 / 18
+2026-05-16 00:12:59,001 - INFO - Epoch 1/140 | train_loss=1.994156 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.004772 val_rmse=0.829246 val_mae=0.676270
+2026-05-16 00:13:04,779 - INFO - Epoch 2/140 | train_loss=1.326692 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.005531 val_rmse=0.846894 val_mae=0.672817
+2026-05-16 00:13:08,595 - INFO - Epoch 3/140 | train_loss=1.367899 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.000938 val_rmse=0.834668 val_mae=0.663739
+2026-05-16 00:13:12,596 - INFO - Epoch 4/140 | train_loss=1.432926 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.004191 val_rmse=0.832362 val_mae=0.670072
+2026-05-16 00:13:16,884 - INFO - Epoch 5/140 | train_loss=1.424117 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.000060 val_rmse=0.837335 val_mae=0.660034
+2026-05-16 00:13:20,497 - INFO - Epoch 6/140 | train_loss=1.298825 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.003902 val_rmse=0.831542 val_mae=0.672302
+2026-05-16 00:13:23,990 - INFO - Epoch 7/140 | train_loss=1.435439 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.004389 val_rmse=0.837194 val_mae=0.662750
+2026-05-16 00:13:27,968 - INFO - Epoch 8/140 | train_loss=1.320087 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.003439 val_rmse=0.850791 val_mae=0.678037
+2026-05-16 00:13:31,843 - INFO - Epoch 9/140 | train_loss=1.329246 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.009649 val_rmse=0.836491 val_mae=0.668916
+2026-05-16 00:13:35,926 - INFO - Epoch 10/140 | train_loss=1.318311 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.008615 val_rmse=0.835749 val_mae=0.669615
+2026-05-16 00:13:39,667 - INFO - Epoch 11/140 | train_loss=1.326640 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.014363 val_rmse=0.836450 val_mae=0.681683
+2026-05-16 00:13:43,395 - INFO - Epoch 12/140 | train_loss=1.351543 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.011245 val_rmse=0.842599 val_mae=0.664576
+2026-05-16 00:13:47,181 - INFO - Epoch 13/140 | train_loss=1.373134 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.019896 val_rmse=0.839478 val_mae=0.676014
+2026-05-16 00:13:50,312 - INFO - Epoch 14/140 | train_loss=1.231642 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.020355 val_rmse=0.842803 val_mae=0.672272
+2026-05-16 00:13:53,354 - INFO - Epoch 15/140 | train_loss=1.199059 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.019331 val_rmse=0.843324 val_mae=0.671244
+2026-05-16 00:13:56,487 - INFO - Epoch 16/140 | train_loss=1.241825 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.017714 val_rmse=0.847117 val_mae=0.670565
+2026-05-16 00:13:59,527 - INFO - Epoch 17/140 | train_loss=1.275100 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.036907 val_rmse=0.847071 val_mae=0.692678
+2026-05-16 00:14:02,752 - INFO - Epoch 18/140 | train_loss=1.226201 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.028974 val_rmse=0.859514 val_mae=0.688848
+2026-05-16 00:14:05,724 - INFO - Epoch 19/140 | train_loss=1.365140 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.038415 val_rmse=0.849836 val_mae=0.681979
+2026-05-16 00:14:08,861 - INFO - Epoch 20/140 | train_loss=1.206955 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.061155 val_rmse=0.860127 val_mae=0.706927
+2026-05-16 00:14:11,910 - INFO - Epoch 21/140 | train_loss=1.131924 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.070895 val_rmse=0.863223 val_mae=0.709611
+2026-05-16 00:14:15,117 - INFO - Epoch 22/140 | train_loss=1.158537 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.058270 val_rmse=0.865510 val_mae=0.701288
+2026-05-16 00:14:18,292 - INFO - Epoch 23/140 | train_loss=1.142783 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.079844 val_rmse=0.870450 val_mae=0.714553
+2026-05-16 00:14:21,427 - INFO - Epoch 24/140 | train_loss=1.166449 | val_f1=0.379310 val_acc=0.611111 val_kappa=-0.188679 val_ccc=-0.080390 val_rmse=0.877286 val_mae=0.719431
+2026-05-16 00:14:24,702 - INFO - Epoch 25/140 | train_loss=1.011758 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.111493 val_rmse=0.895746 val_mae=0.739274
+2026-05-16 00:14:27,728 - INFO - Epoch 26/140 | train_loss=1.034337 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.044639 val_rmse=0.871609 val_mae=0.718384
+2026-05-16 00:14:30,571 - INFO - Epoch 27/140 | train_loss=1.042460 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.039657 val_rmse=0.864882 val_mae=0.699128
+2026-05-16 00:14:33,567 - INFO - Epoch 28/140 | train_loss=0.970402 | val_f1=0.400000 val_acc=0.666667 val_kappa=-0.102041 val_ccc=-0.101021 val_rmse=0.898598 val_mae=0.729463
+2026-05-16 00:14:36,889 - INFO - Epoch 29/140 | train_loss=0.964896 | val_f1=0.400000 val_acc=0.666667 val_kappa=-0.102041 val_ccc=-0.090754 val_rmse=0.901560 val_mae=0.750566
+2026-05-16 00:14:40,125 - INFO - Epoch 30/140 | train_loss=0.930301 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.084240 val_rmse=0.899491 val_mae=0.735719
+2026-05-16 00:14:43,233 - INFO - Epoch 31/140 | train_loss=0.782933 | val_f1=0.517857 val_acc=0.666667 val_kappa=0.052632 val_ccc=-0.043439 val_rmse=0.891595 val_mae=0.735266
+2026-05-16 00:14:46,337 - INFO - Epoch 32/140 | train_loss=0.734517 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.045831 val_rmse=0.897385 val_mae=0.732290
+2026-05-16 00:14:49,439 - INFO - Epoch 33/140 | train_loss=0.732210 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=-0.030285 val_rmse=0.903699 val_mae=0.749976
+2026-05-16 00:14:52,397 - INFO - Epoch 34/140 | train_loss=0.840905 | val_f1=0.500000 val_acc=0.555556 val_kappa=0.013699 val_ccc=-0.024436 val_rmse=0.927810 val_mae=0.777506
+2026-05-16 00:14:55,263 - INFO - Epoch 35/140 | train_loss=0.680024 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.052825 val_rmse=0.916178 val_mae=0.761561
+2026-05-16 00:14:58,177 - INFO - Epoch 36/140 | train_loss=0.583434 | val_f1=0.517857 val_acc=0.666667 val_kappa=0.052632 val_ccc=-0.035605 val_rmse=0.921647 val_mae=0.765756
+2026-05-16 00:15:00,949 - INFO - Epoch 37/140 | train_loss=0.470971 | val_f1=0.400000 val_acc=0.666667 val_kappa=-0.102041 val_ccc=-0.085136 val_rmse=0.941253 val_mae=0.775181
+2026-05-16 00:15:03,712 - INFO - Epoch 38/140 | train_loss=0.566628 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.040050 val_rmse=0.939710 val_mae=0.798909
+2026-05-16 00:15:06,741 - INFO - Epoch 39/140 | train_loss=0.529738 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.014422 val_rmse=0.893077 val_mae=0.735833
+2026-05-16 00:15:09,772 - INFO - Epoch 40/140 | train_loss=0.563342 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.087705 val_rmse=0.988596 val_mae=0.852854
+2026-05-16 00:15:12,679 - INFO - Epoch 41/140 | train_loss=0.579940 | val_f1=0.400000 val_acc=0.666667 val_kappa=-0.102041 val_ccc=-0.050229 val_rmse=0.918072 val_mae=0.742407
+2026-05-16 00:15:15,270 - INFO - Epoch 42/140 | train_loss=0.468900 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.002662 val_rmse=0.899212 val_mae=0.731612
+2026-05-16 00:15:17,985 - INFO - Epoch 43/140 | train_loss=0.438677 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=-0.004842 val_rmse=0.914807 val_mae=0.757068
+2026-05-16 00:15:21,066 - INFO - Epoch 44/140 | train_loss=0.397605 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.018361 val_rmse=0.924331 val_mae=0.778430
+2026-05-16 00:15:24,113 - INFO - Epoch 45/140 | train_loss=0.347436 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.021878 val_rmse=0.905595 val_mae=0.755507
+2026-05-16 00:15:27,083 - INFO - Epoch 46/140 | train_loss=0.337219 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.064473 val_rmse=0.966911 val_mae=0.816988
+2026-05-16 00:15:29,766 - INFO - Epoch 47/140 | train_loss=0.407592 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.030296 val_rmse=0.965869 val_mae=0.813184
+2026-05-16 00:15:32,361 - INFO - Epoch 48/140 | train_loss=0.460678 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.026959 val_rmse=0.881833 val_mae=0.725765
+2026-05-16 00:15:34,899 - INFO - Epoch 49/140 | train_loss=0.330468 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.034402 val_rmse=0.886725 val_mae=0.735666
+2026-05-16 00:15:37,456 - INFO - Epoch 50/140 | train_loss=0.288730 | val_f1=0.481481 val_acc=0.611111 val_kappa=-0.032787 val_ccc=0.042169 val_rmse=0.919362 val_mae=0.781481
+2026-05-16 00:15:39,964 - INFO - Epoch 51/140 | train_loss=0.277114 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.019821 val_rmse=0.889004 val_mae=0.737076
+2026-05-16 00:15:42,931 - INFO - Epoch 52/140 | train_loss=0.233507 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=-0.032296 val_rmse=0.944500 val_mae=0.795719
+2026-05-16 00:15:46,069 - INFO - Epoch 53/140 | train_loss=0.305676 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.034463 val_rmse=0.894930 val_mae=0.731167
+2026-05-16 00:15:49,200 - INFO - Epoch 54/140 | train_loss=0.225626 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=0.103519 val_rmse=0.915314 val_mae=0.766128
+2026-05-16 00:15:52,150 - INFO - Epoch 55/140 | train_loss=0.300698 | val_f1=0.584615 val_acc=0.666667 val_kappa=0.169231 val_ccc=0.094729 val_rmse=0.951253 val_mae=0.804629
+2026-05-16 00:15:55,128 - INFO - Epoch 56/140 | train_loss=0.215667 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.036984 val_rmse=0.917360 val_mae=0.776212
+2026-05-16 00:15:58,068 - INFO - Epoch 57/140 | train_loss=0.195328 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.028769 val_rmse=0.897744 val_mae=0.745917
+2026-05-16 00:16:00,648 - INFO - Epoch 58/140 | train_loss=0.215435 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.011682 val_rmse=0.908321 val_mae=0.755105
+2026-05-16 00:16:03,282 - INFO - Epoch 59/140 | train_loss=0.206626 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=0.035150 val_rmse=0.918454 val_mae=0.764833
+2026-05-16 00:16:05,928 - INFO - Epoch 60/140 | train_loss=0.236169 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.048281 val_rmse=0.890181 val_mae=0.735775
+2026-05-16 00:16:08,515 - INFO - Epoch 61/140 | train_loss=0.195389 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.031646 val_rmse=0.884621 val_mae=0.730646
+2026-05-16 00:16:11,085 - INFO - Epoch 62/140 | train_loss=0.224970 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.079814 val_rmse=0.879692 val_mae=0.726939
+2026-05-16 00:16:13,547 - INFO - Epoch 63/140 | train_loss=0.198109 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.028484 val_rmse=0.900934 val_mae=0.743011
+2026-05-16 00:16:16,001 - INFO - Epoch 64/140 | train_loss=0.191489 | val_f1=0.541818 val_acc=0.611111 val_kappa=0.086957 val_ccc=0.085669 val_rmse=0.960158 val_mae=0.828674
+2026-05-16 00:16:18,645 - INFO - Epoch 65/140 | train_loss=0.218832 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.028919 val_rmse=0.901563 val_mae=0.746230
+2026-05-16 00:16:21,360 - INFO - Epoch 66/140 | train_loss=0.134693 | val_f1=0.419355 val_acc=0.722222 val_kappa=0.000000 val_ccc=0.017401 val_rmse=0.921771 val_mae=0.769150
+2026-05-16 00:16:23,854 - INFO - Epoch 67/140 | train_loss=0.185498 | val_f1=0.600000 val_acc=0.777778 val_kappa=0.265306 val_ccc=0.061167 val_rmse=0.885451 val_mae=0.748469
+2026-05-16 00:16:26,193 - INFO - Epoch 68/140 | train_loss=0.147377 | val_f1=0.556650 val_acc=0.722222 val_kappa=0.150943 val_ccc=0.078483 val_rmse=0.890589 val_mae=0.738155
+2026-05-16 00:16:26,194 - INFO - Early stopping at epoch 68
+2026-05-16 00:16:26,196 - INFO - Best checkpoint: checkpoints/Track1/A-V-P/binary/pipeline__A_VpP__mfcc__openface__bilstm_mean__fold1_seed42/best_model_2026-05-16-00.12.50.pth
+2026-05-16 00:16:26,196 - INFO - Validation metrics saved to: logs/Track1/A-V-P/binary/pipeline__A_VpP__mfcc__openface__bilstm_mean__fold1_seed42/train_result_2026-05-16-00.12.50.json

@@ -1,0 +1,8 @@
+2026-05-15 20:47:02,522 - INFO - Experiment: pipeline__GpP__wav2vec__resnet__bilstm_mean__fold0_seed42
+2026-05-15 20:47:02,522 - INFO - Device: cuda
+2026-05-15 20:47:02,522 - INFO - Train/Val: 69 / 18
+2026-05-15 20:47:02,957 - INFO - Epoch 1/3 | train_loss=2.785232 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.000572 val_rmse=1.159945 val_mae=0.928958
+2026-05-15 20:47:03,112 - INFO - Epoch 2/3 | train_loss=1.732759 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.001064 val_rmse=0.909427 val_mae=0.707252
+2026-05-15 20:47:03,256 - INFO - Epoch 3/3 | train_loss=1.399218 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.001638 val_rmse=0.868846 val_mae=0.670448
+2026-05-15 20:47:03,258 - INFO - Best checkpoint: checkpoints/Track1/G-P/binary/pipeline__GpP__wav2vec__resnet__bilstm_mean__fold0_seed42/best_model_2026-05-15-20.47.01.pth
+2026-05-15 20:47:03,258 - INFO - Validation metrics saved to: logs/Track1/G-P/binary/pipeline__GpP__wav2vec__resnet__bilstm_mean__fold0_seed42/train_result_2026-05-15-20.47.01.json

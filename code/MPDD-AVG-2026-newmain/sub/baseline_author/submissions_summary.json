@@ -1,0 +1,88 @@
+{
+  "submissions": [
+    {
+      "track": "Track1",
+      "subtrack": "A-V+P",
+      "bin_val_f1": 0.4,
+      "ter_val_f1": 0.2857142857142857,
+      "bin_test_f1": 0.41025641025641024,
+      "ter_test_f1": 0.1875,
+      "bin_test_kappa": -0.1145374449339207,
+      "ter_test_kappa": -0.2828685258964141,
+      "phq_source": "ternary(val_ccc=0.664)",
+      "phq_test_ccc": -0.3322132150958738,
+      "predicted_score": -0.07734599846094536,
+      "zip": "sub/baseline_author/submission_Track1_A-V+P.zip"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "A-V-G+P",
+      "bin_val_f1": 0.35714285714285715,
+      "ter_val_f1": 0.35555555555555557,
+      "bin_test_f1": 0.25806451612903225,
+      "ter_test_f1": 0.2735042735042735,
+      "bin_test_kappa": -0.45569620253164556,
+      "ter_test_kappa": -0.049429657794676896,
+      "phq_source": "ternary(val_ccc=0.234)",
+      "phq_test_ccc": 0.23523456545410515,
+      "predicted_score": 0.08281867670253225,
+      "zip": "sub/baseline_author/submission_Track1_A-V-G+P.zip"
+    },
+    {
+      "track": "Track1",
+      "subtrack": "G+P",
+      "bin_val_f1": 0.6493506493506493,
+      "ter_val_f1": 0.26666666666666666,
+      "bin_test_f1": 0.4772727272727273,
+      "ter_test_f1": 0.2522522522522523,
+      "bin_test_kappa": -0.014705882352941346,
+      "ter_test_kappa": 0.0,
+      "phq_source": "binary(val_ccc=0.234)",
+      "phq_test_ccc": -0.06526028313878904,
+      "predicted_score": 0.09738308848241002,
+      "zip": "sub/baseline_author/submission_Track1_G+P.zip"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V+P",
+      "bin_val_f1": 0.5,
+      "ter_val_f1": 0.35555555555555557,
+      "bin_test_f1": 0.24786324786324787,
+      "ter_test_f1": 0.22916666666666666,
+      "bin_test_kappa": -0.4545454545454546,
+      "ter_test_kappa": 0.01224489795918371,
+      "phq_source": "ternary(val_ccc=0.042)",
+      "phq_test_ccc": 0.029576725251857786,
+      "predicted_score": 0.01564713474122653,
+      "zip": "sub/baseline_author/submission_Track2_A-V+P.zip"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "A-V-G+P",
+      "bin_val_f1": 0.75,
+      "ter_val_f1": 0.2929292929292929,
+      "bin_test_f1": 0.5809523809523809,
+      "ter_test_f1": 0.24333333333333332,
+      "bin_test_kappa": 0.2727272727272727,
+      "ter_test_kappa": -0.1578947368421053,
+      "phq_source": "binary(val_ccc=0.053)",
+      "phq_test_ccc": 0.05089284501072632,
+      "predicted_score": 0.17348399003205572,
+      "zip": "sub/baseline_author/submission_Track2_A-V-G+P.zip"
+    },
+    {
+      "track": "Track2",
+      "subtrack": "G+P",
+      "bin_val_f1": 0.5846153846153846,
+      "ter_val_f1": 0.47222222222222215,
+      "bin_test_f1": 0.3333333333333333,
+      "ter_test_f1": 0.15384615384615385,
+      "bin_test_kappa": 0.0,
+      "ter_test_kappa": -0.18918918918918926,
+      "phq_source": "ternary(val_ccc=0.017)",
+      "phq_test_ccc": -0.014858057466957179,
+      "predicted_score": 0.04471236384273059,
+      "zip": "sub/baseline_author/submission_Track2_G+P.zip"
+    }
+  ]
+}

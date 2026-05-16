@@ -1,0 +1,140 @@
+[select] top_n=3  recall_floor>=0.3  gate=collapse_count==0 + progressively-relaxed recall
+
+[Track1/binary  /A-V+P    ] selected 3 combo(s):
+   audio=mfcc      video=openface   f1=0.750  kappa=+0.500  ccc=+0.326  recall_min=0.67  collapse=0/3
+   audio=wav2vec   video=resnet     f1=0.740  kappa=+0.509  ccc=+0.130  recall_min=0.44  collapse=0/3
+   audio=mfcc      video=resnet     f1=0.679  kappa=+0.400  ccc=+0.067  recall_min=0.33  collapse=0/3
+[Track1/binary  /A-V-G+P  ] selected 3 combo(s):
+   audio=opensmile video=openface   f1=0.726  kappa=+0.467  ccc=+0.364  recall_min=0.56  collapse=0/3
+   audio=mfcc      video=resnet     f1=0.679  kappa=+0.400  ccc=+0.081  recall_min=0.33  collapse=0/3
+   audio=opensmile video=resnet     f1=0.679  kappa=+0.400  ccc=+0.052  recall_min=0.33  collapse=0/3
+[Track1/binary  /G+P      ] selected 1 combo(s):
+   audio=mfcc      video=resnet     f1=0.400  kappa=+0.000  ccc=+0.000  recall_min=0.00  collapse=3/3
+[Track1/ternary /A-V+P    ] selected 3 combo(s):
+   audio=mfcc      video=openface   f1=0.453  kappa=+0.392  ccc=+0.440  recall_min=0.00  collapse=0/3
+   audio=opensmile video=openface   f1=0.449  kappa=+0.358  ccc=+0.332  recall_min=0.00  collapse=0/3
+   audio=wav2vec   video=openface   f1=0.439  kappa=+0.347  ccc=+0.454  recall_min=0.00  collapse=0/3
+[Track1/ternary /A-V-G+P  ] selected 3 combo(s):
+   audio=opensmile video=openface   f1=0.432  kappa=+0.334  ccc=+0.477  recall_min=0.00  collapse=0/3
+   audio=wav2vec   video=openface   f1=0.431  kappa=+0.340  ccc=+0.397  recall_min=0.00  collapse=0/3
+   audio=mfcc      video=openface   f1=0.427  kappa=+0.326  ccc=+0.514  recall_min=0.00  collapse=0/3
+[Track1/ternary /G+P      ] selected 1 combo(s):
+   audio=mfcc      video=resnet     f1=0.283  kappa=+0.014  ccc=+0.007  recall_min=0.00  collapse=2/3
+[Track2/binary  /A-V+P    ] selected 3 combo(s):
+   audio=opensmile video=resnet     f1=0.741  kappa=+0.488  ccc=-0.077  recall_min=0.67  collapse=0/3
+   audio=mfcc      video=resnet     f1=0.664  kappa=+0.345  ccc=-0.106  recall_min=0.60  collapse=0/3
+   audio=wav2vec   video=resnet     f1=0.664  kappa=+0.338  ccc=-0.165  recall_min=0.60  collapse=0/3
+[Track2/binary  /A-V-G+P  ] selected 3 combo(s):
+   audio=opensmile video=resnet     f1=0.733  kappa=+0.491  ccc=-0.084  recall_min=0.67  collapse=0/3
+   audio=mfcc      video=resnet     f1=0.703  kappa=+0.418  ccc=-0.081  recall_min=0.60  collapse=0/3
+   audio=opensmile video=openface   f1=0.661  kappa=+0.352  ccc=-0.094  recall_min=0.53  collapse=0/3
+[Track2/binary  /G+P      ] selected 1 combo(s):
+   audio=mfcc      video=resnet     f1=0.731  kappa=+0.473  ccc=+0.007  recall_min=0.67  collapse=0/3
+[Track2/ternary /A-V+P    ] selected 3 combo(s):
+   audio=opensmile video=openface   f1=0.518  kappa=+0.277  ccc=+0.565  recall_min=0.40  collapse=0/3
+   audio=mfcc      video=openface   f1=0.505  kappa=+0.359  ccc=+0.461  recall_min=0.33  collapse=0/3
+   audio=wav2vec   video=resnet     f1=0.440  kappa=+0.339  ccc=-0.000  recall_min=0.00  collapse=0/3
+[Track2/ternary /A-V-G+P  ] selected 3 combo(s):
+   audio=mfcc      video=openface   f1=0.532  kappa=+0.331  ccc=+0.224  recall_min=0.33  collapse=0/3
+   audio=opensmile video=openface   f1=0.532  kappa=+0.391  ccc=+0.278  recall_min=0.33  collapse=0/3
+   audio=mfcc      video=densenet   f1=0.477  kappa=+0.232  ccc=+0.023  recall_min=0.33  collapse=0/3
+[Track2/ternary /G+P      ] selected 1 combo(s):
+   audio=mfcc      video=resnet     f1=0.335  kappa=+0.073  ccc=-0.009  recall_min=0.00  collapse=0/3
+
+[select] wrote /home/niutao/data/code/MPDD-AVG-2026-newmain/experiments/grid_baseline/top_combos_for_kfold.json
+[00:12:47] kfold validation starting -- selections from experiments/grid_baseline/top_combos_for_kfold.json
+[00:12:47] running 28 combos × 5 folds = 140 train.py runs across 4 parallel groups
+[00:12:47] --- batch 1 (remaining=28) ---
+[00:12:47] [1/28] gpus=1,1,1  Track1/binary/A-V+P/mfcc+openface
+[00:12:47] [2/28] gpus=4,4,4  Track1/binary/A-V+P/wav2vec+resnet
+[00:12:47] [4/28] gpus=7,7,7  Track1/binary/A-V-G+P/opensmile+openface
+[00:12:47] [3/28] gpus=5,5,5  Track1/binary/A-V+P/mfcc+resnet
+[00:18:45] [3/28] done   Track1/binary/A-V+P/mfcc+resnet  exit=0
+[00:18:48] [1/28] done   Track1/binary/A-V+P/mfcc+openface  exit=0
+[00:20:05] [4/28] done   Track1/binary/A-V-G+P/opensmile+openface  exit=0
+[00:20:46] [2/28] done   Track1/binary/A-V+P/wav2vec+resnet  exit=0
+[00:20:46] --- batch 2 (remaining=24) ---
+[00:20:46] [5/28] gpus=1,1,1  Track1/binary/A-V-G+P/mfcc+resnet
+[00:20:46] [7/28] gpus=5,5,5  Track1/binary/G+P/mfcc+resnet
+[00:20:46] [6/28] gpus=4,4,4  Track1/binary/A-V-G+P/opensmile+resnet
+[00:20:46] [8/28] gpus=7,7,7  Track1/ternary/A-V+P/mfcc+openface
+[00:21:07] [7/28] done   Track1/binary/G+P/mfcc+resnet  exit=0
+[00:26:39] [8/28] done   Track1/ternary/A-V+P/mfcc+openface  exit=0
+[00:26:48] [6/28] done   Track1/binary/A-V-G+P/opensmile+resnet  exit=0
+[00:27:05] [5/28] done   Track1/binary/A-V-G+P/mfcc+resnet  exit=0
+[00:27:05] --- batch 3 (remaining=20) ---
+[00:27:05] [9/28] gpus=1,1,1  Track1/ternary/A-V+P/opensmile+openface
+[00:27:05] [10/28] gpus=4,4,4  Track1/ternary/A-V+P/wav2vec+openface
+[00:27:05] [11/28] gpus=5,5,5  Track1/ternary/A-V-G+P/opensmile+openface
+[00:27:05] [12/28] gpus=7,7,7  Track1/ternary/A-V-G+P/wav2vec+openface
+[00:35:09] [11/28] done   Track1/ternary/A-V-G+P/opensmile+openface  exit=0
+[00:35:50] [9/28] done   Track1/ternary/A-V+P/opensmile+openface  exit=0
+[00:39:34] [10/28] done   Track1/ternary/A-V+P/wav2vec+openface  exit=0
+[00:40:23] [12/28] done   Track1/ternary/A-V-G+P/wav2vec+openface  exit=0
+[00:40:23] --- batch 4 (remaining=16) ---
+[00:40:23] [13/28] gpus=1,1,1  Track1/ternary/A-V-G+P/mfcc+openface
+[00:40:23] [14/28] gpus=4,4,4  Track1/ternary/G+P/mfcc+resnet
+[00:40:23] [15/28] gpus=5,5,5  Track2/binary/A-V+P/opensmile+resnet
+[00:40:23] [16/28] gpus=7,7,7  Track2/binary/A-V+P/mfcc+resnet
+[00:40:44] [14/28] done   Track1/ternary/G+P/mfcc+resnet  exit=0
+[00:46:50] [13/28] done   Track1/ternary/A-V-G+P/mfcc+openface  exit=0
+[00:49:15] [15/28] done   Track2/binary/A-V+P/opensmile+resnet  exit=0
+[00:50:35] [16/28] done   Track2/binary/A-V+P/mfcc+resnet  exit=0
+[00:50:35] --- batch 5 (remaining=12) ---
+[00:50:35] [17/28] gpus=1,1,1  Track2/binary/A-V+P/wav2vec+resnet
+[00:50:35] [18/28] gpus=4,4,4  Track2/binary/A-V-G+P/opensmile+resnet
+[00:50:35] [19/28] gpus=5,5,5  Track2/binary/A-V-G+P/mfcc+resnet
+[00:50:35] [20/28] gpus=7,7,7  Track2/binary/A-V-G+P/opensmile+openface
+[01:01:13] [19/28] done   Track2/binary/A-V-G+P/mfcc+resnet  exit=0
+[01:02:45] [18/28] done   Track2/binary/A-V-G+P/opensmile+resnet  exit=0
+[01:03:47] [20/28] done   Track2/binary/A-V-G+P/opensmile+openface  exit=0
+[01:29:31] [17/28] done   Track2/binary/A-V+P/wav2vec+resnet  exit=0
+[01:29:31] --- batch 6 (remaining=8) ---
+[01:29:31] [21/28] gpus=1,1,1  Track2/binary/G+P/mfcc+resnet
+[01:29:31] [22/28] gpus=4,4,4  Track2/ternary/A-V+P/opensmile+openface
+[01:29:31] [23/28] gpus=5,5,5  Track2/ternary/A-V+P/mfcc+openface
+[01:29:31] [24/28] gpus=7,7,7  Track2/ternary/A-V+P/wav2vec+resnet
+[01:30:02] [21/28] done   Track2/binary/G+P/mfcc+resnet  exit=0
+[01:42:31] [22/28] done   Track2/ternary/A-V+P/opensmile+openface  exit=0
+[01:42:53] [23/28] done   Track2/ternary/A-V+P/mfcc+openface  exit=0
+[02:04:55] [24/28] done   Track2/ternary/A-V+P/wav2vec+resnet  exit=0
+[02:04:55] --- batch 7 (remaining=4) ---
+[02:04:55] [25/28] gpus=1,1,1  Track2/ternary/A-V-G+P/mfcc+openface
+[02:04:55] [26/28] gpus=4,4,4  Track2/ternary/A-V-G+P/opensmile+openface
+[02:04:55] [27/28] gpus=5,5,5  Track2/ternary/A-V-G+P/mfcc+densenet
+[02:04:55] [28/28] gpus=7,7,7  Track2/ternary/G+P/mfcc+resnet
+[02:05:29] [28/28] done   Track2/ternary/G+P/mfcc+resnet  exit=0
+[02:16:20] [26/28] done   Track2/ternary/A-V-G+P/opensmile+openface  exit=0
+[02:16:35] [25/28] done   Track2/ternary/A-V-G+P/mfcc+openface  exit=0
+[02:17:44] [27/28] done   Track2/ternary/A-V-G+P/mfcc+densenet  exit=0
+[02:17:44] all kfold validations complete
+[pack-v2] scanning kfold train_result_*.json
+[pack-v2] loaded 65 kfold run records
+[pack-v2] WARN no kfold runs for Track1/G+P PHQ -- skip
+[pack-v2] Track1/A-V+P/phq_source: combo=('wav2vec', 'openface', 'bilstm_mean') task=ternary  mean_ccc=+0.006±0.199  folds=5
+[pack-v2] WARN no kfold runs for Track1/A-V+P/binary -- skip
+[pack-v2] Track1/A-V+P/ternary: combo=('wav2vec', 'openface', 'bilstm_mean')  score=-0.737  f1=0.389±0.126  kappa=+0.128  collapse=2/5
+[pack-v2] skipping submission_Track1_A-V+P.zip (missing task)
+[pack-v2] Track1/A-V-G+P/phq_source: combo=('wav2vec', 'openface', 'bilstm_mean') task=ternary  mean_ccc=-0.018±0.167  folds=5
+[pack-v2] WARN no kfold runs for Track1/A-V-G+P/binary -- skip
+[pack-v2] Track1/A-V-G+P/ternary: combo=('wav2vec', 'openface', 'bilstm_mean')  score=+0.406  f1=0.479±0.073  kappa=+0.239  collapse=0/5
+[pack-v2] skipping submission_Track1_A-V-G+P.zip (missing task)
+[pack-v2] Track2/G+P/phq_source: combo=('mfcc', 'resnet', 'bilstm_mean') task=ternary  mean_ccc=-0.014±0.015  folds=5
+[pack-v2] WARN no kfold runs for Track2/G+P/binary -- skip
+[pack-v2] Track2/G+P/ternary: combo=('mfcc', 'resnet', 'bilstm_mean')  score=+0.392  f1=0.450±0.058  kappa=+0.347  collapse=0/5
+[pack-v2] skipping submission_Track2_G+P.zip (missing task)
+[pack-v2] Track2/A-V+P/phq_source: combo=('opensmile', 'openface', 'bilstm_mean') task=ternary  mean_ccc=+0.113±0.124  folds=5
+[pack-v2] Track2/A-V+P/binary: combo=('opensmile', 'resnet', 'bilstm_mean')  score=+0.574  f1=0.654±0.080  kappa=+0.336  collapse=0/5
+[pack-v2] Track2/A-V+P/ternary: combo=('opensmile', 'openface', 'bilstm_mean')  score=+0.446  f1=0.520±0.074  kappa=+0.365  collapse=0/5
+[pack-v2] -> /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track2_A-V+P.zip  (0.6 KB)
+[pack-v2] Track2/A-V-G+P/phq_source: combo=('opensmile', 'openface', 'bilstm_mean') task=ternary  mean_ccc=+0.173±0.252  folds=5
+[pack-v2] Track2/A-V-G+P/binary: combo=('opensmile', 'resnet', 'bilstm_mean')  score=+0.541  f1=0.619±0.078  kappa=+0.272  collapse=0/5
+[pack-v2] Track2/A-V-G+P/ternary: combo=('mfcc', 'openface', 'bilstm_mean')  score=+0.396  f1=0.474±0.078  kappa=+0.325  collapse=0/5
+[pack-v2] -> /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submission_Track2_A-V-G+P.zip  (0.6 KB)
+
+[pack-v2] 2 submission zips -> /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2
+[pack-v2] summary -> /home/niutao/data/code/MPDD-AVG-2026-newmain/submissions_v2/submissions_summary.json
+
+===== DONE =====
+-rw-rw-r-- 1 niutao niutao 573 May 16 02:18 submissions_v2/submission_Track2_A-V-G+P.zip
+-rw-rw-r-- 1 niutao niutao 573 May 16 02:18 submissions_v2/submission_Track2_A-V+P.zip

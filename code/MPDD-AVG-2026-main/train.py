@@ -17,9 +17,26 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from dataset import REGRESSION_TASK, MPDDElderDataset, collate_batch, infer_input_dims, resolve_project_path
-from metrics import CCCLoss, evaluate_model
+from metrics import (
+    CCCLoss,
+    MultitaskLoss,
+    OrdinalBCELoss,
+    compute_active_head_mask,
+    compute_empirical_midpoints,
+    compute_ordinal_pos_weight,
+    evaluate_model,
+)
 from models import TorchcatBaseline
 from train_val_split import create_train_val_split, load_fold_split
+
+
+# Default ordinal thresholds (Route 1 baseline). Routes 2/3 override via --ordinal_thresholds.
+DEFAULT_ORDINAL_THRESHOLDS = [5.0, 10.0, 15.0, 20.0]
+DEFAULT_LABEL_BOUNDARIES = {"binary": 5.0, "ternary": [5.0, 10.0]}
+
+
+def parse_float_list(spec: str) -> list[float]:
+    return [float(x.strip()) for x in spec.split(",") if x.strip()]
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -76,6 +93,33 @@ def build_parser(defaults: dict[str, Any]) -> argparse.ArgumentParser:
     # 对于小样本回归（~70 个训练样本），建议设为 30~50，默认 0 表示从第1轮直接用CCCLoss
     parser.add_argument("--mse_warmup_epochs", type=int, default=0,
                         help="回归任务：前 N epoch 用 MSELoss 预热，之后切换到 CCCLoss（默认 0=不预热）")
+    # 方案 A v1: ordinal 分类替代纯 CCC 回归
+    # 把 PHQ-9 当 4 个二元分类（>=5/10/15/20），用 BCE + pos_weight 训练，
+    # 推理时反解码为期望 PHQ。比纯 CCCLoss 在小样本上更稳定。
+    parser.add_argument("--use_ordinal", action="store_true", default=False,
+                        help="回归任务：用 ordinal BCE 替代 CCCLoss")
+    # ── Phase 0 新增（Route 2/3 支持） ─────────────────────────────────────
+    parser.add_argument("--ordinal_thresholds", default="5,10,15,20",
+                        help="逗号分隔 float 列表，默认 [5,10,15,20]（Route 1）；"
+                             "Track1/Route2-3 用 [3,5,10,15]，Track2/Route2-3 用 [3,5,8,10]")
+    parser.add_argument("--ordinal_pos_weight_clamp", type=float, default=5.0,
+                        help="ordinal pos_weight 上限，默认 5（R1）；R2=10、R3=8")
+    parser.add_argument("--ordinal_pos_weight_min", type=float, default=0.5,
+                        help="ordinal pos_weight 下限，避免简单 head 被弱化")
+    parser.add_argument("--ordinal_mask_min_pos", type=int, default=0,
+                        help="若某 head 训练集正样本 < N → 静态 mask 其 loss；0=不 mask（R1），R2/R3=5")
+    parser.add_argument("--ordinal_use_empirical_midpoints", action="store_true", default=False,
+                        help="decode 用 per-fold train PHQ 的 bin 均值（R2/R3 启用）")
+    parser.add_argument("--multitask_mode", default="off", choices=["off", "ord_bin_ter"],
+                        help="Route 3 启用 ord_bin_ter：模型输出 ord/bin/ter 三头 dict")
+    parser.add_argument("--loss_weights", default="1.0,0.15,0.30,0.05,0.10",
+                        help="multitask loss 权重 (ord,bin,ter,phq_l1,cons)")
+    parser.add_argument("--multitask_phq_warmup", type=int, default=30,
+                        help="multitask SmoothL1(decoded_phq, true_phq) 启用前的 warmup epoch 数")
+    parser.add_argument("--bin_boundary", type=float, default=5.0,
+                        help="binary head 的 PHQ 切点（label2 真实定义=5）")
+    parser.add_argument("--ter_boundaries", default="5,10",
+                        help="ternary head 的 PHQ 切点 (low,high)，label3 真实定义 = '<5/[5,10)/>=10'")
     # 五折交叉验证：指定预生成的 fold CSV（由 generate_kfold_splits.py 生成）
     # 若指定此参数，则忽略 --val_ratio 直接读取固定分割（完全确定性）
     parser.add_argument("--fold_csv", default="",
@@ -218,6 +262,21 @@ def main() -> None:
         )
     setup_seed(args.seed)
     is_regression_task = args.task == REGRESSION_TASK
+    multitask_mode = str(getattr(args, "multitask_mode", "off"))
+    is_multitask = (multitask_mode == "ord_bin_ter") and is_regression_task
+    if is_multitask:
+        # multitask 必然走 ordinal head（ord_logits 是其中一项）
+        args.use_ordinal = True
+    use_ordinal = bool(getattr(args, "use_ordinal", False)) and is_regression_task
+    # ordinal 模式下 mse_warmup 没有意义（直接 BCE），强制清零并提示
+    if use_ordinal and args.mse_warmup_epochs > 0:
+        print(f"[WARN] --use_ordinal 启用 → 忽略 --mse_warmup_epochs={args.mse_warmup_epochs}（强制设为 0）")
+        args.mse_warmup_epochs = 0
+    regression_head_mode = "ordinal" if use_ordinal else "direct"
+    ordinal_thresholds = parse_float_list(args.ordinal_thresholds) if use_ordinal else []
+    ter_boundaries = parse_float_list(args.ter_boundaries)
+    if is_multitask and len(ter_boundaries) != 2:
+        raise ValueError(f"--ter_boundaries must have exactly 2 values, got {ter_boundaries}")
     # 回归任务：纯回归模式—— is_regression=True 使 classifier 输出 1 个标量，
     #                      use_regression_head=False 彻底去掉辅助分类头，
     #                      避免 CrossEntropy 梯度与回归梯度竞争。
@@ -274,10 +333,6 @@ def main() -> None:
     model_kwargs = {
         "subtrack": args.subtrack,
         "num_classes": num_classes,
-        # 回归任务使用 is_regression=True：
-        #   classifier 头改为 Linear(hidden, 1)，直接输出 PHQ-9 标量。
-        # 分类任务使用 is_regression=False：
-        #   classifier 头输出 num_classes 个 logits。
         "is_regression": is_regression_task,
         "use_regression_head": use_regression_head,
         "audio_dim": input_dims["audio_dim"],
@@ -286,6 +341,9 @@ def main() -> None:
         "hidden_dim": args.hidden_dim,
         "dropout": args.dropout,
         "encoder_type": args.encoder_type,
+        "regression_head_mode": regression_head_mode,
+        "ordinal_n_thresholds": len(ordinal_thresholds) if use_ordinal else 4,
+        "multitask_mode": multitask_mode,
     }
     model = TorchcatBaseline(**model_kwargs).to(device)
     num_gpus = torch.cuda.device_count() if str(device).startswith("cuda") else 0
@@ -299,13 +357,68 @@ def main() -> None:
         device=device,
     )
     # criterion 的类型决定了 evaluate_model 的行为：
-    #   CCCLoss  单个 → evaluate_model 按「纯回归」模式处理（task=regression 时）
+    #   OrdinalBCELoss → evaluate_model 按「ordinal 回归」模式处理（方案 A v1）
+    #   CCCLoss  单个 → evaluate_model 按「纯回归」模式处理（旧 direct 模式）
     #   tuple    → evaluate_model 按「分类+回归」模式处理（旧行为，已弃用）
     #   单个 CE  → evaluate_model 按「纯分类」模式处理
-    if is_regression_task:
-        # 纯回归模式：直接用 CCC 作为训练目标，彻底避免均值坤踻问题
-        # CCC Loss = 1 - CCC(预测, 真实) ，等价于最大化 CCC
-        criterion: nn.Module | tuple = CCCLoss()
+    ordinal_pos_weight = None    # 仅在 ordinal 模式下非 None，会保存到 ckpt
+    ordinal_active_head_mask = None
+    ordinal_bin_midpoints = None
+    loss_weights_list = parse_float_list(args.loss_weights) if is_multitask else None
+    if is_regression_task and use_ordinal:
+        train_phq_tensor = torch.tensor(
+            [float(s.get("phq9", 0.0)) for s in train_dataset.samples],
+            dtype=torch.float32,
+        )
+        ordinal_pos_weight = compute_ordinal_pos_weight(
+            train_phq_tensor, ordinal_thresholds,
+            max_clamp=args.ordinal_pos_weight_clamp,
+            min_clamp=args.ordinal_pos_weight_min,
+        )
+        ordinal_active_head_mask = compute_active_head_mask(
+            train_phq_tensor, ordinal_thresholds, min_pos=args.ordinal_mask_min_pos,
+        )
+        if args.ordinal_use_empirical_midpoints:
+            ordinal_bin_midpoints = compute_empirical_midpoints(
+                train_phq_tensor, ordinal_thresholds,
+            )
+        logger.info(
+            "[Ordinal] thresholds=%s  pos_weight=[%s] (clamp=[%.2f,%.2f])  "
+            "active_head_mask=%s  midpoints=%s  multitask=%s  train_phq min=%.1f max=%.1f mean=%.2f",
+            ordinal_thresholds,
+            ", ".join(f"{w:.2f}" for w in ordinal_pos_weight.tolist()),
+            args.ordinal_pos_weight_min, args.ordinal_pos_weight_clamp,
+            ordinal_active_head_mask.tolist(),
+            ([f"{m:.2f}" for m in ordinal_bin_midpoints] if ordinal_bin_midpoints else "geometric"),
+            multitask_mode,
+            float(train_phq_tensor.min()), float(train_phq_tensor.max()),
+            float(train_phq_tensor.mean()),
+        )
+        if is_multitask:
+            criterion: nn.Module | tuple = MultitaskLoss(
+                thresholds=ordinal_thresholds,
+                pos_weight=ordinal_pos_weight,
+                head_mask=ordinal_active_head_mask,
+                midpoints=ordinal_bin_midpoints,
+                loss_weights=tuple(loss_weights_list),
+                bin_boundary=args.bin_boundary,
+                ter_boundaries=tuple(ter_boundaries),
+                phq_warmup_epochs=args.multitask_phq_warmup,
+            ).to(device)
+            logger.info(
+                "[Multitask] loss_weights (ord,bin,ter,phq,cons)=%s  bin_boundary=%.1f  "
+                "ter_boundaries=%s  phq_warmup=%d",
+                loss_weights_list, args.bin_boundary, ter_boundaries, args.multitask_phq_warmup,
+            )
+        else:
+            criterion = OrdinalBCELoss(
+                thresholds=ordinal_thresholds,
+                pos_weight=ordinal_pos_weight,
+                head_mask=ordinal_active_head_mask,
+            ).to(device)
+    elif is_regression_task:
+        # 纯回归模式（旧 direct）：CCCLoss
+        criterion = CCCLoss()
     elif use_regression_head:
         # 旧行为（分类+回归共存，现已弃用）
         criterion = (
@@ -333,7 +446,10 @@ def main() -> None:
 
     for epoch in range(1, args.epochs + 1):
         model.train()
+        if is_multitask and isinstance(criterion, MultitaskLoss):
+            criterion.set_epoch(epoch)
         running_loss = 0.0
+        running_loss_parts: dict[str, float] = {"ord": 0.0, "bin": 0.0, "ter": 0.0, "phq": 0.0, "cons": 0.0}
         for batch in train_loader:
             optimizer.zero_grad()
             labels = batch["label"].to(device)
@@ -344,8 +460,20 @@ def main() -> None:
                 personality=batch["personality"].to(device),
                 pair_mask=batch["pair_mask"].to(device) if "pair_mask" in batch else None,
             )
-            if is_regression_task:
-                # ── 纯回归模式：模型输出 1 个标量 ──
+            if is_multitask:
+                # ── Multitask (Route 3) ──
+                phq9 = batch["phq9"].to(device)
+                loss, parts = criterion(outputs, phq9)
+                for k, v in parts.items():
+                    running_loss_parts[k] += v * len(labels)
+            elif is_regression_task and use_ordinal:
+                # ── Ordinal 回归模式（方案 A v1） ──
+                # 模型输出 [B, K] 个 logits，每个对应 P(PHQ >= threshold_k)
+                # criterion = OrdinalBCELoss，内部直接根据 phq9 计算二元 target
+                phq9 = batch["phq9"].to(device)
+                loss = criterion(outputs, phq9)
+            elif is_regression_task:
+                # ── 纯回归模式（旧 direct）：模型输出 1 个标量 ──
                 # [Fix #1] MSE 预热：前 mse_warmup_epochs 轮用 MSE，之后切换 CCC+方差惩罚
                 phq9 = batch["phq9"].to(device)
                 reg_out = outputs.squeeze(-1)  # [batch_size]
@@ -397,12 +525,25 @@ def main() -> None:
             history_row["phq9_pred_mean"] = round(val_metrics.get("phq9_pred_mean", 0.0), 3)
             history_row["phq9_pred_std"]  = round(val_metrics.get("phq9_pred_std", 0.0), 3)
         if is_regression_task:
-            _loss_mode = "MSE-warmup" if epoch <= args.mse_warmup_epochs else "CCC+VarPenalty"
+            if is_multitask:
+                _loss_mode = "Multitask"
+            elif use_ordinal:
+                _loss_mode = "Ordinal-BCE"
+            else:
+                _loss_mode = "MSE-warmup" if epoch <= args.mse_warmup_epochs else "CCC+VarPenalty"
+            extra = ""
+            if is_multitask:
+                n = max(1, len(train_dataset))
+                p = {k: v / n for k, v in running_loss_parts.items()}
+                extra = (
+                    f" | parts ord={p['ord']:.4f} bin={p['bin']:.4f} "
+                    f"ter={p['ter']:.4f} phq={p['phq']:.4f} cons={p['cons']:.4f}"
+                )
             logger.info(
-                "Epoch %d/%d [%s] | train_loss=%.6f | "
+                "Epoch %d/%d [%s] | train_loss=%.6f%s | "
                 "[log1p] ccc=%.4f rmse=%.4f mae=%.4f | "
                 "[PHQ-9] ccc=%.4f rmse=%.2f mae=%.2f pred_mean=%.2f pred_std=%.2f",
-                epoch, args.epochs, _loss_mode, train_loss,
+                epoch, args.epochs, _loss_mode, train_loss, extra,
                 val_metrics["ccc"], val_metrics["rmse"], val_metrics["mae"],
                 val_metrics.get("phq9_ccc", 0.0),
                 val_metrics.get("phq9_rmse", 0.0),
@@ -450,6 +591,23 @@ def main() -> None:
                     # 记录 PHQ-9 是否使用 log1p 归一化
                     # 推理时若此字段为 True，需对回归输出做 expm1() 反变换
                     "phq_log1p_normalized": phq_log1p_normalized,
+                    # Ordinal 模式元数据：推理脚本读这些字段做反解码 / 多任务派生
+                    "use_ordinal": use_ordinal,
+                    "ordinal_thresholds": list(ordinal_thresholds) if use_ordinal else None,
+                    "ordinal_pos_weight": (
+                        ordinal_pos_weight.cpu().tolist() if ordinal_pos_weight is not None else None
+                    ),
+                    "ordinal_active_head_mask": (
+                        ordinal_active_head_mask.cpu().tolist()
+                        if ordinal_active_head_mask is not None else None
+                    ),
+                    "ordinal_bin_midpoints": ordinal_bin_midpoints,
+                    "multitask_mode": multitask_mode,
+                    "loss_weights": loss_weights_list,
+                    "label_boundaries": {
+                        "binary": float(args.bin_boundary),
+                        "ternary": ter_boundaries,
+                    },
                 },
                 best_checkpoint_path,
             )

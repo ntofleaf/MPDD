@@ -1,0 +1,6 @@
+2026-05-15 21:11:32,070 - INFO - Experiment: pipeline__A_VpP__opensmile__openface__bilstm_mean__frozen_val_seed42
+2026-05-15 21:11:32,070 - INFO - Device: cuda
+2026-05-15 21:11:32,070 - INFO - Train/Val: 78 / 9
+2026-05-15 21:13:38,681 - INFO - Epoch 1/140 | train_loss=1.967065 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=0.004295 val_rmse=0.712213 val_mae=0.515973
+2026-05-15 21:15:46,876 - INFO - Epoch 2/140 | train_loss=1.335150 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.009742 val_rmse=0.671467 val_mae=0.619646
+2026-05-15 21:17:31,883 - INFO - Epoch 3/140 | train_loss=1.512103 | val_f1=0.400000 val_acc=0.666667 val_kappa=0.000000 val_ccc=-0.014855 val_rmse=0.682747 val_mae=0.566421

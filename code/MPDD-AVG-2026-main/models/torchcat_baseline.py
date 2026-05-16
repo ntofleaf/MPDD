@@ -90,6 +90,8 @@ class TorchcatBaseline(nn.Module):
     }
     ENCODER_TYPES = {"bilstm_mean", "hybrid_attn"}
 
+    MULTITASK_MODES = {"off", "ord_bin_ter"}
+
     def __init__(
         self,
         subtrack: str = "A-V-G+P",
@@ -102,18 +104,28 @@ class TorchcatBaseline(nn.Module):
         hidden_dim: int = 64,
         dropout: float = 0.3,
         encoder_type: str = "bilstm_mean",
+        regression_head_mode: str = "direct",
+        ordinal_n_thresholds: int = 4,
+        multitask_mode: str = "off",
     ) -> None:
         super().__init__()
         if subtrack not in self.SUBTRACKS:
             raise ValueError(f"Unknown subtrack: {subtrack}")
         if encoder_type not in self.ENCODER_TYPES:
             raise ValueError(f"Unknown encoder_type: {encoder_type}")
+        if regression_head_mode not in {"direct", "ordinal"}:
+            raise ValueError(f"Unknown regression_head_mode: {regression_head_mode}")
+        if multitask_mode not in self.MULTITASK_MODES:
+            raise ValueError(f"Unknown multitask_mode: {multitask_mode}")
 
         self.subtrack = subtrack
         self.modalities = self.SUBTRACKS[subtrack]
         self.encoder_type = encoder_type
         self.is_regression = is_regression
         self.use_regression_head = use_regression_head
+        self.regression_head_mode = regression_head_mode
+        self.ordinal_n_thresholds = ordinal_n_thresholds
+        self.multitask_mode = multitask_mode
 
         if "audio" in self.modalities:
             pre_audio = 128 if audio_dim > 128 else None
@@ -135,19 +147,46 @@ class TorchcatBaseline(nn.Module):
             self.pers_enc = PersonalityEncoder(1024, hidden_dim, dropout)
 
         fused_dim = hidden_dim * len(self.modalities)
-        self.classifier = nn.Sequential(
-            nn.Linear(fused_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_dim, 1 if is_regression else num_classes),
-        )
-        if use_regression_head:
-            self.regressor = nn.Sequential(
+        self.fused_dim = fused_dim
+        # 决定 classifier 输出维度：
+        #   multitask=ord_bin_ter → 三个独立 head：ord_head[K], bin_head[2], ter_head[3]
+        #     （forward 返回 dict，不走 self.classifier）
+        #   ordinal 回归模式 → ordinal_n_thresholds 个 logits
+        #   direct 回归模式  → 1 个标量
+        #   分类任务         → num_classes 个 logits
+        if multitask_mode == "ord_bin_ter":
+            self.ord_head = self._make_head(fused_dim, hidden_dim, dropout, ordinal_n_thresholds)
+            self.bin_head = self._make_head(fused_dim, hidden_dim, dropout, 2)
+            self.ter_head = self._make_head(fused_dim, hidden_dim, dropout, 3)
+        else:
+            if is_regression and regression_head_mode == "ordinal":
+                classifier_out = ordinal_n_thresholds
+            elif is_regression:
+                classifier_out = 1
+            else:
+                classifier_out = num_classes
+            self.classifier = nn.Sequential(
                 nn.Linear(fused_dim, hidden_dim),
                 nn.ReLU(),
                 nn.Dropout(dropout),
-                nn.Linear(hidden_dim, 1),
+                nn.Linear(hidden_dim, classifier_out),
             )
+            if use_regression_head:
+                self.regressor = nn.Sequential(
+                    nn.Linear(fused_dim, hidden_dim),
+                    nn.ReLU(),
+                    nn.Dropout(dropout),
+                    nn.Linear(hidden_dim, 1),
+                )
+
+    @staticmethod
+    def _make_head(in_dim: int, hidden: int, dropout: float, out_dim: int) -> nn.Sequential:
+        return nn.Sequential(
+            nn.Linear(in_dim, hidden),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, out_dim),
+        )
 
     @staticmethod
     def _masked_average_sequences(x: torch.Tensor, pair_mask: Optional[torch.Tensor]) -> torch.Tensor:
@@ -205,6 +244,12 @@ class TorchcatBaseline(nn.Module):
             features.append(self.pers_enc(personality))
 
         fused = torch.cat(features, dim=-1)
+        if self.multitask_mode == "ord_bin_ter":
+            return {
+                "ord_logits": self.ord_head(fused),
+                "bin_logits": self.bin_head(fused),
+                "ter_logits": self.ter_head(fused),
+            }
         logits = self.classifier(fused)
         if self.use_regression_head:
             return logits, self.regressor(fused).squeeze(-1)

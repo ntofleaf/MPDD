@@ -1,0 +1,49 @@
+================================================================
+  Route 3 (multitask)  GPU=6  TRACK=Track2
+  thresholds=3,5,8,10  pos_weight=[0.5,8.0]
+  mask_min_pos=5  multitask_mode=ord_bin_ter
+  loss_weights=1.0,0.15,0.30,0.05,0.10  phq_warmup=30
+  bin_boundary=5  ter_boundaries=5,10
+  EPOCHS=30  FOLDS='0'  LOG=parallel_logs/route3_multitask_smoke_Track2_2026-05-15_15.53.45.log
+================================================================
+  [OK] fold CSV: kfold_splits/Track2_Young_regression
+
+## route3_multitask | Track2 | Fold 0
+2026-05-15 15:53:47,999 - INFO - [Ordinal] thresholds=[3.0, 5.0, 8.0, 10.0]  pos_weight=[0.50, 1.12, 4.38, 7.75] (clamp=[0.50,8.00])  active_head_mask=[1.0, 1.0, 1.0, 1.0]  midpoints=['1.10', '3.53', '5.90', '8.80', '11.88']  multitask=ord_bin_ter  train_phq min=0.0 max=17.0 mean=4.84
+2026-05-15 15:53:48,000 - INFO - [Multitask] loss_weights (ord,bin,ter,phq,cons)=[1.0, 0.15, 0.3, 0.05, 0.1]  bin_boundary=5.0  ter_boundaries=[5.0, 10.0]  phq_warmup=30
+2026-05-15 15:53:48,937 - INFO - Experiment: fold_0_route3_multitask_smoke
+2026-05-15 15:53:48,937 - INFO - Device: cuda
+2026-05-15 15:53:48,938 - INFO - Train/Val: 70 / 18
+2026-05-15 15:53:58,477 - INFO - Epoch 1/30 [Multitask] | train_loss=1.324195 | parts ord=0.8861 bin=0.6989 ter=1.1027 phq=0.0000 cons=0.0243 | [log1p] ccc=-0.0000 rmse=3.5476 mae=2.9280 | [PHQ-9] ccc=-0.0000 rmse=3.55 mae=2.93 pred_mean=6.37 pred_std=0.00
+2026-05-15 15:53:59,979 - INFO - Epoch 2/30 [Multitask] | train_loss=1.319673 | parts ord=0.8842 bin=0.6947 ter=1.0959 phq=0.0000 cons=0.0243 | [log1p] ccc=-0.0003 rmse=3.5612 mae=2.9439 | [PHQ-9] ccc=-0.0003 rmse=3.56 mae=2.94 pred_mean=6.40 pred_std=0.00
+2026-05-15 15:54:01,207 - INFO - Epoch 3/30 [Multitask] | train_loss=1.319563 | parts ord=0.8885 bin=0.6906 ter=1.0837 phq=0.0000 cons=0.0238 | [log1p] ccc=0.0002 rmse=3.5586 mae=2.9410 | [PHQ-9] ccc=0.0002 rmse=3.56 mae=2.94 pred_mean=6.40 pred_std=0.00
+2026-05-15 15:54:02,500 - INFO - Epoch 4/30 [Multitask] | train_loss=1.315965 | parts ord=0.8885 bin=0.6957 ter=1.0692 phq=0.0000 cons=0.0232 | [log1p] ccc=0.0001 rmse=3.5540 mae=2.9359 | [PHQ-9] ccc=0.0001 rmse=3.55 mae=2.94 pred_mean=6.39 pred_std=0.00
+2026-05-15 15:54:04,242 - INFO - Epoch 5/30 [Multitask] | train_loss=1.307939 | parts ord=0.8888 bin=0.6957 ter=1.0421 phq=0.0000 cons=0.0216 | [log1p] ccc=0.0002 rmse=3.5517 mae=2.9333 | [PHQ-9] ccc=0.0002 rmse=3.55 mae=2.93 pred_mean=6.38 pred_std=0.00
+2026-05-15 15:54:05,531 - INFO - Epoch 6/30 [Multitask] | train_loss=1.304285 | parts ord=0.8872 bin=0.6973 ter=1.0344 phq=0.0000 cons=0.0220 | [log1p] ccc=0.0004 rmse=3.5530 mae=2.9348 | [PHQ-9] ccc=0.0004 rmse=3.55 mae=2.93 pred_mean=6.38 pred_std=0.00
+2026-05-15 15:54:07,119 - INFO - Epoch 7/30 [Multitask] | train_loss=1.301088 | parts ord=0.8910 bin=0.7015 ter=1.0095 phq=0.0000 cons=0.0207 | [log1p] ccc=0.0004 rmse=3.5428 mae=2.9227 | [PHQ-9] ccc=0.0004 rmse=3.54 mae=2.92 pred_mean=6.36 pred_std=0.00
+2026-05-15 15:54:08,659 - INFO - Epoch 8/30 [Multitask] | train_loss=1.289097 | parts ord=0.8855 bin=0.6938 ter=0.9914 phq=0.0000 cons=0.0209 | [log1p] ccc=0.0004 rmse=3.5355 mae=2.9138 | [PHQ-9] ccc=0.0004 rmse=3.54 mae=2.91 pred_mean=6.35 pred_std=0.00
+2026-05-15 15:54:10,116 - INFO - Epoch 9/30 [Multitask] | train_loss=1.292598 | parts ord=0.8902 bin=0.7005 ter=0.9846 phq=0.0000 cons=0.0195 | [log1p] ccc=0.0006 rmse=3.5123 mae=2.8860 | [PHQ-9] ccc=0.0006 rmse=3.51 mae=2.89 pred_mean=6.30 pred_std=0.00
+2026-05-15 15:54:11,505 - INFO - Epoch 10/30 [Multitask] | train_loss=1.304635 | parts ord=0.9009 bin=0.6843 ter=0.9967 phq=0.0000 cons=0.0204 | [log1p] ccc=0.0006 rmse=3.4945 mae=2.8639 | [PHQ-9] ccc=0.0006 rmse=3.49 mae=2.86 pred_mean=6.26 pred_std=0.01
+2026-05-15 15:54:13,082 - INFO - Epoch 11/30 [Multitask] | train_loss=1.295562 | parts ord=0.8929 bin=0.6933 ter=0.9886 phq=0.0000 cons=0.0212 | [log1p] ccc=0.0007 rmse=3.4823 mae=2.8483 | [PHQ-9] ccc=0.0007 rmse=3.48 mae=2.85 pred_mean=6.23 pred_std=0.01
+2026-05-15 15:54:14,635 - INFO - Epoch 12/30 [Multitask] | train_loss=1.280082 | parts ord=0.8913 bin=0.6867 ter=0.9456 phq=0.0000 cons=0.0208 | [log1p] ccc=0.0009 rmse=3.4641 mae=2.8248 | [PHQ-9] ccc=0.0009 rmse=3.46 mae=2.82 pred_mean=6.19 pred_std=0.01
+2026-05-15 15:54:16,135 - INFO - Epoch 13/30 [Multitask] | train_loss=1.287512 | parts ord=0.8926 bin=0.6884 ter=0.9652 phq=0.0000 cons=0.0212 | [log1p] ccc=0.0010 rmse=3.4468 mae=2.8019 | [PHQ-9] ccc=0.0010 rmse=3.45 mae=2.80 pred_mean=6.15 pred_std=0.01
+2026-05-15 15:54:17,619 - INFO - Epoch 14/30 [Multitask] | train_loss=1.301046 | parts ord=0.9062 bin=0.6924 ter=0.9629 phq=0.0000 cons=0.0207 | [log1p] ccc=0.0011 rmse=3.4302 mae=2.7794 | [PHQ-9] ccc=0.0011 rmse=3.43 mae=2.78 pred_mean=6.10 pred_std=0.01
+2026-05-15 15:54:19,031 - INFO - Epoch 15/30 [Multitask] | train_loss=1.310607 | parts ord=0.9126 bin=0.6908 ter=0.9733 phq=0.0000 cons=0.0242 | [log1p] ccc=0.0012 rmse=3.4153 mae=2.7589 | [PHQ-9] ccc=0.0012 rmse=3.42 mae=2.76 pred_mean=6.07 pred_std=0.01
+2026-05-15 15:54:20,143 - INFO - Epoch 16/30 [Multitask] | train_loss=1.292546 | parts ord=0.8947 bin=0.7008 ter=0.9686 phq=0.0000 cons=0.0216 | [log1p] ccc=0.0013 rmse=3.4051 mae=2.7444 | [PHQ-9] ccc=0.0013 rmse=3.41 mae=2.74 pred_mean=6.04 pred_std=0.01
+2026-05-15 15:54:21,136 - INFO - Epoch 17/30 [Multitask] | train_loss=1.315210 | parts ord=0.9139 bin=0.7045 ter=0.9782 phq=0.0000 cons=0.0215 | [log1p] ccc=0.0014 rmse=3.3991 mae=2.7358 | [PHQ-9] ccc=0.0014 rmse=3.40 mae=2.74 pred_mean=6.03 pred_std=0.01
+2026-05-15 15:54:22,104 - INFO - Epoch 18/30 [Multitask] | train_loss=1.297000 | parts ord=0.8925 bin=0.6809 ter=1.0005 phq=0.0000 cons=0.0219 | [log1p] ccc=0.0014 rmse=3.3879 mae=2.7236 | [PHQ-9] ccc=0.0014 rmse=3.39 mae=2.72 pred_mean=6.00 pred_std=0.01
+2026-05-15 15:54:23,023 - INFO - Epoch 19/30 [Multitask] | train_loss=1.307259 | parts ord=0.9132 bin=0.6915 ter=0.9601 phq=0.0000 cons=0.0230 | [log1p] ccc=0.0014 rmse=3.3832 mae=2.7196 | [PHQ-9] ccc=0.0014 rmse=3.38 mae=2.72 pred_mean=5.99 pred_std=0.01
+2026-05-15 15:54:23,935 - INFO - Epoch 20/30 [Multitask] | train_loss=1.341675 | parts ord=0.9332 bin=0.6970 ter=1.0056 phq=0.0000 cons=0.0225 | [log1p] ccc=0.0015 rmse=3.3780 mae=2.7161 | [PHQ-9] ccc=0.0015 rmse=3.38 mae=2.72 pred_mean=5.97 pred_std=0.01
+2026-05-15 15:54:24,903 - INFO - Epoch 21/30 [Multitask] | train_loss=1.297238 | parts ord=0.9056 bin=0.6925 ter=0.9527 phq=0.0000 cons=0.0191 | [log1p] ccc=0.0015 rmse=3.3701 mae=2.7114 | [PHQ-9] ccc=0.0015 rmse=3.37 mae=2.71 pred_mean=5.95 pred_std=0.01
+2026-05-15 15:54:26,171 - INFO - Epoch 22/30 [Multitask] | train_loss=1.324406 | parts ord=0.9291 bin=0.6807 ter=0.9703 phq=0.0000 cons=0.0210 | [log1p] ccc=0.0015 rmse=3.3660 mae=2.7089 | [PHQ-9] ccc=0.0015 rmse=3.37 mae=2.71 pred_mean=5.94 pred_std=0.01
+2026-05-15 15:54:27,634 - INFO - Epoch 23/30 [Multitask] | train_loss=1.310213 | parts ord=0.9109 bin=0.7078 ter=0.9706 phq=0.0000 cons=0.0196 | [log1p] ccc=0.0015 rmse=3.3632 mae=2.7071 | [PHQ-9] ccc=0.0015 rmse=3.36 mae=2.71 pred_mean=5.93 pred_std=0.01
+2026-05-15 15:54:28,984 - INFO - Epoch 24/30 [Multitask] | train_loss=1.325009 | parts ord=0.9302 bin=0.6885 ter=0.9650 phq=0.0000 cons=0.0201 | [log1p] ccc=0.0015 rmse=3.3603 mae=2.7054 | [PHQ-9] ccc=0.0015 rmse=3.36 mae=2.71 pred_mean=5.92 pred_std=0.01
+2026-05-15 15:54:30,413 - INFO - Epoch 25/30 [Multitask] | train_loss=1.312421 | parts ord=0.9105 bin=0.6936 ter=0.9861 phq=0.0000 cons=0.0205 | [log1p] ccc=0.0016 rmse=3.3587 mae=2.7044 | [PHQ-9] ccc=0.0016 rmse=3.36 mae=2.70 pred_mean=5.92 pred_std=0.01
+2026-05-15 15:54:31,754 - INFO - Epoch 26/30 [Multitask] | train_loss=1.311242 | parts ord=0.9090 bin=0.7031 ter=0.9819 phq=0.0000 cons=0.0222 | [log1p] ccc=0.0015 rmse=3.3583 mae=2.7041 | [PHQ-9] ccc=0.0015 rmse=3.36 mae=2.70 pred_mean=5.92 pred_std=0.01
+2026-05-15 15:54:33,206 - INFO - Epoch 27/30 [Multitask] | train_loss=1.311214 | parts ord=0.9063 bin=0.6820 ter=1.0017 phq=0.0000 cons=0.0216 | [log1p] ccc=0.0016 rmse=3.3572 mae=2.7035 | [PHQ-9] ccc=0.0016 rmse=3.36 mae=2.70 pred_mean=5.91 pred_std=0.01
+2026-05-15 15:54:34,306 - INFO - Epoch 28/30 [Multitask] | train_loss=1.296626 | parts ord=0.8947 bin=0.6841 ter=0.9910 phq=0.0000 cons=0.0201 | [log1p] ccc=0.0016 rmse=3.3567 mae=2.7031 | [PHQ-9] ccc=0.0016 rmse=3.36 mae=2.70 pred_mean=5.91 pred_std=0.01
+2026-05-15 15:54:35,727 - INFO - Epoch 29/30 [Multitask] | train_loss=1.359253 | parts ord=0.9532 bin=0.6896 ter=1.0013 phq=0.0000 cons=0.0227 | [log1p] ccc=0.0016 rmse=3.3565 mae=2.7030 | [PHQ-9] ccc=0.0016 rmse=3.36 mae=2.70 pred_mean=5.91 pred_std=0.01
+2026-05-15 15:54:37,414 - INFO - Epoch 30/30 [Multitask] | train_loss=1.418009 | parts ord=0.9050 bin=0.6885 ter=0.9374 phq=2.5257 cons=0.0226 | [log1p] ccc=0.0016 rmse=3.3564 mae=2.7030 | [PHQ-9] ccc=0.0016 rmse=3.36 mae=2.70 pred_mean=5.91 pred_std=0.01
+2026-05-15 15:54:37,415 - INFO - Best checkpoint: checkpoints/Track2/A-V-P/regression/fold_0_route3_multitask_smoke/best_model_2026-05-15-15.53.47.pth
+2026-05-15 15:54:37,415 - INFO - Validation metrics saved to: logs/Track2/A-V-P/regression/fold_0_route3_multitask_smoke/train_result_2026-05-15-15.53.47.json
+[smoke] 跳过 ensemble，仅完成 fold_0 训练验证

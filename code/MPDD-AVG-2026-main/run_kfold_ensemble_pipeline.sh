@@ -58,10 +58,10 @@ SPLIT_CSV="${TRAIN_DATA_ROOT}/split_labels_train.csv"
 # ─────────────────────────────────────────────────────────────────────────────
 # 6. 训练超参数
 # ─────────────────────────────────────────────────────────────────────────────
-EPOCHS=400
-BATCH_SIZE=32
-LR=5e-4
-PATIENCE=400
+EPOCHS=300
+BATCH_SIZE=2
+LR=5e-5
+PATIENCE=40
 WEIGHT_DECAY=1e-3
 # 注：五折模式下不使用 VAL_RATIO，由 fold CSV 固定分割
 
@@ -80,9 +80,14 @@ REG_KFOLD_DIR="${KFOLD_BASE_DIR}/Track2_Young_regression"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 8. 回归任务配置
+#    方案 A v1 (2026-05-15): 启用 ordinal BCE 替代 CCCLoss
+#      USE_ORDINAL=true → 模型输出 4 个 logits（PHQ>=5/10/15/20），BCE+pos_weight 训练
+#      USE_ORDINAL=false → 原 CCCLoss + MSE warmup 路径
+#    ordinal 模式下 mse_warmup 自动失效，无需关心
 # ─────────────────────────────────────────────────────────────────────────────
 REGRESSION_LABEL="label2"
-MSE_WARMUP_EPOCHS=40
+MSE_WARMUP_EPOCHS=60
+USE_ORDINAL=true
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 9. 多卡 batch 自动缩放
@@ -242,6 +247,11 @@ for FOLD_IDX in $(seq 0 $(( N_FOLDS - 1 ))); do
     # ── Fold N.C: Regression ────────────────────────────────────────────────
     echo ""
     echo "  >> [Fold ${FOLD_IDX}.C] 训练 Regression（PHQ-9 回归）"
+    REG_EXTRA_ARGS=()
+    if [ "${USE_ORDINAL}" = "true" ]; then
+        REG_EXTRA_ARGS+=(--use_ordinal)
+        echo "     [Ordinal Mode] 启用 ordinal BCE，忽略 mse_warmup"
+    fi
     CUDA_VISIBLE_DEVICES=${GPU_IDS} NCCL_P2P_DISABLE=${NCCL_P2P_DISABLE} \
         python train.py \
             --task              regression             \
@@ -249,6 +259,7 @@ for FOLD_IDX in $(seq 0 $(( N_FOLDS - 1 ))); do
             --fold_csv          "${REG_FOLD_CSV}"      \
             --experiment_name   "fold_${FOLD_IDX}"     \
             --mse_warmup_epochs "${MSE_WARMUP_EPOCHS}" \
+            "${REG_EXTRA_ARGS[@]}"                     \
             "${COMMON_ARGS[@]}"
 
     REG_CKPT=$(ls -t "${REG_CKPT_DIR}"/best_model_*.pth 2>/dev/null | head -1)

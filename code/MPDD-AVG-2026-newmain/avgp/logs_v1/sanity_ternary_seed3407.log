@@ -1,0 +1,8 @@
+
+=== 0/1 ckpts passed sanity ===
+
+✗ FAIL  best_model_2026-05-16-12.00.37.pth
+  val: n=9 f1=0.267 acc=0.667 kappa=+0.000 ccc=-0.004 pred_dist={0: 9} true_dist={2: 1, 0: 6, 1: 2} phq_std=0.01
+  train: n=78 f1=0.276 kappa=+0.000
+  ! COLLAPSED: only predicted 1 class(es) on val
+  ! PHQ_DEAD: phq_pred std=0.011 < 0.05 (regression head fully dead)
