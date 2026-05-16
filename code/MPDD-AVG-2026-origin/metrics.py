@@ -36,7 +36,7 @@ def classification_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, 
         "mae": safe_float(mean_absolute_error(y_true, y_pred)),
         "confusion_matrix": confusion_matrix(y_true, y_pred).tolist(),
     }
-    metrics["selection_score"] = metrics["f1"] + metrics["kappa"]
+    metrics["selection_score"] = metrics["f1"]
     return metrics
 
 
@@ -63,7 +63,7 @@ def joint_regression_metrics(
     metrics["rmse"] = reg_metrics["rmse"]
     metrics["mae"] = reg_metrics["mae"]
     metrics["r2"] = reg_metrics["r2"]
-    metrics["selection_score"] = metrics["f1"] + metrics["kappa"]
+    metrics["selection_score"] = metrics["f1"]
     return metrics
 
 
@@ -144,7 +144,7 @@ def evaluate_model(
     if task == "regression":
         metrics["selection_score"] = safe_float(metrics.get("ccc"))
     else:
-        metrics["selection_score"] = safe_float(metrics.get("f1", 0.0)) + safe_float(metrics.get("kappa", 0.0))
+        metrics["selection_score"] = safe_float(metrics.get("f1", metrics.get("ccc", 0.0)))
 
     metrics["loss"] = safe_float(total_loss / max(1, len(all_labels)))
     metrics["ids"] = all_ids

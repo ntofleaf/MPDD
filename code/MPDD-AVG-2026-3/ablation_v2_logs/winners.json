@@ -1,0 +1,134 @@
+[
+  {
+    "subtrack": "A-V+P",
+    "config": "h64_do50",
+    "binary_seed": 1234,
+    "binary_F1": 0.7684210526315789,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 9527,
+    "ternary_F1": 0.5206349206349207,
+    "ternary_Kappa": 0.525179856115108,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h64_do50/submission.zip"
+  },
+  {
+    "subtrack": "A-V+P",
+    "config": "h64_do30",
+    "binary_seed": 2024,
+    "binary_F1": 0.7722567287784678,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 1234,
+    "ternary_F1": 0.4995822890559733,
+    "ternary_Kappa": 0.46712802768166095,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h64_do30/submission.zip"
+  },
+  {
+    "subtrack": "A-V+P",
+    "config": "h64_do40",
+    "binary_seed": 3407,
+    "binary_F1": 0.7722567287784678,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 2024,
+    "ternary_F1": 0.5206349206349207,
+    "ternary_Kappa": 0.525179856115108,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h64_do40/submission.zip"
+  },
+  {
+    "subtrack": "A-V+P",
+    "config": "h128_do50",
+    "binary_seed": 1234,
+    "binary_F1": 0.7722567287784678,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 42,
+    "ternary_F1": 0.4873015873015873,
+    "ternary_Kappa": 0.45195729537366547,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h128_do50/submission.zip"
+  },
+  {
+    "subtrack": "A-V+P",
+    "config": "h128_do30",
+    "binary_seed": 42,
+    "binary_F1": 0.7272727272727273,
+    "binary_Kappa": 0.4545454545454546,
+    "ternary_seed": 9527,
+    "ternary_F1": 0.4873015873015873,
+    "ternary_Kappa": 0.45195729537366547,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h128_do30/submission.zip"
+  },
+  {
+    "subtrack": "A-V+P",
+    "config": "h128_do40",
+    "binary_seed": 9527,
+    "binary_F1": 0.8610526315789473,
+    "binary_Kappa": 0.7272727272727273,
+    "ternary_seed": 1234,
+    "ternary_F1": 0.47863247863247865,
+    "ternary_Kappa": 0.4144486692015209,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-P_h128_do40/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h64_do50",
+    "binary_seed": 9527,
+    "binary_F1": 0.8166666666666667,
+    "binary_Kappa": 0.6363636363636364,
+    "ternary_seed": 9527,
+    "ternary_F1": 0.5222222222222221,
+    "ternary_Kappa": 0.2666666666666667,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h64_do50/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h64_do30",
+    "binary_seed": 9527,
+    "binary_F1": 0.8166666666666667,
+    "binary_Kappa": 0.6363636363636364,
+    "ternary_seed": 1234,
+    "ternary_F1": 0.43738977072310403,
+    "ternary_Kappa": 0.32307692307692304,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h64_do30/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h64_do40",
+    "binary_seed": 42,
+    "binary_F1": 0.8166666666666667,
+    "binary_Kappa": 0.6363636363636364,
+    "ternary_seed": 9527,
+    "ternary_F1": 0.5427350427350427,
+    "ternary_Kappa": 0.2528301886792452,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h64_do40/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h128_do50",
+    "binary_seed": 42,
+    "binary_F1": 0.8633540372670807,
+    "binary_Kappa": 0.7272727272727273,
+    "ternary_seed": 9527,
+    "ternary_F1": 0.45751633986928103,
+    "ternary_Kappa": 0.34572490706319703,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h128_do50/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h128_do30",
+    "binary_seed": 1234,
+    "binary_F1": 0.7684210526315789,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 3407,
+    "ternary_F1": 0.5714285714285715,
+    "ternary_Kappa": 0.3282442748091604,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h128_do30/submission.zip"
+  },
+  {
+    "subtrack": "A-V-G+P",
+    "config": "h128_do40",
+    "binary_seed": 3407,
+    "binary_F1": 0.7722567287784678,
+    "binary_Kappa": 0.5454545454545454,
+    "ternary_seed": 3407,
+    "ternary_F1": 0.4541062801932367,
+    "ternary_Kappa": 0.3529411764705882,
+    "submission_zip": "submissions_ablation_v2/Track2_A-V-G+P_h128_do40/submission.zip"
+  }
+]

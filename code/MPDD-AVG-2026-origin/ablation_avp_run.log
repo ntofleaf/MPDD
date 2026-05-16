@@ -1,0 +1,59 @@
+
+=========================================================
+  Ablation: Track2 / A-V+P / ternary
+  4 configs × 3 seeds = 12 trainings
+  GPUs: [0, 1, 4, 5, 6, 7] × 3/GPU = 18 slots
+=========================================================
+
+[gpu0][baseline/seed3407] starting …
+[gpu1][baseline/seed42] starting …
+[gpu4][baseline/seed1234] starting …
+[gpu5][h128/seed3407] starting …
+[gpu6][h128/seed42] starting …
+[gpu7][h128/seed1234] starting …
+[gpu0][drop03/seed3407] starting …
+[gpu1][drop03/seed42] starting …
+[gpu4][drop03/seed1234] starting …
+[gpu5][h128+drop03/seed3407] starting …
+[gpu6][h128+drop03/seed42] starting …
+[gpu7][h128+drop03/seed1234] starting …
+[gpu0][drop03/seed3407] done in 383.1s
+[gpu5][h128/seed3407] done in 384.0s
+[gpu1][baseline/seed42] done in 385.4s
+[gpu0][baseline/seed3407] done in 405.7s
+[gpu5][h128+drop03/seed3407] done in 483.8s
+[gpu6][h128+drop03/seed42] done in 509.4s
+[gpu4][baseline/seed1234] done in 538.8s
+[gpu4][drop03/seed1234] done in 617.8s
+[gpu1][drop03/seed42] done in 675.9s
+[gpu6][h128/seed42] done in 697.1s
+[gpu7][h128+drop03/seed1234] done in 768.0s
+[gpu7][h128/seed1234] done in 799.6s
+
+=== Evaluating on test set (n=22) ===
+
+Config           hd    do  seed          F1      ACC    Kappa
+----------------------------------------------------------------------
+baseline         64  0.50  3407      0.3681   0.5455   0.1440
+baseline         64  0.50    42      0.2716   0.4091   0.0138
+baseline         64  0.50  1234      0.2959   0.3182  -0.0345
+h128            128  0.50  3407      0.2684   0.4091   0.0338
+h128            128  0.50    42      0.4786   0.6818   0.4144
+h128            128  0.50  1234      0.2700   0.4091  -0.0752
+drop03           64  0.30  3407      0.2271   0.3636  -0.1493
+drop03           64  0.30    42      0.3829   0.5455   0.1635
+drop03           64  0.30  1234      0.2850   0.4091  -0.0515
+h128+drop03     128  0.30  3407      0.2083   0.4545  -0.0776
+h128+drop03     128  0.30    42      0.4374   0.6364   0.3231
+h128+drop03     128  0.30  1234      0.2919   0.4091  -0.0070
+
+=== Per-config aggregate (mean ± std across 3 seeds) ===
+
+Config           hd    do                  F1              ACC            Kappa
+--------------------------------------------------------------------------------
+baseline         64  0.50     0.3119±0.041    0.4242±0.093    0.0411±0.075
+h128            128  0.50     0.3390±0.099    0.5000±0.129    0.1243±0.210
+drop03           64  0.30     0.2983±0.064    0.4394±0.077   -0.0124±0.131
+h128+drop03     128  0.30     0.3125±0.095    0.5000±0.098    0.0795±0.175
+
+→ Saved: ablation_logs/ablation_ternary_A-V-P.json

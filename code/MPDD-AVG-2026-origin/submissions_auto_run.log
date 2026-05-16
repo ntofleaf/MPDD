@@ -1,0 +1,77 @@
+Launching 20 trainings across 6 GPUs × 2/GPU = 12 workers (epochs=100).
+[gpu0][A-V-P/binary/seed3407] starting …
+[gpu1][A-V-P/binary/seed42] starting …
+[gpu5][A-V-P/binary/seed2024] starting …
+[gpu4][A-V-P/binary/seed1234] starting …
+[gpu6][A-V-P/binary/seed9527] starting …
+[gpu7][A-V-P/ternary/seed3407] starting …
+[gpu0][A-V-P/ternary/seed42] starting …
+[gpu1][A-V-P/ternary/seed1234] starting …
+[gpu4][A-V-P/ternary/seed2024] starting …
+[gpu5][A-V-P/ternary/seed9527] starting …
+[gpu7][A-V-G+P/binary/seed42] starting …
+[gpu6][A-V-G+P/binary/seed3407] starting …
+[gpu0][A-V-P/binary/seed3407] done in 317.2s  →  best_model_2026-05-16-16.17.33.pth
+[gpu0][A-V-G+P/binary/seed1234] starting …
+[gpu5][A-V-P/ternary/seed9527] done in 370.1s  →  best_model_2026-05-16-16.17.33.pth
+[gpu5][A-V-G+P/binary/seed2024] starting …
+[gpu7][A-V-G+P/binary/seed42] done in 434.1s  →  best_model_2026-05-16-16.17.33.pth
+[gpu7][A-V-G+P/binary/seed9527] starting …
+[gpu6][A-V-P/binary/seed9527] done in 468.7s  →  best_model_2026-05-16-16.17.33.pth
+[gpu6][A-V-G+P/ternary/seed3407] starting …
+[gpu0][A-V-P/ternary/seed42] done in 550.5s  →  best_model_2026-05-16-16.17.33.pth
+[gpu0][A-V-G+P/ternary/seed42] starting …
+[gpu7][A-V-P/ternary/seed3407] done in 577.1s  →  best_model_2026-05-16-16.17.33.pth
+[gpu7][A-V-G+P/ternary/seed1234] starting …
+[gpu1][A-V-P/ternary/seed1234] done in 592.3s  →  best_model_2026-05-16-16.17.33.pth
+[gpu1][A-V-G+P/ternary/seed2024] starting …
+[gpu4][A-V-P/ternary/seed2024] done in 657.0s  →  best_model_2026-05-16-16.17.33.pth
+[gpu4][A-V-G+P/ternary/seed9527] starting …
+[gpu1][A-V-P/binary/seed42] done in 692.2s  →  best_model_2026-05-16-16.17.33.pth
+[gpu4][A-V-P/binary/seed1234] done in 725.2s  →  best_model_2026-05-16-16.17.33.pth
+[gpu0][A-V-G+P/ternary/seed42] done in 320.7s  →  best_model_2026-05-16-16.26.44.pth
+[gpu5][A-V-G+P/binary/seed2024] done in 504.7s  →  best_model_2026-05-16-16.23.43.pth
+[gpu5][A-V-P/binary/seed2024] done in 893.3s  →  best_model_2026-05-16-16.17.33.pth
+[gpu7][A-V-G+P/binary/seed9527] done in 493.0s  →  best_model_2026-05-16-16.24.48.pth
+[gpu7][A-V-G+P/ternary/seed1234] done in 356.6s  →  best_model_2026-05-16-16.27.10.pth
+[gpu0][A-V-G+P/binary/seed1234] done in 633.6s  →  best_model_2026-05-16-16.22.51.pth
+[gpu6][A-V-G+P/binary/seed3407] done in 960.0s  →  best_model_2026-05-16-16.17.33.pth
+[gpu1][A-V-G+P/ternary/seed2024] done in 477.4s  →  best_model_2026-05-16-16.27.26.pth
+[gpu4][A-V-G+P/ternary/seed9527] done in 554.8s  →  best_model_2026-05-16-16.28.30.pth
+[gpu6][A-V-G+P/ternary/seed3407] done in 831.0s  →  best_model_2026-05-16-16.25.22.pth
+
+=== Track2 / A-V+P / binary ===
+  seed= 3407  F1=0.6645  Kappa=0.3636  ACC=0.6818  CCC=-0.0106  sel=1.0281
+  seed=   42  F1=0.5901  Kappa=0.1818  ACC=0.5909  CCC=0.1206  sel=0.7719
+  seed= 1234  F1=0.6645  Kappa=0.3636  ACC=0.6818  CCC=0.0322  sel=1.0281
+  seed= 2024  F1=0.5417  Kappa=0.0909  ACC=0.5455  CCC=0.1375  sel=0.6326
+  seed= 9527  F1=0.6239  Kappa=0.2727  ACC=0.6364  CCC=-0.0795  sel=0.8967
+  >>> best seed=3407  F1=0.6645  Kappa=0.3636
+
+=== Track2 / A-V+P / ternary ===
+  seed= 3407  F1=0.3000  Kappa=-0.0377  ACC=0.3182  CCC=-0.0494  sel=0.2623
+  seed=   42  F1=0.1935  Kappa=-0.1532  ACC=0.4091  CCC=-0.0079  sel=0.0403
+  seed= 1234  F1=0.2403  Kappa=-0.2425  ACC=0.2273  CCC=-0.0355  sel=-0.0022
+  seed= 2024  F1=0.2445  Kappa=-0.1042  ACC=0.4091  CCC=-0.1039  sel=0.1403
+  seed= 9527  F1=0.2684  Kappa=-0.0875  ACC=0.4091  CCC=-0.0157  sel=0.1809
+  >>> best seed=3407  F1=0.3000  Kappa=-0.0377
+  >>> submission written: submissions_auto/Track2_A-V-P/submission.zip
+
+=== Track2 / A-V-G+P / binary ===
+  seed= 3407  F1=0.6812  Kappa=0.3636  ACC=0.6818  CCC=-0.0090  sel=1.0448
+  seed=   42  F1=0.4500  Kappa=-0.0909  ACC=0.4545  CCC=-0.0097  sel=0.3591
+  seed= 1234  F1=0.3333  Kappa=0.0000  ACC=0.5000  CCC=-0.0260  sel=0.3333
+  seed= 2024  F1=0.4500  Kappa=-0.0909  ACC=0.4545  CCC=-0.0006  sel=0.3591
+  seed= 9527  F1=0.4437  Kappa=0.0000  ACC=0.5000  CCC=0.1728  sel=0.4437
+  >>> best seed=3407  F1=0.6812  Kappa=0.3636
+
+=== Track2 / A-V-G+P / ternary ===
+  seed= 3407  F1=0.2684  Kappa=-0.0875  ACC=0.4091  CCC=-0.1152  sel=0.1809
+  seed=   42  F1=0.3434  Kappa=0.1235  ACC=0.5455  CCC=-0.0160  sel=0.4669
+  seed= 1234  F1=0.4226  Kappa=0.3028  ACC=0.5909  CCC=-0.0088  sel=0.7255
+  seed= 2024  F1=0.2151  Kappa=-0.0645  ACC=0.4545  CCC=0.0073  sel=0.1505
+  seed= 9527  F1=0.4556  Kappa=0.1406  ACC=0.5455  CCC=0.0335  sel=0.5962
+  >>> best seed=1234  F1=0.4226  Kappa=0.3028
+  >>> submission written: submissions_auto/Track2_A-V-G+P/submission.zip
+
+Summary → submissions_auto/summary.json
